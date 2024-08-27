@@ -1,11 +1,12 @@
-bin <- function (x, y, data, type = "a", q = 0.2, cut = NULL, silent = F) 
+#' @export
+bin <- function (x, y, data, type = "a", q = 0.2, cut = NULL, silent = F)
 {
   #-- Packages
   require(smbinning)
-  
+
   #-- Dataframe
   data <- as.data.frame(data)
-  
+
   #-- Binning
   if (type == "a") {
     sbin <- smbinning(df = data, y = y, x = x, p = 0.05)
@@ -25,16 +26,16 @@ bin <- function (x, y, data, type = "a", q = 0.2, cut = NULL, silent = F)
       sbin <- smbinning(df = data, y = y, x = x, p = 0.05)
     }
     else {
-      sbin <- smbinning.custom(df = data, y = y, x = x, 
+      sbin <- smbinning.custom(df = data, y = y, x = x,
                                cuts = cut)
     }
   }
-  
+
   #-- Output
   if (silent == F) {
     print(sbin$ivtable)
     smbinning.plot(sbin, option = "WoE", sub = x)
-  } 
-  
+  }
+
   list(info = sbin, type = type) %>% invisible()
 }

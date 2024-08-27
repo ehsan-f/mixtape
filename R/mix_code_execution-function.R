@@ -1,3 +1,4 @@
+#' @export
 mix_code_execution <-  function(root_dir = NULL,
                                 script_name,
                                 google_sheet_id = NULL,

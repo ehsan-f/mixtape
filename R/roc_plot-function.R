@@ -1,3 +1,4 @@
+#' @export
 roc_plot <- function (prob = 'p_',
                       y = "t_Paid",
                       df_train = ds1,

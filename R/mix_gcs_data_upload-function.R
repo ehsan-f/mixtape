@@ -1,3 +1,4 @@
+#' @export
 mix_gcs_data_upload <- function(project,
                                 df,
                                 object_name,

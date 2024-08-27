@@ -1,3 +1,4 @@
+#' @export
 mix_gdr_read <- function(file_id, read_fn) {
 
   #-- Start time

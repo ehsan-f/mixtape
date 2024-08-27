@@ -1,3 +1,4 @@
+#' @export
 copy_table <- function(x, sep = '\t', row.names = FALSE, col.names = TRUE, ...){
 
   if (.Platform$OS.type == 'unix') {

@@ -1,3 +1,4 @@
+#' @export
 time_key <- function(df = ds,
                      x,
                      start = '2019-01-01',

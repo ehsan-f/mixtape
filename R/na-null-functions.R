@@ -1,3 +1,4 @@
+#' @export
 if_na <- function(x, replacement, na = T, value = NULL) {
   if (na == T) {
     x[is.na(x)] <- replacement
@@ -7,6 +8,7 @@ if_na <- function(x, replacement, na = T, value = NULL) {
   x
 }
 
+#' @export
 if_null <- function(x, replacement = NA) {
   x <- ifelse(is.null(x) | x %in% c("", " ", 'NULL', 'null'), replacement, x)
   if (length(x) == 0) {

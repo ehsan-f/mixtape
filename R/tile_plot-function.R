@@ -1,3 +1,4 @@
+#' @export
 tile_plot <- function (prob = 'p_',
                        y,
                        measure = NULL,

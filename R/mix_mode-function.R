@@ -1,3 +1,4 @@
+#' @export
 mix_mode <- function(x) {
   u <- unique(x)
   tab <- tabulate(match(x, u))

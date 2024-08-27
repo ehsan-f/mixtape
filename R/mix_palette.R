@@ -1,3 +1,4 @@
+
 # mix_palette <- c(
 #   rgb(0, 0.45, 0.7),     # Blue
 #   '#FD6467',             # Grandbudapest - Red
@@ -12,10 +13,10 @@
 #   '#464646',             # SF_Grey
 #   rgb(0, 0, 0),          # Black
 #   '#EDEDED',             # Light Grey - Grey93
-#   '#353744'               # Google Grey 
-# ) 
+#   '#353744'               # Google Grey
+# )
 
-
+#' @export
 mix_palette <- list()
 mix_palette$blue <- rgb(0, 0.45, 0.7)
 mix_palette$red <- '#FD6467' # Grand Budapest Hotel
@@ -32,12 +33,12 @@ mix_palette$black <- rgb(0, 0, 0)
 mix_palette$light_grey <- '#EDEDED'
 mix_palette$google_grey <- '#353744'
 
-
+#' @export
 mix_palette_gg <- list()
 mix_palette_gg$dark_grey_3 <- '#666666'
 mix_palette_gg$dark_grey_2 <- '#999999'
 
-
+#' @export
 mix_palette_light <- list()
 mix_palette_light$red <- '#EF9A9A' # Red
 mix_palette_light$blue <- '#81D4FA' # Blue
@@ -48,5 +49,5 @@ mix_palette_light$purple <- '#CCAAB3' # Purple
 mix_palette_light$sakura <- '#ECC7C0' # Sakura
 mix_palette_light$blue_grey <- '#B0BEC5' # Blue Grey
 
-
+#' @export
 mix_palette_cb_jp <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")

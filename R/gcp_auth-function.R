@@ -1,3 +1,4 @@
+#' @export
 gcp_auth <- function(path = NULL) {
 
   #-- Load Packages

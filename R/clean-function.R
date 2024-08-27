@@ -1,7 +1,8 @@
+#' @export
 clean <- function(except = NULL) {
-  
+
   ls_env <- ls(envir = .GlobalEnv)
-  
+
   if (is.null(except)) {
     rm(list = ls_env, envir = .GlobalEnv)
     graphics.off()
@@ -13,5 +14,5 @@ clean <- function(except = NULL) {
     cat("\014")
     gc()
   }
-  
+
 }

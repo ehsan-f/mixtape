@@ -1,3 +1,4 @@
+#' @export
 mix_gcs_code_execution <- function(project,
                                    bucket,
                                    folder_regex = '',

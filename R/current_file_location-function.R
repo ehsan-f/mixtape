@@ -1,3 +1,4 @@
+#' @export
 current_file_location <-  function() {
   #-- TEst
 

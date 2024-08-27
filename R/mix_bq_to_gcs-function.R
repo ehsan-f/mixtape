@@ -1,3 +1,4 @@
+#' @export
 mix_bq_to_gcs <- function(project,
                           dataset = NULL,
                           table,
