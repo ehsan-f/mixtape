@@ -37,6 +37,11 @@ mix_install_packages <- function() {
   install.packages('datapasta')
   install.packages('janitor')
 
+
+  install.packages('purrr')
+  install.packages('sf')
+  install.packages('h3jsr')
+
   # install.packages('RODBC')
   # install.packages('plyr')
   # install.packages('extrafont')
