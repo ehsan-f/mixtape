@@ -16,10 +16,10 @@ mix_gcs_data_upload <- function(project,
   message('Object: ', object_name)
 
   #-- Packages
-  require(arrow)
-  require(dplyr)
-  require(readr)
-  require(googleCloudStorageR)
+  library(arrow)
+  library(dplyr)
+  library(readr)
+  library(googleCloudStorageR)
 
   #----- Data cleaning
   #-- Folder name

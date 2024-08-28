@@ -35,7 +35,7 @@ elapsed_months <- function(start_date, end_date, accuracy_type = 'day') {
 }
 
 elapsed_weeks <- function(start_date, end_date, iso = F) {
-  require(lubridate)
+  library(lubridate)
 
   ed <- as.POSIXlt(end_date)
   sd <- as.POSIXlt(start_date)
@@ -48,7 +48,7 @@ elapsed_weeks <- function(start_date, end_date, iso = F) {
 }
 
 elapsed_days <- function(start_date, end_date) {
-  require(lubridate)
+  library(lubridate)
 
   ed <- as_date(end_date)
   sd <- as_date(start_date)

@@ -15,8 +15,8 @@ mix_gcs_code_execution <- function(project,
   message('Object regex: ', object_regex)
 
   #-- Packages
-  require(dplyr)
-  require(googleCloudStorageR)
+  library(dplyr)
+  library(googleCloudStorageR)
 
   #-- Bucket objects
   ds_bucket_objects <- gcs_list_objects(bucket = bucket) %>%

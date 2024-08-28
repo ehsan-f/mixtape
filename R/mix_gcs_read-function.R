@@ -20,12 +20,12 @@ mix_gcs_read <- function(project,
   message('Object regex: ', object_regex)
 
   #-- Packages
-  require(arrow)
-  require(dplyr)
-  require(readr)
-  require(janitor)
-  require(googleCloudStorageR)
-  require(purrr)
+  library(arrow)
+  library(dplyr)
+  library(readr)
+  library(janitor)
+  library(googleCloudStorageR)
+  library(purrr)
 
   #-- Bucket objects
   ds_bucket_objects <- gcs_list_objects(bucket = bucket) %>%

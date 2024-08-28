@@ -1,7 +1,7 @@
 #' @export
 mix_theme <- function(x_axis_angle = NULL, gg_theme = theme_light()) {
   #-- Packages
-  require(ggplot2)
+  library(ggplot2)
   #-- Theme
   x_angle <- NULL
   if (!is.null(x_axis_angle)) {

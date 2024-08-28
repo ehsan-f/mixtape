@@ -13,9 +13,9 @@ mix_bq_to_gcs <- function(project,
   v_start_time <- Sys.time()
 
   #-- Packages
-  require(googleCloudStorageR)
-  require(bigrquery)
-  require(dplyr)
+  library(googleCloudStorageR)
+  library(bigrquery)
+  library(dplyr)
 
   #-- Set vars
   folder <- if_else(is.null(folder), '', paste0(folder, '/'))

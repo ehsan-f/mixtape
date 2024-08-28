@@ -1,8 +1,8 @@
 #' @export
 mix_point_to_h3 <- function(df, long, lat, h3_res) {
   #-- Packages
-  require(sf)
-  require(h3jsr)
+  library(sf)
+  library(h3jsr)
 
   #-- Create points
   xy_point <- st_multipoint(x = as.matrix(df[,c(long, lat)]))

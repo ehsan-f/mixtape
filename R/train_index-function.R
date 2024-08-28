@@ -2,8 +2,8 @@
 train_index <- function(df = ds, target = 't_', p = 0.7, env_var = NULL) {
 
   #-- Packages
-  require(caret)
-  require(dplyr)
+  library(caret)
+  library(dplyr)
 
   #-- Environment Variables
   # Current Env = environment(fun = NULL)

@@ -7,7 +7,7 @@ mix_code_execution <-  function(root_dir = NULL,
                                 ...) {
 
   ##### Packages #####
-  require(dplyr)
+  library(dplyr)
 
   ##### Variables #####
   file_location <- paste0(root_dir,

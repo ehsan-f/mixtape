@@ -18,10 +18,10 @@ mix_gcs_to_bq <- function(project,
   message('Object: ', object_name)
 
   #-- Packages
-  require(googleCloudStorageR)
-  require(bigrquery)
-  require(dplyr)
-  require(purrr)
+  library(googleCloudStorageR)
+  library(bigrquery)
+  library(dplyr)
+  library(purrr)
 
   #-- Variables
   v_staging <- max(if_else(!is.null(cluster_index) | !is.null(partition_index), 1, 0), use_staging)

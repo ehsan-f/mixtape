@@ -9,8 +9,8 @@ time_key <- function(df = ds,
                      group_year = T) {
 
   #-- Packages
-  require(lubridate)
-  require(dplyr)
+  library(lubridate)
+  library(dplyr)
 
   #-- Variables
   d <- seq(as_date(start), as_date(end), by = 'days')

@@ -12,8 +12,8 @@ tile_plot <- function (prob = 'p_',
                        generate_plot = T)
 {
   #-- Packages
-  require(tidyverse)
-  require(lemon)
+  library(tidyverse)
+  library(lemon)
 
   #-- Data
   df_train <- as.data.frame(df_train)

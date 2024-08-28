@@ -17,7 +17,7 @@ pretty_perc <- function(x, p = 2) {
 }
 
 # pretty_json <- function(df) {
-#   require(jsonlite)
+#   library(jsonlite)
 #
 #   x <- prettify(toJSON(as.data.frame(df)))
 #   x

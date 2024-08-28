@@ -9,9 +9,9 @@ roc_plot <- function (prob = 'p_',
 {
 
   #-- Packages
-  require(dplyr)
-  require(ROCR)
-  require(lemon)
+  library(dplyr)
+  library(ROCR)
+  library(lemon)
   perform <- ROCR::performance
 
   #-- Data

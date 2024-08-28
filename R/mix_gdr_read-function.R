@@ -5,8 +5,8 @@ mix_gdr_read <- function(file_id, read_fn) {
   v_start_time <- Sys.time()
 
   #-- Packages
-  require(dplyr)
-  require(googledrive)
+  library(dplyr)
+  library(googledrive)
 
   #-- Google Drive id
   v_drive_file_id <- as_id(file_id)

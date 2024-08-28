@@ -2,7 +2,7 @@
 bin <- function (x, y, data, type = "a", q = 0.2, cut = NULL, silent = F)
 {
   #-- Packages
-  require(smbinning)
+  library(smbinning)
 
   #-- Dataframe
   data <- as.data.frame(data)
