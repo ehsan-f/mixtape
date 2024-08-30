@@ -7,14 +7,13 @@ mix_load_packages <- function() {
   library(jsonlite)
   library(janitor)
   library(zoo)
+  library(httr2)
+  library(devtools)
 
-  #-- GCP
+  #-- Cloud
   library(googledrive)
   library(googlesheets4)
   library(googleCloudStorageR)
   library(bigrquery)
-
-  #-- Other
-  library(devtools)
 
 }

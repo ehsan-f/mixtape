@@ -1,72 +1,59 @@
 #' @export
-mix_install_packages <- function() {
-  #----- Base
-  install.packages('httr')
-  install.packages('devtools')
-  install.packages('httpuv')
-  install.packages("htmltools")
+mix_install_packages <- function(install_core_packages = T,
+                                 exclude_from_core = NULL,
+                                 install_additional_packages = T) {
 
-  install.packages('tidyverse')
-  install.packages('DBI')
-  install.packages('arrow')
+  #----- Core Packages
+  if (install_core_packages == T) {
+    v_core_packages <- c(
+      #-- Base
+      'arrow', 'tidyverse', 'jsonlite', 'janitor', 'zoo', 'httr2', 'devtools',
 
-  install.packages('bigrquery')
-  install.packages('googlesheets4')
-  install.packages('googledrive')
-  install.packages('googleCloudStorageR')
-  install.packages('aws.s3')
+      #-- Cloud
+      'googledrive', 'googlesheets4', 'googleCloudStorageR', 'bigrquery', 'aws.s3',
 
-  install.packages('lubridate')
-  install.packages('zoo')
+      #-- Other
 
-  #----- Other
-  install.packages('foreach')
-  install.packages('readxl')
-  install.packages('writexl')
-  install.packages('readr')
-  install.packages('data.table')
-  install.packages('doParallel')
-  install.packages('lemon')
+      #-- Modelling
+      'caret', 'foreach', 'doParallel', 'smbinning', 'Information', 'xgboost', 'ROCR'
+    )
 
-  install.packages('plotly')
-  install.packages('tm')
-  install.packages('corpus')
-  install.packages('hunspell')
-  install.packages('DiagrammeR')
+    #-- Exclude packages from installation
+    if (!is.null(exclude)) {
+      v_core_packages <- v_core_packages[!(v_core_packages %in% exclude_from_core)]
+    }
 
-  install.packages('datapasta')
-  install.packages('janitor')
+    #-- Install packages
+    install.packages(v_core_packages)
+  }
 
 
-  install.packages('purrr')
-  install.packages('sf')
-  install.packages('h3jsr')
+  #----- Additional Packages
+  if (install_additional_packages == T) {
+    v_additional_packages <- c(
+      #-- Base
+      'data.table', 'readxl', 'writexl',
 
-  # install.packages('RODBC')
-  # install.packages('plyr')
-  # install.packages('extrafont')
+      #-- Modelling
+      'woeBinning', 'separationplot', 'MASS', 'car', 'dummies',
+      'tm', 'corpus', 'hunspell',
+      # 'unbalanced',
 
-  #----- Modelling
-  install.packages('MASS')
-  install.packages('car')
-  install.packages('unbalanced')
-  install.packages('smbinning')
-  install.packages('separationplot')
-  install.packages('woeBinning')
-  install.packages('Information')
-  install.packages('xgboost')
-  install.packages('dummies')
-  install.packages('caret')
-  install.packages('ROCR')
+      #-- Other
+      'datapasta', 'extrafont',
 
-  # install.packages('imputeTS')
+      #-- Geo-spatial
+      'sf', 'h3jsr',
 
-  # Install Caret from Github
-  # httr::set_config(httr::config( ssl_verifypeer = 0L ) )
-  # devtools::install_github('topepo/caret/pkg/caret')
+      #-- Visualisation
+      'plotly', 'lemon', 'flexdashboard', 'DiagrammeR'
+    )
 
-  #----- Markdowns
-  devtools::install_github('rstudio/rmarkdown')
-  install.packages('flexdashboard')
+    #-- Install packages
+    install.packages(v_additional_packages)
+
+    #-- Special installations
+    devtools::install_github('rstudio/rmarkdown')
+  }
 
 }
