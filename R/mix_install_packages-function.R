@@ -7,15 +7,13 @@ mix_install_packages <- function(install_core_packages = T,
   if (install_core_packages == T) {
     v_core_packages <- c(
       #-- Base
-      'arrow', 'tidyverse', 'jsonlite', 'janitor', 'zoo', 'httr2', 'devtools',
+      'arrow', 'tidyverse', 'jsonlite', 'janitor', 'zoo', 'httr2', 'devtools', 'remotes', 'plumber',
 
       #-- Cloud
       'googledrive', 'googlesheets4', 'googleCloudStorageR', 'bigrquery', 'aws.s3',
 
-      #-- Other
-
       #-- Modelling
-      'caret', 'foreach', 'doParallel', 'smbinning', 'Information', 'xgboost', 'ROCR'
+      'caret', 'foreach', 'doParallel', 'smbinning', 'Information', 'xgboost'
     )
 
     #-- Exclude packages from installation
@@ -35,7 +33,7 @@ mix_install_packages <- function(install_core_packages = T,
       'data.table', 'readxl', 'writexl',
 
       #-- Modelling
-      'woeBinning', 'separationplot', 'MASS', 'car', 'dummies',
+      'ROCR', 'woeBinning', 'separationplot', 'MASS', 'car', 'dummies',
       'tm', 'corpus', 'hunspell',
       # 'unbalanced',
 
@@ -46,14 +44,14 @@ mix_install_packages <- function(install_core_packages = T,
       'sf', 'h3jsr',
 
       #-- Visualisation
-      'plotly', 'lemon', 'flexdashboard', 'DiagrammeR'
+      'plotly', 'lemon', 'flexdashboard', 'DiagrammeR', 'kableExtra'
     )
 
     #-- Install packages
     install.packages(v_additional_packages)
 
     #-- Special installations
-    devtools::install_github('rstudio/rmarkdown')
+    remotes::install_github('rstudio/rmarkdown')
   }
 
 }
