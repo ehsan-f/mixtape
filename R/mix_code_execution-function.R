@@ -39,18 +39,19 @@ mix_code_execution <-  function(script_path = NULL,
   v_end_time <- Sys.time()
 
   #-- Process Info
+  v_status <- ifelse(!is.na(error_message), 'Failed!', 'Success!')
   v_time_taken <- difftime(v_end_time, v_start_time, units='mins')
   message('Time taken: ', round(as.numeric(v_time_taken), 3), ' mins')
+  message('Status: ', v_status)
 
   ##### Status Report #####
   if (!is.null(google_sheet_id)) {
-    current_time <- Sys.time()
-    status <- ifelse(!is.na(error_message), 'Failed!', 'Success!')
+    v_current_time <- Sys.time()
 
     ds_error <- tibble(
       script_name = script_name,
-      run_time = current_time,
-      status = status,
+      run_time = v_current_time,
+      status = v_status,
       error = error_message,
       file_location = file_location,
       time_taken_mins = round(as.numeric(v_time_taken), 3)
