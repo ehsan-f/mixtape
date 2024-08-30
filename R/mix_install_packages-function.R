@@ -10,10 +10,7 @@ mix_install_packages <- function(install_core_packages = T,
       'arrow', 'tidyverse', 'jsonlite', 'janitor', 'zoo', 'httr2', 'devtools', 'remotes', 'plumber',
 
       #-- Cloud
-      'googledrive', 'googlesheets4', 'googleCloudStorageR', 'bigrquery', 'aws.s3',
-
-      #-- Modelling
-      'caret', 'foreach', 'doParallel', 'smbinning', 'Information', 'xgboost'
+      'googledrive', 'googlesheets4', 'googleCloudStorageR', 'bigrquery', 'aws.s3'
     )
 
     #-- Exclude packages from installation
@@ -22,7 +19,11 @@ mix_install_packages <- function(install_core_packages = T,
     }
 
     #-- Install packages
-    install.packages(v_core_packages)
+    for (i in v_core_packages) {
+      message('Core package - installing ', i, '...')
+      install.packages(i)
+    }
+
   }
 
 
@@ -33,6 +34,7 @@ mix_install_packages <- function(install_core_packages = T,
       'data.table', 'readxl', 'writexl',
 
       #-- Modelling
+      'caret', 'foreach', 'doParallel', 'smbinning', 'Information', 'xgboost',
       'ROCR', 'woeBinning', 'separationplot', 'MASS', 'car', 'dummies',
       'tm', 'corpus', 'hunspell',
       # 'unbalanced',
@@ -48,7 +50,12 @@ mix_install_packages <- function(install_core_packages = T,
     )
 
     #-- Install packages
-    install.packages(v_additional_packages)
+    #-- Install packages
+    for (i in v_additional_packages) {
+      message('Additional packages - installing ', i, '...')
+      install.packages(i)
+    }
+
 
     #-- Special installations
     remotes::install_github('rstudio/rmarkdown')
