@@ -1,18 +1,20 @@
 #' @export
-mix_code_execution <-  function(root_dir = NULL,
-                                script_name,
+mix_code_execution <-  function(script_path = NULL,
+                                script_url = NULL,
                                 google_sheet_id = NULL,
-                                sheet_name = 'R_Data_Process_Logs',
+                                sheet_name = 'R_Code_Logs',
                                 # gcp_js_path,
                                 ...) {
 
   ##### Packages #####
   library(dplyr)
+  library(devtools)
 
   ##### Variables #####
-  file_location <- paste0(root_dir,
-                          script_name,
-                          if_else(!grepl('\\.R$', x = script_name), '.R', ''))
+  script_path <- paste0(script_path,
+                        if_else(!grepl('\\.R$', x = script_path), '.R', ''))
+
+  script_name <- gsub(pattern = '.*/', replacement = '', x = script_path)
 
   ##### Code Execution #####
   #-- Start Time
@@ -23,7 +25,11 @@ mix_code_execution <-  function(root_dir = NULL,
 
     {
 
-      source(file = file_location)
+      if (!is.null(script_url)) {
+        source_url(url = script_url)
+      } else {
+        source(file = script_path)
+      }
 
     }, error = function(e) return( error_message <<- as.character(conditionMessage(e)) )
 

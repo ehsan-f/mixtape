@@ -1,25 +1,20 @@
 #' @export
 mix_load_packages <- function() {
 
-  #----- Graphics
-  library(plotly)
-
-  #----- Base
+  #-- Base
   library(arrow)
   library(tidyverse)
-
-  library(googledrive)
-  library(googlesheets4)
-  library(bigrquery)
-  library(googleCloudStorageR)
-  library(aws.s3)
-
-
-  library(lubridate)
+  library(jsonlite)
+  library(janitor)
   library(zoo)
 
-  library(jsonlite)
+  #-- GCP
+  library(googledrive)
+  library(googlesheets4)
+  library(googleCloudStorageR)
+  library(bigrquery)
 
-  library(janitor)
+  #-- Other
+  library(devtools)
 
 }

@@ -6,7 +6,7 @@ mix_gcs_code_execution <- function(project,
 
                                    #-- mix_code_execution args
                                    google_sheet_id = NULL,
-                                   sheet_name = 'R_Data_Process_Logs') {
+                                   sheet_name = 'R_Code_Logs') {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -47,7 +47,7 @@ mix_gcs_code_execution <- function(project,
                        saveToDisk = v_file_download_name)
 
         #-- Run script
-        mix_code_execution(script_name = v_file_download_name,
+        mix_code_execution(script_path = v_file_download_name,
                            google_sheet_id = google_sheet_id,
                            sheet_name = sheet_name)
 
