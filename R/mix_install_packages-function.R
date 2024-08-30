@@ -17,7 +17,7 @@ mix_install_packages <- function(install_core_packages = T,
     )
 
     #-- Exclude packages from installation
-    if (!is.null(exclude)) {
+    if (!is.null(exclude_from_core)) {
       v_core_packages <- v_core_packages[!(v_core_packages %in% exclude_from_core)]
     }
 
