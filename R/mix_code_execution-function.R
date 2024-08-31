@@ -45,20 +45,23 @@ mix_code_execution <-  function(script_path = NULL,
   message('Status: ', v_status)
 
   ##### Status Report #####
+  v_current_time <- Sys.time()
+
+  ds_status <- tibble(
+    script_name = script_name,
+    run_time = v_current_time,
+    status = v_status,
+    error = error_message,
+    time_taken_mins = round(as.numeric(v_time_taken), 3)
+  )
+
+  #-- Google Sheet output
   if (!is.null(google_sheet_id)) {
-    v_current_time <- Sys.time()
-
-    ds_error <- tibble(
-      script_name = script_name,
-      run_time = v_current_time,
-      status = v_status,
-      error = error_message,
-      file_location = file_location,
-      time_taken_mins = round(as.numeric(v_time_taken), 3)
-    )
-
     #-- Export
-    sheet_append(data = ds_error, ss = as_sheets_id(google_sheet_id), sheet = sheet_name)
+    sheet_append(data = ds_status, ss = as_sheets_id(google_sheet_id), sheet = sheet_name)
   }
+
+  #-- Retun results
+  return(invisible(ds_status))
 
 }
