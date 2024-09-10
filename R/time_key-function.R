@@ -2,11 +2,11 @@
 time_key <- function(df = ds,
                      x,
                      start = '2019-01-01',
-                     end = Sys.date(),
+                     end = Sys.Date(),
                      end_of_week = 'Saturday',
                      week_days = 7,
                      weekend_days = c('Friday', 'Saturday'),
-                     group_year = T) {
+                     group_year = F) {
 
   #-- Packages
   library(lubridate)

@@ -11,7 +11,8 @@ mix_gcs_read <- function(project,
                          clean_vars = F,
                          add_time_fields = F,
                          time_field = NULL,
-                         csv_delim = ',') {
+                         csv_delim = ',',
+                         skip_lines = 0) {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -23,6 +24,7 @@ mix_gcs_read <- function(project,
   library(arrow)
   library(dplyr)
   library(readr)
+  library(readxl)
   library(janitor)
   library(googleCloudStorageR)
   library(purrr)
@@ -79,7 +81,11 @@ mix_gcs_read <- function(project,
         }
 
         if (object_format == 'csv') {
-          ls_object[[i]] <- read_delim(file = v_file_download_name, delim = csv_delim)
+          ls_object[[i]] <- read_delim(file = v_file_download_name, delim = csv_delim, skip = skip_lines)
+        }
+
+        if (object_format == 'xlsx') {
+          ls_object[[i]] <- read_excel(path = v_file_download_name, skip = skip_lines)
         }
 
         #-- Remove file
