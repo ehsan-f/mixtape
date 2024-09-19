@@ -135,8 +135,6 @@ mix_gcs_read <- function(project,
       time_key(x = time_field)
   }
 
-
-
   #-- End time
   v_end_time <- Sys.time()
 
