@@ -88,6 +88,11 @@ mix_gcs_read <- function(project,
           ls_object[[i]] <- read_excel(path = v_file_download_name, skip = skip_lines)
         }
 
+        if (object_format == 'json') {
+          ls_object[[i]] <- fromJSON(txt = v_file_download_name) %>%
+            as_tibble()
+        }
+
         #-- Remove file
         file.remove(v_file_download_name)
         message('Downloaded file deleted.')
