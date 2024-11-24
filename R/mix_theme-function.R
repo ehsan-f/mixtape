@@ -18,9 +18,7 @@ mix_theme <- function(x_axis_angle = NULL, gg_theme = theme_light()) {
       strip.text.x = element_text(face = "bold"),
 
       legend.background = element_rect(linetype = "solid",
-                                       color = mix_palette$light_grey),
-      legend.title = element_blank(),
-      legend.position = "bottom"
+                                       color = mix_palette$light_grey)
     ) +
     x_angle
 

@@ -3,7 +3,7 @@ mix_code_execution <-  function(script_path = NULL,
                                 script_url = NULL,
                                 google_sheet_id = NULL,
                                 sheet_name = 'R_Code_Logs',
-                                # gcp_js_path,
+                                script_prefix = NULL,
                                 ...) {
 
   ##### Packages #####
@@ -14,7 +14,13 @@ mix_code_execution <-  function(script_path = NULL,
   script_path <- paste0(script_path,
                         if_else(!grepl('\\.R$', x = script_path), '.R', ''))
 
+  #-- Script name (output)
   script_name <- gsub(pattern = '.*/', replacement = '', x = script_path)
+
+  #-- Add prefix if provided (output)
+  if (!is.null(script_prefix)) {
+    script_name <- paste0(script_prefix, script_name)
+  }
 
   ##### Code Execution #####
   #-- Start Time
@@ -22,17 +28,13 @@ mix_code_execution <-  function(script_path = NULL,
 
   error_message <- NA
   tryCatch(
-
     {
-
       if (!is.null(script_url)) {
         source_url(url = script_url)
       } else {
         source(file = script_path)
       }
-
     }, error = function(e) return( error_message <<- as.character(conditionMessage(e)) )
-
   )
 
   #-- End Time
@@ -61,7 +63,7 @@ mix_code_execution <-  function(script_path = NULL,
     sheet_append(data = ds_status, ss = as_sheets_id(google_sheet_id), sheet = sheet_name)
   }
 
-  #-- Retun results
+  #-- Return results
   return(invisible(ds_status))
 
 }

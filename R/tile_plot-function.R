@@ -9,7 +9,9 @@ tile_plot <- function (prob = 'p_',
                        n = 10,
                        nudge_train = 1.5,
                        nudge_test = 1.5,
-                       generate_plot = T)
+                       generate_plot = T,
+                       actual_colour = mix_palette$blue,
+                       pred_colour = mix_palette$red)
 {
   #-- Packages
   library(tidyverse)
@@ -154,9 +156,10 @@ tile_plot <- function (prob = 'p_',
       ggtitle('Lift Chart - Train', subtitle = measure) +
       ylab(prob) +
 
-      scale_colour_manual(values = as.vector(unlist(mix_palette))) +
+      scale_colour_manual(values = c(actual_colour, pred_colour)) +
 
-      mix_theme()
+      mix_theme() +
+      theme(legend.title = element_blank())
 
     if (!is.null(measure)) {
       t_train <- lift_train$Actual_Train
@@ -177,8 +180,6 @@ tile_plot <- function (prob = 'p_',
 
     reposition_legend(aplot = gg_train,  position = 'top left')
 
-
-
     #-- Test
     if (!is.null(df_test)) {
       gg_test <- lift_test %>%
@@ -192,9 +193,10 @@ tile_plot <- function (prob = 'p_',
         ggtitle('Lift Chart - Test', subtitle = measure) +
         ylab(prob) +
 
-        scale_colour_manual(values = as.vector(unlist(mix_palette))) +
+        scale_colour_manual(values = c(actual_colour, pred_colour)) +
 
-        mix_theme()
+        mix_theme() +
+        theme(legend.title = element_blank())
 
       if (!is.null(measure)) {
         t_test <- lift_test$Actual_Test

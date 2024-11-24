@@ -32,6 +32,7 @@ mix_palette$purple_rain <- '#735BCC' # Purple Rain
 mix_palette$black <- rgb(0, 0, 0)
 mix_palette$light_grey <- '#EDEDED'
 mix_palette$google_grey <- '#353744'
+mix_palette$serene_purple <- '#5720FF'
 
 #' @export
 mix_palette_gg <- list()

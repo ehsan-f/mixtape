@@ -5,7 +5,9 @@ roc_plot <- function (prob = 'p_',
                       df_test = ds2,
                       model = NULL,
                       model_var = 'X1',
-                      generate_plot = T)
+                      generate_plot = T,
+                      train_colour = mix_palette$blue,
+                      test_colour = mix_palette$red)
 {
 
   #-- Packages
@@ -73,17 +75,18 @@ roc_plot <- function (prob = 'p_',
 
       ggtitle('ROC Curves') + xlab('False Positive Rate') + ylab('True Positive Rate') +
 
-      mix_theme()
+      mix_theme() +
+      theme(legend.title = element_blank())
 
     if (is.null(df_test)) {
       gg_roc <- gg_roc +
-        scale_color_manual(values = as.vector(unlist(mix_palette)),
-                           labels = c(sprintf("Train - %.4f", auc_perf_train@y.values)))
+        scale_color_manual(values = c(train_colour, test_colour),
+                           labels = c(sprintf("Train | AUC = %.4f | Gini = %.4f", auc_perf_train@y.values[[1]], auc_perf_train@y.values[[1]]*2 - 1)))
     } else if (!is.null(df_test)) {
       gg_roc <- gg_roc +
-        scale_color_manual(values = as.vector(unlist(mix_palette)),
-                           labels = c(sprintf("Train - %.4f", auc_perf_train@y.values),
-                                      sprintf("Test  - %.4f", auc_perf_test@y.values)))
+        scale_color_manual(values = c(train_colour, test_colour),
+                           labels = c(sprintf("Train | AUC = %.4f | Gini = %.4f", auc_perf_train@y.values[[1]], auc_perf_train@y.values[[1]]*2 - 1),
+                                      sprintf("Test  | AUC = %.4f | Gini = %.4f", auc_perf_test@y.values[[1]], auc_perf_test@y.values[[1]]*2 - 1)))
     }
 
     reposition_legend(aplot = gg_roc,  position = 'top left')
