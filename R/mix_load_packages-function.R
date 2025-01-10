@@ -7,6 +7,7 @@ mix_load_packages <- function() {
   library(jsonlite)
   library(janitor)
   library(zoo)
+  library(lubridate)
   library(httr2)
   library(devtools)
 
