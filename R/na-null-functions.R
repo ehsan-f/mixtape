@@ -10,7 +10,7 @@ if_na <- function(x, replacement, na = T, value = NULL) {
 
 #' @export
 if_null <- function(x, replacement = NA) {
-  x <- ifelse(is.null(x) | x %in% c("", " ", 'NULL', 'null'), replacement, x)
+  x <- ifelse(is.null(x) | is.infinite(x) | x %in% c("", " ", 'NULL', 'null'), replacement, x)
   if (length(x) == 0) {
     x <- replacement
   }
