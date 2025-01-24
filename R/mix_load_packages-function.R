@@ -12,6 +12,7 @@ mix_load_packages <- function() {
   library(devtools)
 
   #-- Cloud
+  library(AzureStor)
   library(googledrive)
   library(googlesheets4)
   library(googleCloudStorageR)

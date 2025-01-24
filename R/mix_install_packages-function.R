@@ -10,7 +10,7 @@ mix_install_packages <- function(install_core_packages = T,
       'arrow', 'tidyverse', 'jsonlite', 'janitor', 'zoo', 'httr2', 'devtools', 'remotes', 'plumber',
 
       #-- Cloud
-      'googledrive', 'googlesheets4', 'googleCloudStorageR', 'bigrquery', 'aws.s3'
+      'AzureStor', 'googledrive', 'googlesheets4', 'googleCloudStorageR', 'bigrquery', 'aws.s3'
     )
 
     #-- Exclude packages from installation
