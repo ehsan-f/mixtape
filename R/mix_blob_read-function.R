@@ -4,9 +4,7 @@ mix_blob_read <- function(storage_account_name,
                           file_path,
                           max_files = NULL,
                           object_format = 'parquet',
-
-                          key = Sys.getenv('SERENE_AZURE_BLOB_KEY'),
-                          sas = Sys.getenv('SERENE_AZURE_BLOB_SAS'),
+                          blob_sas,
                           var_clean_names = F,
                           clean_vars = F,
                           add_time_fields = F,
@@ -30,7 +28,7 @@ mix_blob_read <- function(storage_account_name,
   #-- Authentication
   v_adls_end_point <- sprintf('https://%s.dfs.core.windows.net', storage_account_name)
   v_adls_storage_account <- storage_endpoint(endpoint = v_adls_end_point,
-                                             sas = sas)
+                                             sas = blob_sas)
 
   #-- Get files
   ls_adls_containers <- list_storage_containers(v_adls_storage_account)
