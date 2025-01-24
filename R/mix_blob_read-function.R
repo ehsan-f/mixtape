@@ -1,3 +1,4 @@
+#' @export
 mix_blob_read <- function(storage_account_name,
                           container_name,
                           file_path,
