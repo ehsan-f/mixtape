@@ -130,7 +130,7 @@ mix_gcs_read <- function(project,
   }
 
   #-- Add time fields
-  if (add_time_fields == T) {
+  if (add_time_fields == T & !is.null(time_field)) {
     ds_object <- ds_object %>%
       time_key(x = time_field)
   }
