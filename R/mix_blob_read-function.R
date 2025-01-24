@@ -54,7 +54,7 @@ mix_blob_read <- function(storage_account_name,
 
         v_data_path <- sprintf(
           'https://%s.blob.core.windows.net/%s/%s?%s',
-          storage_account_name, container_name, v_object_names[i], sas
+          storage_account_name, container_name, v_object_names[i], blob_sas
         )
 
         #-- Read file
