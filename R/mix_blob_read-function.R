@@ -32,8 +32,8 @@ mix_blob_read <- function(storage_account_name,
 
   #-- Get files
   ls_adls_containers <- list_storage_containers(v_adls_storage_account)
-  ls_adls_target_container <- ls_adls_containers[[container_name]]
-  ds_adls_files <- list_storage_files(ls_adls_target_container, file_path) # |>
+  v_adls_target_container <- ls_adls_containers[[container_name]]
+  ds_adls_files <- list_storage_files(v_adls_target_container, file_path)
 
   v_object_names <- ds_adls_files$name |>
     grep(pattern = paste0(object_format, '$'), ignore.case = T, value = T)
