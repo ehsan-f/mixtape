@@ -7,10 +7,13 @@ mix_install_packages <- function(install_core_packages = T,
   if (install_core_packages == T) {
     v_core_packages <- c(
       #-- Base
-      'arrow', 'tidyverse', 'jsonlite', 'janitor', 'zoo', 'httr2', 'devtools', 'remotes', 'plumber',
+      'arrow', 'tidyverse', 'jsonlite', 'janitor', 'zoo', 'httr2', 'devtools', 'remotes', 'plumber', 'data.table',
 
       #-- Cloud
-      'AzureStor', 'googledrive', 'googlesheets4', 'googleCloudStorageR', 'bigrquery', 'aws.s3'
+      'AzureStor', 'googledrive', 'googlesheets4', 'googleCloudStorageR', 'bigrquery', 'aws.s3',
+
+      #-- Modelling
+      'tidymodels', 'xgboost'
     )
 
     #-- Exclude packages from installation
@@ -31,10 +34,10 @@ mix_install_packages <- function(install_core_packages = T,
   if (install_additional_packages == T) {
     v_additional_packages <- c(
       #-- Base
-      'data.table', 'readxl', 'writexl',
+      'readxl', 'writexl',
 
       #-- Modelling
-      'caret', 'foreach', 'doParallel', 'smbinning', 'Information', 'xgboost',
+      'caret', 'foreach', 'doParallel', 'smbinning', 'Information',
       'ROCR', 'woeBinning', 'separationplot', 'MASS', 'car', 'dummies',
       'tm', 'corpus', 'hunspell',
       # 'unbalanced',
@@ -43,7 +46,7 @@ mix_install_packages <- function(install_core_packages = T,
       'datapasta', 'extrafont',
 
       #-- Geo-spatial
-      'sf', 'h3jsr',
+      # 'sf', 'h3jsr',
 
       #-- Visualisation
       'plotly', 'lemon', 'flexdashboard', 'DiagrammeR', 'kableExtra'
