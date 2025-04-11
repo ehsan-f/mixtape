@@ -1,16 +1,16 @@
 #' @export
-mix_blob_read <- function(storage_account_name,
-                          container_name,
-                          file_path,
-                          max_files = NULL,
-                          object_format = 'parquet',
-                          blob_sas,
-                          var_clean_names = F,
-                          clean_vars = F,
-                          add_time_fields = F,
-                          time_field = NULL,
-                          csv_delim = ',',
-                          skip_lines = 0) {
+mix_azure_adls_read <- function(storage_account_name,
+                                container_name,
+                                file_path,
+                                max_files = NULL,
+                                object_format = 'parquet',
+                                blob_sas,
+                                var_clean_names = F,
+                                clean_vars = F,
+                                add_time_fields = F,
+                                time_field = NULL,
+                                csv_delim = ',',
+                                skip_lines = 0) {
 
   #-- Start time
   v_start_time <- Sys.time()

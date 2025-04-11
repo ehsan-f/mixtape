@@ -7,10 +7,10 @@
 #'
 #' @return The object stored in the RDS file
 #' @export
-mix_blob_read_rds <- function(storage_account_name,
-                              container_name,
-                              file_path,
-                              blob_sas) {
+mix_azure_blob_read_rds <- function(storage_account_name,
+                                    container_name,
+                                    file_path,
+                                    blob_sas) {
   #-- Start time
   v_start_time <- Sys.time()
 
