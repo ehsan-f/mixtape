@@ -7,7 +7,7 @@ mix_azure_adls_write <- function(storage_account_name,
                                  object_format = 'parquet',
                                  max_object_size_mb = 50,
                                  object_name_wildcard_length = 5,
-                                 blob_sas) {
+                                 storage_sas) {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -25,7 +25,7 @@ mix_azure_adls_write <- function(storage_account_name,
   #-- Authentication
   v_adls_end_point <- sprintf('https://%s.dfs.core.windows.net', storage_account_name)
   v_adls_storage_account <- storage_endpoint(endpoint = v_adls_end_point,
-                                             sas = blob_sas)
+                                             sas = storage_sas)
   ls_adls_containers <- list_storage_containers(v_adls_storage_account)
   v_adls_target_container <- ls_adls_containers[[container_name]]
 

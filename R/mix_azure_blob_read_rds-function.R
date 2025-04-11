@@ -3,14 +3,14 @@
 #' @param storage_account_name The name of the Azure storage account
 #' @param container_name The name of the container in the storage account
 #' @param file_path The path to the RDS file (must include .rds extension)
-#' @param blob_sas The shared access signature for authentication
+#' @param storage_sas The shared access signature for authentication
 #'
 #' @return The object stored in the RDS file
 #' @export
 mix_azure_blob_read_rds <- function(storage_account_name,
                                     container_name,
                                     file_path,
-                                    blob_sas) {
+                                    storage_sas) {
   #-- Start time
   v_start_time <- Sys.time()
 
@@ -23,7 +23,7 @@ mix_azure_blob_read_rds <- function(storage_account_name,
   #-- Authentication - use blob endpoint instead of dfs
   v_blob_end_point <- sprintf('https://%s.blob.core.windows.net', storage_account_name)
   v_blob_storage_account <- storage_endpoint(endpoint = v_blob_end_point,
-                                             sas = blob_sas)
+                                             sas = storage_sas)
 
   #-- Create temporary file
   temp_file <- tempfile(fileext = ".rds")
@@ -34,7 +34,7 @@ mix_azure_blob_read_rds <- function(storage_account_name,
       # Create the full URL to the blob
       v_data_path <- sprintf(
         'https://%s.blob.core.windows.net/%s/%s?%s',
-        storage_account_name, container_name, file_path, blob_sas
+        storage_account_name, container_name, file_path, storage_sas
       )
 
       # Download to temp file
