@@ -8,21 +8,19 @@ mix_azure_blob_read_rds(
   storage_account_name,
   container_name,
   file_path,
-  blob_sas
+  storage_sas
 )
 }
 \arguments{
-\item{storage_account_name}{The name of the Azure storage account}
+\item{storage_account_name}{Name of the Azure storage account}
 
-\item{container_name}{The name of the container in the storage account}
+\item{container_name}{Name of the container in the storage account}
 
-\item{file_path}{The path to the RDS file (must include .rds extension)}
+\item{file_path}{Path to the RDS file (must include .rds extension)}
 
-\item{blob_sas}{The shared access signature for authentication}
-}
-\value{
-The object stored in the RDS file
+\item{storage_sas}{Shared access signature for Azure authentication}
 }
 \description{
-Read a single RDS file from Azure Blob Storage
+Downloads and reads an RDS file from Azure Blob Storage.
+Handles authentication and error conditions.
 }
