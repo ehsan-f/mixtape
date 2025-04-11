@@ -1,3 +1,12 @@
+#' Apply binning to a variable using Weight of Evidence values
+#'
+#' @description
+#' Applies binning to a variable in a data frame using previously created binning information.
+#' Replaces original values with Weight of Evidence (WoE) values.
+#'
+#' @param sbin Binning information created by the bin() function
+#' @param df Data frame to apply binning to (default: ds)
+#'
 #' @export
 auto_bin <- function(sbin, df = ds) {
 

@@ -1,3 +1,13 @@
+#' Install common R packages
+#'
+#' @description
+#' Installs a curated set of R packages for data science workflows.
+#' Includes core packages and additional specialized packages.
+#'
+#' @param install_core_packages Whether to install core packages (default: TRUE)
+#' @param exclude_from_core Vector of package names to exclude from core installation (optional)
+#' @param install_additional_packages Whether to install additional specialized packages (default: TRUE)
+#'
 #' @export
 mix_install_packages <- function(install_core_packages = T,
                                  exclude_from_core = NULL,

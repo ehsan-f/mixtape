@@ -1,3 +1,21 @@
+#' Create binning for a predictor variable
+#'
+#' @description
+#' Creates binning for a predictor variable with respect to a response variable.
+#' Supports automatic, factor, quantile, and custom binning methods.
+#' Can also produce Weight of Evidence plots.
+#'
+#' @param x Name of the predictor variable
+#' @param y Name of the response variable
+#' @param data Data frame containing the variables
+#' @param type Binning type: 'a' (automatic), 'f' (factor), 'q' (quantile), 'c' (custom) (default: 'a')
+#' @param q Quantile step for quantile binning (default: 0.2)
+#' @param cut Vector of cut points for custom binning (optional)
+#' @param silent Whether to suppress output (default: FALSE)
+#' @param custom_plot Whether to use custom plot styling (default: TRUE)
+#' @param custom_colour_scale_start Start color for custom plot gradient (default: '#5720FF')
+#' @param custom_colour_scale_end End color for custom plot gradient (default: 'grey')
+#'
 #' @export
 bin <- function (x, y, data, type = "a", q = 0.2, cut = NULL, silent = F,
                  custom_plot = T, custom_colour_scale_start = '#5720FF', custom_colour_scale_end = 'grey')

@@ -1,3 +1,12 @@
+#' Clean the R environment
+#'
+#' @description
+#' Removes objects from the global environment, closes graphics devices,
+#' clears the console, and performs garbage collection.
+#' Optionally preserves specified objects.
+#'
+#' @param except Vector of object names to preserve (optional)
+#'
 #' @export
 clean <- function(except = NULL) {
 

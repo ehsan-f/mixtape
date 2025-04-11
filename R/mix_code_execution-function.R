@@ -1,3 +1,16 @@
+#' Execute R script with error handling and status reporting
+#'
+#' @description
+#' Executes an R script with error handling and provides status reporting. It can source scripts from a local path
+#' or from a URL, and can optionally log execution details to a Google Sheet.
+#'
+#' @param script_path Path to the R script file to execute
+#' @param script_url URL of the R script to execute (alternative to script_path)
+#' @param google_sheet_id ID of Google Sheet to log execution details (optional)
+#' @param sheet_name Name of the sheet in the Google Sheet for logging (default: 'R_Code_Logs')
+#' @param script_prefix Prefix to add to the script name in logs (optional)
+#' @param ... Additional arguments
+#'
 #' @export
 mix_code_execution <-  function(script_path = NULL,
                                 script_url = NULL,

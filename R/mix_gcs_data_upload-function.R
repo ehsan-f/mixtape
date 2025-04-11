@@ -1,3 +1,18 @@
+#' Upload data to Google Cloud Storage
+#'
+#' @description
+#' Uploads a data frame to Google Cloud Storage with optional batching for large datasets.
+#' Supports different file formats and handles error conditions.
+#'
+#' @param project Google Cloud project ID
+#' @param df Data frame to upload
+#' @param object_name Base name for the output files
+#' @param object_name_wildcard_length Length of the wildcard part in object names (default: 5)
+#' @param bucket Name of the Google Cloud Storage bucket
+#' @param folder Folder path within the bucket (optional)
+#' @param max_object_size_mb Maximum size of each output file in MB (default: 50)
+#' @param object_format Format for the output files ('parquet', 'csv') (default: 'parquet')
+#'
 #' @export
 mix_gcs_data_upload <- function(project,
                                 df,

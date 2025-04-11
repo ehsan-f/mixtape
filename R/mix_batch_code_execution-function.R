@@ -1,3 +1,12 @@
+#' Execute multiple R scripts in a directory
+#'
+#' @description
+#' Executes multiple R scripts in a specified directory.
+#' Optionally allows selection of specific scripts to run.
+#'
+#' @param directory Directory containing R scripts to execute
+#' @param run_manual_scripts JSON array of script names to run (optional, default: NA)
+#'
 #' @export
 mix_batch_code_execution <- function(directory, run_manual_scripts = NA) {
   tryCatch(

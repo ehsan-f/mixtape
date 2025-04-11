@@ -1,3 +1,21 @@
+#' Load data from Google Cloud Storage to BigQuery
+#'
+#' @description
+#' Loads data from Google Cloud Storage into a BigQuery table.
+#' Supports optional partitioning and clustering of the destination table.
+#'
+#' @param project Google Cloud project ID
+#' @param bucket Name of the Google Cloud Storage bucket
+#' @param folder Folder path within the bucket (optional)
+#' @param object_name Base name of the objects to load
+#' @param dataset BigQuery dataset name for the destination table
+#' @param table BigQuery table name for the destination
+#' @param partition_index Column to use for table partitioning (optional)
+#' @param cluster_index Column to use for table clustering (optional)
+#' @param use_staging Whether to use a staging table (0 or 1, default: 0)
+#' @param staging_dataset BigQuery dataset name for staging
+#' @param object_format Format of the source files ('parquet', 'csv', etc.) (default: 'parquet')
+#'
 #' @export
 mix_gcs_to_bq <- function(project,
                           bucket,

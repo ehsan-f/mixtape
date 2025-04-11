@@ -1,3 +1,23 @@
+#' Create lift charts using tile-based binning
+#'
+#' @description
+#' Creates lift charts for model evaluation by binning predictions into tiles.
+#' Works with training and test datasets and supports different model types.
+#'
+#' @param prob Prefix for probability column (default: 'p_')
+#' @param y Name of the target variable column
+#' @param measure Name of measure column for additional analysis (optional)
+#' @param df_train Training dataset (default: ds1)
+#' @param df_test Test dataset (default: ds2)
+#' @param model Model object (optional)
+#' @param model_var Model variable to use for predictions (default: 'X1')
+#' @param n Number of tiles (default: 10)
+#' @param nudge_train Position adjustment for training labels (default: 1.5)
+#' @param nudge_test Position adjustment for test labels (default: 1.5)
+#' @param generate_plot Whether to generate plots (default: TRUE)
+#' @param actual_colour Colour for actual values (default: mix_palette$blue)
+#' @param pred_colour Colour for predicted values (default: mix_palette$red)
+#'
 #' @export
 tile_plot <- function (prob = 'p_',
                        y,

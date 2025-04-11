@@ -1,3 +1,16 @@
+#' Execute R scripts stored in Google Cloud Storage
+#'
+#' @description
+#' Downloads and executes R scripts stored in Google Cloud Storage.
+#' Filters scripts by regex pattern and handles error conditions.
+#'
+#' @param project Google Cloud project ID
+#' @param bucket Name of the Google Cloud Storage bucket
+#' @param folder_regex Regular expression to filter folders (default: '')
+#' @param object_regex Regular expression to filter script objects
+#' @param google_sheet_id ID of Google Sheet to log execution details (optional)
+#' @param sheet_name Name of the sheet in the Google Sheet for logging (default: 'R_Code_Logs')
+#'
 #' @export
 mix_gcs_code_execution <- function(project,
                                    bucket,

@@ -1,11 +1,14 @@
 #' Read a single RDS file from Azure Blob Storage
 #'
-#' @param storage_account_name The name of the Azure storage account
-#' @param container_name The name of the container in the storage account
-#' @param file_path The path to the RDS file (must include .rds extension)
-#' @param storage_sas The shared access signature for authentication
+#' @description
+#' Downloads and reads an RDS file from Azure Blob Storage.
+#' Handles authentication and error conditions.
 #'
-#' @return The object stored in the RDS file
+#' @param storage_account_name Name of the Azure storage account
+#' @param container_name Name of the container in the storage account
+#' @param file_path Path to the RDS file (must include .rds extension)
+#' @param storage_sas Shared access signature for Azure authentication
+#'
 #' @export
 mix_azure_blob_read_rds <- function(storage_account_name,
                                     container_name,

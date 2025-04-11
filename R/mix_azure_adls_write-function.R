@@ -1,3 +1,19 @@
+#' Write data to Azure Data Lake Storage
+#'
+#' @description
+#' Writes a data frame to Azure Data Lake Storage in batches.
+#' Supports different file formats and handles error conditions.
+#'
+#' @param storage_account_name Name of the Azure storage account
+#' @param container_name Name of the container in the storage account
+#' @param folder_path Path to the folder within the container
+#' @param object_name Base name for the output files (default: 'part_')
+#' @param df Data frame to write
+#' @param object_format Format for the output files ('parquet', 'csv') (default: 'parquet')
+#' @param max_object_size_mb Maximum size of each output file in MB (default: 50)
+#' @param object_name_wildcard_length Length of the wildcard part in object names (default: 5)
+#' @param storage_sas Shared access signature for Azure authentication
+#'
 #' @export
 mix_azure_adls_write <- function(storage_account_name,
                                  container_name,

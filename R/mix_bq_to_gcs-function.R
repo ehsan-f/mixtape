@@ -1,3 +1,18 @@
+#' Export BigQuery table to Google Cloud Storage
+#'
+#' @description
+#' Exports data from a BigQuery table or external table to Google Cloud Storage.
+#' Supports different output formats and handles error conditions.
+#'
+#' @param project Google Cloud project ID
+#' @param dataset BigQuery dataset name (optional if using a fully qualified table)
+#' @param table BigQuery table name
+#' @param external_table Whether the source is an external table (default: FALSE)
+#' @param external_server External server connection string if external_table is TRUE
+#' @param bucket Name of the destination Google Cloud Storage bucket
+#' @param folder Folder path within the bucket (optional)
+#' @param object_format Format for the exported files (default: 'parquet')
+#'
 #' @export
 mix_bq_to_gcs <- function(project,
                           dataset = NULL,

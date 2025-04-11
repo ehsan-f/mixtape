@@ -1,3 +1,18 @@
+#' Create or add time-based features to a data frame
+#'
+#' @description
+#' Creates a time-based reference table or adds time-based features to an existing data frame.
+#' Includes day, week, month, and year features as well as weekend indicators.
+#'
+#' @param df Data frame to add time features to (optional, default: ds)
+#' @param x Name of the date column in the data frame
+#' @param start Start date for the time key (default: '2019-01-01')
+#' @param end End date for the time key (default: Sys.Date())
+#' @param end_of_week Day considered end of week (default: 'Saturday')
+#' @param week_days Number of days in a week (default: 7)
+#' @param weekend_days Vector of days considered weekends (default: c('Friday', 'Saturday'))
+#' @param group_year Whether to group years (default: FALSE)
+#'
 #' @export
 time_key <- function(df = ds,
                      x,

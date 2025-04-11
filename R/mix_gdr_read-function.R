@@ -1,3 +1,12 @@
+#' Read a file from Google Drive
+#'
+#' @description
+#' Downloads and reads a file from Google Drive using a provided reader function.
+#' Handles authentication and error conditions.
+#'
+#' @param file_id Google Drive file ID
+#' @param read_fn Function to use for reading the file
+#'
 #' @export
 mix_gdr_read <- function(file_id, read_fn) {
 

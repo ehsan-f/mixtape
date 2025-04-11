@@ -1,3 +1,22 @@
+#' Read data from Azure Data Lake Storage
+#'
+#' @description
+#' Reads data files from Azure Data Lake Storage. Supports different file formats
+#' including parquet, csv, and json. Handles authentication and error conditions.
+#'
+#' @param storage_account_name Name of the Azure storage account
+#' @param container_name Name of the container in the storage account
+#' @param file_path Path to the files within the container
+#' @param max_files Maximum number of files to read (optional)
+#' @param object_format Format of the files to read ('parquet', 'csv', 'json') (default: 'parquet')
+#' @param storage_sas Shared access signature for Azure authentication
+#' @param var_clean_names Whether to clean variable names (default: FALSE)
+#' @param clean_vars Whether to clean variables (convert dates/times) (default: FALSE)
+#' @param add_time_fields Whether to add time fields (default: FALSE)
+#' @param time_field Field to use for time-based operations if add_time_fields is TRUE
+#' @param csv_delim Delimiter for CSV files (default: ',')
+#' @param skip_lines Number of lines to skip (default: 0)
+#'
 #' @export
 mix_azure_adls_read <- function(storage_account_name,
                                 container_name,

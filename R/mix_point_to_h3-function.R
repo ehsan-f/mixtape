@@ -1,3 +1,13 @@
+#' Convert geographic points to H3 hexagon indices
+#'
+#' @description
+#' Converts geographic points (longitude/latitude) to H3 hexagon indices at a specified resolution.
+#'
+#' @param df Data frame containing geographic coordinates
+#' @param long Column name for longitude values
+#' @param lat Column name for latitude values
+#' @param h3_res H3 resolution level
+#'
 #' @export
 mix_point_to_h3 <- function(df, long, lat, h3_res) {
   #-- Packages

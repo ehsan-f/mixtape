@@ -1,3 +1,9 @@
+#' Load commonly used packages
+#'
+#' @description
+#' Loads a set of commonly used R packages for data science workflows.
+#' Includes packages for data manipulation, cloud services, and date handling.
+#'
 #' @export
 mix_load_packages <- function() {
 

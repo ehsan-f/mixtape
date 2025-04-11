@@ -1,3 +1,14 @@
+#' Create a training/test split index
+#'
+#' @description
+#' Creates an index column for splitting a data frame into training and test sets.
+#' Uses stratified sampling based on a target variable.
+#'
+#' @param df Data frame to create index for (default: ds)
+#' @param target Name of the target variable column (default: 't_')
+#' @param p Proportion of data to use for training (default: 0.7)
+#' @param env_var Environment to assign the result to (default: global environment)
+#'
 #' @export
 train_index <- function(df = ds, target = 't_', p = 0.7, env_var = NULL) {
 

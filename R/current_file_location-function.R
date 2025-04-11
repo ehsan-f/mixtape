@@ -1,3 +1,9 @@
+#' Get the directory of the current script
+#'
+#' @description
+#' Determines the directory path of the currently executing R script.
+#' Works in both RStudio and when running from command line.
+#'
 #' @export
 current_file_location <-  function() {
   #-- TEst

@@ -1,3 +1,23 @@
+#' Read data from Google Cloud Storage
+#'
+#' @description
+#' Reads data files from Google Cloud Storage. Supports different file formats including parquet, csv, xlsx, and json.
+#' Can filter objects by regex pattern and optionally process only the latest object.
+#'
+#' @param project Google Cloud project ID
+#' @param bucket Name of the Google Cloud Storage bucket
+#' @param folder_regex Regular expression to filter folders (default: '')
+#' @param object_regex Regular expression to filter objects
+#' @param latest_object_only Whether to only read the latest object (default: FALSE)
+#' @param object_name_wildcard_length Length of the wildcard part in object names (default: 5)
+#' @param object_format Format of the objects to read ('parquet', 'csv', 'xlsx', 'json') (default: 'parquet')
+#' @param var_clean_names Whether to clean variable names (default: FALSE)
+#' @param clean_vars Whether to clean variables (convert dates/times) (default: FALSE)
+#' @param add_time_fields Whether to add time fields (default: FALSE)
+#' @param time_field Field to use for time-based operations if add_time_fields is TRUE
+#' @param csv_delim Delimiter for CSV files (default: ',')
+#' @param skip_lines Number of lines to skip (default: 0)
+#'
 #' @export
 mix_gcs_read <- function(project,
                          bucket,

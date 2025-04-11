@@ -1,3 +1,12 @@
+#' Create a consistent ggplot2 theme
+#'
+#' @description
+#' Creates a consistent ggplot2 theme with customizable elements.
+#' Based on theme_light() with added styling for titles, subtitles, and legends.
+#'
+#' @param x_axis_angle Angle for x-axis text (optional)
+#' @param gg_theme Base ggplot2 theme to extend (default: theme_light())
+#'
 #' @export
 mix_theme <- function(x_axis_angle = NULL, gg_theme = theme_light()) {
   #-- Packages

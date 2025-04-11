@@ -1,3 +1,19 @@
+#' Create ROC curve plots for model evaluation
+#'
+#' @description
+#' Creates ROC curve plots for model evaluation on training and optionally test datasets.
+#' Calculates and displays AUC and Gini coefficients.
+#'
+#' @param prob Prefix for probability column (default: 'p_')
+#' @param y Name of the target variable column (default: "t_Paid")
+#' @param df_train Training dataset (default: ds1)
+#' @param df_test Test dataset (default: ds2)
+#' @param model Model object (optional)
+#' @param model_var Model variable to use for predictions (default: 'X1')
+#' @param generate_plot Whether to generate plots (default: TRUE)
+#' @param train_colour Colour for training curve (default: mix_palette$blue)
+#' @param test_colour Colour for test curve (default: mix_palette$red)
+#'
 #' @export
 roc_plot <- function (prob = 'p_',
                       y = "t_Paid",
