@@ -93,7 +93,7 @@ mix_azure_adls_write <- function(storage_account_name,
           v_file_name <- paste0(object_name, v_file_number, '.', object_format)
 
           #-- Write data
-          message('Writing to file: ', v_file_name)
+          message('Writing to file: ', v_file_name, ' (', j, ' / ', (length(v_batch_seq)-1), ')')
 
           if (object_format == 'parquet') {
             write_parquet(x = df[(v_batch_seq[(i-1)]+1):v_batch_seq[i],],
@@ -105,27 +105,25 @@ mix_azure_adls_write <- function(storage_account_name,
                       file = v_file_name)
           }
 
-          #-- Combine file names
-          v_all_file_names <- c(v_all_file_names, v_file_name)
+          #-- Upload data
+          message('Uploading to path: ', paste0(container_name, '/', folder_path))
+
+          storage_upload(v_adls_target_container,
+                         src = v_file_name,
+                         dest = paste0(folder_path, v_file_name))
+
+          #-- Remove file
+          file.remove(v_file_name)
+          message('Local file deleted.')
+
         }
-
-        #-- Upload data
-        message('Uploading to path: ', paste0(container_name, '/', folder_path))
-
-        storage_multiupload(v_adls_target_container,
-                            src = v_all_file_names,
-                            dest = paste0(folder_path, v_all_file_names))
-
-        #-- Remove file
-        file.remove(v_all_file_names)
-        message('Local files deleted.')
 
       },
 
       error = function(e) {
         #-- Remove local file in case of an error
-        file.remove(v_all_file_names)
-        message('Local files deleted.')
+        file.remove(v_file_name)
+        message('Local file deleted.')
 
         #-- Output error message
         stop(e)
