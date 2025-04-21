@@ -113,6 +113,11 @@ mix_gcs_read <- function(project,
             as_tibble()
         }
 
+        if (object_format == 'RDS') {
+          ls_object[[i]] <- readRDS(file = v_file_download_name) %>%
+            as_tibble()
+        }
+
         #-- Remove file
         file.remove(v_file_download_name)
         message('Downloaded file deleted.')

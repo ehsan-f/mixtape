@@ -93,6 +93,11 @@ mix_gcs_data_upload <- function(project,
                       file = v_file_name)
           }
 
+          if (object_format == 'RDS') {
+            saveRDS(object = df[(v_batch_seq[(i-1)]+1):v_batch_seq[i],],
+                    file = v_file_name)
+          }
+
           #-- Upload to GCS
           message('Uploading to bucket: ', bucket, '/', folder)
 
@@ -138,6 +143,11 @@ mix_gcs_data_upload <- function(project,
         if (object_format == 'csv') {
           write_csv(x = df,
                     file = v_file_name)
+        }
+
+        if (object_format == 'RDS') {
+          saveRDS(x = df,
+                  file = v_file_name)
         }
 
         #-- Upload to GCS
