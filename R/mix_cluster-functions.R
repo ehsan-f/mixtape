@@ -23,7 +23,7 @@ mix_cluster_make <- function(n = 3) {
 }
 
 #' @export
-mix_cluster_stop <- function(cl = NULL) {
+mix_cluster_stop <- function() {
   #-- Explicitly terminate clusters
   plan(sequential)
 

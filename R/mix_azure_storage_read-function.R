@@ -1,12 +1,13 @@
-#' Read data from Azure Data Lake Storage
+#' Read data from Azure Storage (Blob or ADLS)
 #'
 #' @description
-#' Reads data files from Azure Data Lake Storage. Supports different file formats
+#' Reads data files from Azure Storage (Blob or ADLS). Supports different file formats
 #' including parquet, csv, and json. Handles authentication and error conditions.
 #'
 #' @param storage_account_name Name of the Azure storage account
 #' @param container_name Name of the container in the storage account
 #' @param file_path Path to the files within the container
+#' @param storage_type Type of storage ('blob' or 'adls', default: 'blob')
 #' @param max_files Maximum number of files to read (optional)
 #' @param object_format Format of the files to read ('parquet', 'csv', 'json') (default: 'parquet')
 #' @param storage_sas Shared access signature for Azure authentication
@@ -18,24 +19,26 @@
 #' @param skip_lines Number of lines to skip (default: 0)
 #'
 #' @export
-mix_azure_adls_read <- function(storage_account_name,
-                                container_name,
-                                file_path,
-                                max_files = NULL,
-                                object_format = 'parquet',
-                                storage_sas,
-                                var_clean_names = F,
-                                clean_vars = F,
-                                add_time_fields = F,
-                                time_field = NULL,
-                                csv_delim = ',',
-                                skip_lines = 0) {
+mix_azure_storage_read <- function(storage_account_name,
+                                   container_name,
+                                   file_path,
+                                   storage_type = 'adls',
+                                   max_files = NULL,
+                                   object_format = 'parquet',
+                                   storage_sas,
+                                   var_clean_names = F,
+                                   clean_vars = F,
+                                   add_time_fields = F,
+                                   time_field = NULL,
+                                   csv_delim = ',',
+                                   skip_lines = 0) {
 
   #-- Start time
   v_start_time <- Sys.time()
 
   #-- Start process info
   message('File path: ', file_path)
+  message('Storage type: ', storage_type)
 
   #-- Packages
   library(arrow)
@@ -44,17 +47,22 @@ mix_azure_adls_read <- function(storage_account_name,
   library(AzureStor)
   library(purrr)
 
-  #-- Authentication
-  v_adls_end_point <- sprintf('https://%s.dfs.core.windows.net', storage_account_name)
-  v_adls_storage_account <- storage_endpoint(endpoint = v_adls_end_point,
-                                             sas = storage_sas)
+  #-- Authentication - select appropriate endpoint based on storage type
+  if (tolower(storage_type) == 'adls') {
+    v_storage_end_point <- sprintf('https://%s.dfs.core.windows.net', storage_account_name)
+  } else {
+    v_storage_end_point <- sprintf('https://%s.blob.core.windows.net', storage_account_name)
+  }
+
+  v_storage_account <- storage_endpoint(endpoint = v_storage_end_point,
+                                        sas = storage_sas)
 
   #-- Get files
-  ls_adls_containers <- list_storage_containers(v_adls_storage_account)
-  v_adls_target_container <- ls_adls_containers[[container_name]]
-  ds_adls_files <- list_storage_files(v_adls_target_container, file_path)
+  ls_storage_containers <- list_storage_containers(v_storage_account)
+  v_target_container <- ls_storage_containers[[container_name]]
+  ds_storage_files <- list_storage_files(v_target_container, file_path)
 
-  v_object_names <- ds_adls_files$name |>
+  v_object_names <- ds_storage_files$name |>
     grep(pattern = paste0(object_format, '$'), ignore.case = T, value = T)
 
   #-- Download objects
@@ -71,6 +79,7 @@ mix_azure_adls_read <- function(storage_account_name,
         #- Print progress
         message('Progress: ', i, '/', length(v_object_names))
 
+        # Direct URL construction - always use blob endpoint for direct access
         v_data_path <- sprintf(
           'https://%s.blob.core.windows.net/%s/%s?%s',
           storage_account_name, container_name, v_object_names[i], storage_sas

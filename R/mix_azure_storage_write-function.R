@@ -1,12 +1,13 @@
-#' Write data to Azure Data Lake Storage
+#' Write data to Azure Storage (Blob or ADLS)
 #'
 #' @description
-#' Writes a data frame to Azure Data Lake Storage in batches.
+#' Writes a data frame to Azure Storage (Blob or ADLS) in batches.
 #' Supports different file formats and handles error conditions.
 #'
 #' @param storage_account_name Name of the Azure storage account
 #' @param container_name Name of the container in the storage account
 #' @param folder_path Path to the folder within the container
+#' @param storage_type Type of storage ('blob' or 'adls', default: 'blob')
 #' @param object_name Base name for the output files (default: 'part_')
 #' @param df Data frame to write
 #' @param object_format Format for the output files ('parquet', 'csv') (default: 'parquet')
@@ -15,21 +16,23 @@
 #' @param storage_sas Shared access signature for Azure authentication
 #'
 #' @export
-mix_azure_adls_write <- function(storage_account_name,
-                                 container_name,
-                                 folder_path,
-                                 object_name = 'part_',
-                                 df,
-                                 object_format = 'parquet',
-                                 max_object_size_mb = 50,
-                                 object_name_wildcard_length = 5,
-                                 storage_sas) {
+mix_azure_storage_write <- function(storage_account_name,
+                                    container_name,
+                                    folder_path,
+                                    storage_type = 'adls',
+                                    object_name = 'part_',
+                                    df,
+                                    object_format = 'parquet',
+                                    max_object_size_mb = 50,
+                                    object_name_wildcard_length = 5,
+                                    storage_sas) {
 
   #-- Start time
   v_start_time <- Sys.time()
 
   #-- Start process info
   message('Folder path: ', folder_path)
+  message('Storage type: ', storage_type)
 
   #-- Packages
   library(arrow)
@@ -38,12 +41,17 @@ mix_azure_adls_write <- function(storage_account_name,
   library(AzureStor)
   library(purrr)
 
-  #-- Authentication
-  v_adls_end_point <- sprintf('https://%s.dfs.core.windows.net', storage_account_name)
-  v_adls_storage_account <- storage_endpoint(endpoint = v_adls_end_point,
-                                             sas = storage_sas)
-  ls_adls_containers <- list_storage_containers(v_adls_storage_account)
-  v_adls_target_container <- ls_adls_containers[[container_name]]
+  #-- Authentication - select appropriate endpoint based on storage type
+  if (tolower(storage_type) == 'adls') {
+    v_storage_end_point <- sprintf('https://%s.dfs.core.windows.net', storage_account_name)
+  } else {
+    v_storage_end_point <- sprintf('https://%s.blob.core.windows.net', storage_account_name)
+  }
+
+  v_storage_account <- storage_endpoint(endpoint = v_storage_end_point,
+                                        sas = storage_sas)
+  ls_storage_containers <- list_storage_containers(v_storage_account)
+  v_target_container <- ls_storage_containers[[container_name]]
 
   #----- Data cleaning
   #-- Folder name
@@ -58,9 +66,6 @@ mix_azure_adls_write <- function(storage_account_name,
 
   #-- Estimated (conservative) compression factor
   v_compresson_factor <- 4 # 2109 / 468
-
-  #----- Blob Path
-  # v_blob_path <- paste0(container_name, '/', folder_path)
 
   #----- Batch upload
   if (!is.null(max_object_size_mb) & v_rows > 0) {
@@ -108,7 +113,7 @@ mix_azure_adls_write <- function(storage_account_name,
           #-- Upload data
           message('Uploading to path: ', paste0(container_name, '/', folder_path))
 
-          storage_upload(v_adls_target_container,
+          storage_upload(v_target_container,
                          src = v_file_name,
                          dest = paste0(folder_path, v_file_name))
 
@@ -151,10 +156,10 @@ mix_azure_adls_write <- function(storage_account_name,
                     file = v_file_name)
         }
 
-        #-- Upload to GCS
-        message('Uploading to bucket: ', bucket, '/', folder)
+        #-- Upload data
+        message('Uploading to container: ', container_name, ', folder path: ', folder_path)
 
-        storage_upload(v_adls_target_container,
+        storage_upload(v_target_container,
                        src = v_file_name,
                        dest = paste0(folder_path, v_file_name))
 
