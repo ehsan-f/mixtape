@@ -8,6 +8,7 @@ mix_azure_storage_read(
   storage_account_name,
   container_name,
   file_path,
+  single_file = F,
   storage_type = "adls",
   max_files = NULL,
   object_format = "parquet",
@@ -26,6 +27,8 @@ mix_azure_storage_read(
 \item{container_name}{Name of the container in the storage account}
 
 \item{file_path}{Path to the files within the container}
+
+\item{single_file}{Whether file_path points to a single file rather than a directory (default: FALSE)}
 
 \item{storage_type}{Type of storage ('blob' or 'adls', default: 'blob')}
 
