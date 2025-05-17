@@ -14,7 +14,7 @@ mix_azure_storage_write(
   object_format = "parquet",
   max_object_size_mb = 50,
   object_name_wildcard_length = 5,
-  storage_sas
+  storage_key
 )
 }
 \arguments{
@@ -30,13 +30,13 @@ mix_azure_storage_write(
 
 \item{df}{Data frame to write}
 
-\item{object_format}{Format for the output files ('parquet', 'csv') (default: 'parquet')}
+\item{object_format}{Format for the output files ('parquet', 'csv', 'rds') (default: 'parquet')}
 
 \item{max_object_size_mb}{Maximum size of each output file in MB (default: 50)}
 
 \item{object_name_wildcard_length}{Length of the wildcard part in object names (default: 5)}
 
-\item{storage_sas}{Shared access signature for Azure authentication}
+\item{storage_key}{Azure storage account key for authentication}
 }
 \description{
 Writes a data frame to Azure Storage (Blob or ADLS) in batches.

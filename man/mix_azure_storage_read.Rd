@@ -11,7 +11,7 @@ mix_azure_storage_read(
   storage_type = "adls",
   max_files = NULL,
   object_format = "parquet",
-  storage_sas,
+  storage_key,
   var_clean_names = F,
   clean_vars = F,
   add_time_fields = F,
@@ -31,9 +31,9 @@ mix_azure_storage_read(
 
 \item{max_files}{Maximum number of files to read (optional)}
 
-\item{object_format}{Format of the files to read ('parquet', 'csv', 'json') (default: 'parquet')}
+\item{object_format}{Format of the files to read ('parquet', 'csv', 'json', 'rds') (default: 'parquet')}
 
-\item{storage_sas}{Shared access signature for Azure authentication}
+\item{storage_key}{Azure storage account key for authentication}
 
 \item{var_clean_names}{Whether to clean variable names (default: FALSE)}
 
@@ -49,5 +49,5 @@ mix_azure_storage_read(
 }
 \description{
 Reads data files from Azure Storage (Blob or ADLS). Supports different file formats
-including parquet, csv, and json. Handles authentication and error conditions.
+including parquet, csv, json, and rds. Handles authentication and error conditions.
 }
