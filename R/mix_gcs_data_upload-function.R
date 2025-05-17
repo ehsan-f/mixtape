@@ -146,7 +146,7 @@ mix_gcs_data_upload <- function(project,
         }
 
         if (object_format == 'RDS') {
-          saveRDS(x = df,
+          saveRDS(object = df,
                   file = v_file_name)
         }
 
