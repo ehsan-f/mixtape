@@ -7,6 +7,7 @@
 #' @param storage_account_name Name of the Azure storage account
 #' @param container_name Name of the container in the storage account
 #' @param file_path Path to the files within the container
+#' @param single_file Whether file_path points to a single file rather than a directory (default: FALSE)
 #' @param storage_type Type of storage ('blob' or 'adls', default: 'blob')
 #' @param max_files Maximum number of files to read (optional)
 #' @param object_format Format of the files to read ('parquet', 'csv', 'json', 'rds') (default: 'parquet')
@@ -22,6 +23,7 @@
 mix_azure_storage_read <- function(storage_account_name,
                                    container_name,
                                    file_path,
+                                   single_file = F,
                                    storage_type = 'adls',
                                    max_files = NULL,
                                    object_format = 'parquet',
@@ -47,26 +49,32 @@ mix_azure_storage_read <- function(storage_account_name,
   library(AzureStor)
   library(purrr)
 
-  #-- Authentication - select appropriate endpoint based on storage type
+  #-- Storage endpoint
   if (tolower(storage_type) == 'adls') {
     v_storage_end_point <- sprintf('https://%s.dfs.core.windows.net', storage_account_name)
   } else {
     v_storage_end_point <- sprintf('https://%s.blob.core.windows.net', storage_account_name)
   }
 
-  # Authenticate with storage account key instead of SAS token
+  #-- Authentication
   v_storage_account <- storage_endpoint(endpoint = v_storage_end_point,
                                         key = storage_key)
 
   #-- Get files
   ls_storage_containers <- list_storage_containers(v_storage_account)
   v_target_container <- ls_storage_containers[[container_name]]
-  ds_storage_files <- list_storage_files(v_target_container, file_path)
 
-  #-- Handle RDS files differently - don't batch process
-  if (tolower(object_format) == 'rds') {
+  if (single_file == T) {
+    v_object_names <- file_path
+  } else {
+    ds_storage_files <- list_storage_files(v_target_container, file_path)
     v_object_names <- ds_storage_files$name |>
       grep(pattern = paste0('\\.', object_format, '$'), ignore.case = T, value = T)
+  }
+
+
+  #-- RDS Read
+  if (tolower(object_format) == 'rds') {
 
     if (length(v_object_names) == 0) {
       stop("No RDS files found at the specified path")
@@ -79,23 +87,23 @@ mix_azure_storage_read <- function(storage_account_name,
 
     tryCatch(
       expr = {
-        # Create temp file
+        #-- Create temp file
         temp_file <- tempfile(fileext = ".rds")
 
-        # Download the file using AzureStor functions with key authentication
+        #-- Download file
         storage_download(v_target_container,
                          src = v_object_names,
                          dest = temp_file)
 
-        # Read the RDS file
+        #-- Read file
         ls_object <- readRDS(temp_file)
 
-        # Remove temp file
+        #-- Remove temp file
         file.remove(temp_file)
         message('Temporary file deleted.')
       },
       error = function(e) {
-        # Clean up temp file if it exists
+        #-- Delete temp file
         if (file.exists(temp_file)) {
           file.remove(temp_file)
           message('Temporary file deleted.')
@@ -104,23 +112,8 @@ mix_azure_storage_read <- function(storage_account_name,
       }
     )
 
-    # If the result is not a data frame, make it one
-    if (!is.data.frame(ls_object)) {
-      message("RDS file did not contain a data frame. Attempting to convert to tibble.")
-      tryCatch(
-        {
-          ls_object <- as_tibble(ls_object)
-        },
-        error = function(e) {
-          warning("Could not convert RDS content to tibble. Returning as is.")
-        }
-      )
-    }
   } else {
-    v_object_names <- ds_storage_files$name |>
-      grep(pattern = paste0('\\.', object_format, '$'), ignore.case = T, value = T)
-
-    #-- Download objects
+    #-- Read other file types
     ls_object <- NULL
     v_max_files <- length(v_object_names)
     if (!is.null(max_files)) {
@@ -130,12 +123,13 @@ mix_azure_storage_read <- function(storage_account_name,
     tryCatch(
       expr = {
         for (i in 1:v_max_files) {
-          #- Print progress
+          #-- Print progress
           message('Progress: ', i, '/', v_max_files)
 
-          # Download file to temp location
+          #-- Create temp file
           temp_file <- tempfile(fileext = paste0(".", object_format))
 
+          #-- Download file
           storage_download(v_target_container,
                            src = v_object_names[i],
                            dest = temp_file)
@@ -154,12 +148,12 @@ mix_azure_storage_read <- function(storage_account_name,
               as_tibble()
           }
 
-          # Clean up temp file
+          #-- Delete temp file
           file.remove(temp_file)
         }
       },
       error = function(e) {
-        # Clean up temp file if it exists
+        #-- Delete temp file
         if (exists("temp_file") && file.exists(temp_file)) {
           file.remove(temp_file)
         }
