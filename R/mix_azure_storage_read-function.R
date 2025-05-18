@@ -17,6 +17,7 @@
 #' @param add_time_fields Whether to add time fields (default: FALSE)
 #' @param time_field Field to use for time-based operations if add_time_fields is TRUE
 #' @param csv_delim Delimiter for CSV files (default: ',')
+#' @param csv_col_names Colnames for CSV files (default: TRUE)
 #' @param skip_lines Number of lines to skip (default: 0)
 #'
 #' @export
@@ -33,6 +34,7 @@ mix_azure_storage_read <- function(storage_account_name,
                                    add_time_fields = F,
                                    time_field = NULL,
                                    csv_delim = ',',
+                                   csv_col_names = T,
                                    skip_lines = 0) {
 
   #-- Start time
@@ -140,7 +142,7 @@ mix_azure_storage_read <- function(storage_account_name,
           }
 
           if (object_format == 'csv') {
-            ls_object[[i]] <- read_delim_arrow(file = temp_file, delim = csv_delim, skip = skip_lines)
+            ls_object[[i]] <- read_delim_arrow(file = temp_file, delim = csv_delim, skip = skip_lines, col_names = csv_col_names)
           }
 
           if (object_format == 'json') {
