@@ -152,12 +152,14 @@ mix_azure_storage_read <- function(storage_account_name,
 
           #-- Delete temp file
           file.remove(temp_file)
+          message("Temporary file deleted.")
         }
       },
       error = function(e) {
         #-- Delete temp file
         if (exists("temp_file") && file.exists(temp_file)) {
           file.remove(temp_file)
+          message("Temporary file deleted.")
         }
         stop(e)
       }
