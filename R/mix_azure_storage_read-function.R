@@ -19,6 +19,8 @@
 #' @param csv_delim Delimiter for CSV files (default: ',')
 #' @param csv_col_names Colnames for CSV files (default: TRUE)
 #' @param skip_lines Number of lines to skip (default: 0)
+#' @param preserve_partitions Whether to extract and preserve partition columns from directory structure (default: FALSE)
+#' @param partition_column Name of the partition column to extract from file paths (required if preserve_partitions is TRUE)
 #'
 #' @export
 mix_azure_storage_read <- function(storage_account_name,
@@ -35,7 +37,9 @@ mix_azure_storage_read <- function(storage_account_name,
                                    time_field = NULL,
                                    csv_delim = ',',
                                    csv_col_names = T,
-                                   skip_lines = 0) {
+                                   skip_lines = 0,
+                                   preserve_partitions = F,
+                                   partition_column = NULL) {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -122,48 +126,108 @@ mix_azure_storage_read <- function(storage_account_name,
       v_max_files <- min(max_files, v_max_files)
     }
 
-    tryCatch(
-      expr = {
-        for (i in 1:v_max_files) {
-          #-- Print progress
-          message('Progress: ', i, '/', v_max_files)
+    # Check if we should preserve partitions for parquet files
+    if (tolower(object_format) == 'parquet' && preserve_partitions && !is.null(partition_column)) {
+      message('Preserving partition column: ', partition_column)
 
-          #-- Create temp file
-          temp_file <- tempfile(fileext = paste0(".", object_format))
+      # Extract partition values from file paths
+      partition_values <- sapply(v_object_names[1:v_max_files], function(path) {
+        # Parse the partition column=value format from the path
+        pattern <- paste0(partition_column, "=([^/]+)")
+        matches <- regexpr(pattern, path, perl = TRUE)
+        if (matches > 0) {
+          # Extract just the value part after the =
+          extracted <- regmatches(path, matches)
+          return(sub(paste0(partition_column, "="), "", extracted))
+        } else {
+          warning("Could not find partition column in path: ", path)
+          return(NA)
+        }
+      })
 
-          #-- Download file
-          storage_download(v_target_container,
-                           src = v_object_names[i],
-                           dest = temp_file)
+      tryCatch(
+        expr = {
+          for (i in 1:v_max_files) {
+            #-- Print progress
+            message('Progress: ', i, '/', v_max_files)
 
-          #-- Read file
-          if (object_format == 'parquet') {
-            ls_object[[i]] <- read_parquet(file = temp_file)
+            #-- Create temp file
+            temp_file <- tempfile(fileext = paste0(".", object_format))
+
+            #-- Download file
+            storage_download(v_target_container,
+                             src = v_object_names[i],
+                             dest = temp_file)
+
+            #-- Read file
+            df_temp <- read_parquet(file = temp_file)
+
+            #-- Add partition column if not already present
+            if (!partition_column %in% names(df_temp)) {
+              df_temp[[partition_column]] <- partition_values[i]
+            }
+
+            ls_object[[i]] <- df_temp
+
+            #-- Delete temp file
+            file.remove(temp_file)
+            message("Temporary file deleted.")
           }
-
-          if (object_format == 'csv') {
-            ls_object[[i]] <- read_delim_arrow(file = temp_file, delim = csv_delim, skip = skip_lines, col_names = csv_col_names)
-          }
-
-          if (object_format == 'json') {
-            ls_object[[i]] <- read_json_arrow(file = temp_file) %>%
-              as_tibble()
-          }
-
+        },
+        error = function(e) {
           #-- Delete temp file
-          file.remove(temp_file)
-          message("Temporary file deleted.")
+          if (exists("temp_file") && file.exists(temp_file)) {
+            file.remove(temp_file)
+            message("Temporary file deleted.")
+          }
+          stop(e)
         }
-      },
-      error = function(e) {
-        #-- Delete temp file
-        if (exists("temp_file") && file.exists(temp_file)) {
-          file.remove(temp_file)
-          message("Temporary file deleted.")
+      )
+    } else {
+      # Original code for other formats or when not preserving partitions
+      tryCatch(
+        expr = {
+          for (i in 1:v_max_files) {
+            #-- Print progress
+            message('Progress: ', i, '/', v_max_files)
+
+            #-- Create temp file
+            temp_file <- tempfile(fileext = paste0(".", object_format))
+
+            #-- Download file
+            storage_download(v_target_container,
+                             src = v_object_names[i],
+                             dest = temp_file)
+
+            #-- Read file
+            if (object_format == 'parquet') {
+              ls_object[[i]] <- read_parquet(file = temp_file)
+            }
+
+            if (object_format == 'csv') {
+              ls_object[[i]] <- read_delim_arrow(file = temp_file, delim = csv_delim, skip = skip_lines, col_names = csv_col_names)
+            }
+
+            if (object_format == 'json') {
+              ls_object[[i]] <- read_json_arrow(file = temp_file) %>%
+                as_tibble()
+            }
+
+            #-- Delete temp file
+            file.remove(temp_file)
+            message("Temporary file deleted.")
+          }
+        },
+        error = function(e) {
+          #-- Delete temp file
+          if (exists("temp_file") && file.exists(temp_file)) {
+            file.remove(temp_file)
+            message("Temporary file deleted.")
+          }
+          stop(e)
         }
-        stop(e)
-      }
-    )
+      )
+    }
 
     #-- Reduce list to dataframe
     ls_object <- ls_object %>%
