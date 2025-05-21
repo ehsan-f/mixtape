@@ -69,7 +69,7 @@ mix_azure_storage_read <- function(storage_account_name,
   if (single_file == T) {
     v_object_names <- file_path
   } else {
-    ds_storage_files <- list_storage_files(v_target_container, file_path)
+    ds_storage_files <- list_storage_files(v_target_container, file_path, recursive = T)
     v_object_names <- ds_storage_files$name |>
       grep(pattern = paste0('\\.', object_format, '$'), ignore.case = T, value = T)
   }
