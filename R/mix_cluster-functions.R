@@ -1,5 +1,5 @@
 #' @export
-mix_cluster_make <- function(n = 3) {
+mix_cluster_make <- function(n = 3, max_n = 6) {
   tryCatch(
     expr = {
       #-- Packages
@@ -9,6 +9,7 @@ mix_cluster_make <- function(n = 3) {
       plan(sequential)
 
       #-- Make cluster
+      n <- min(c(n, max_n))
       plan(multisession, workers = n)
       message(paste0(n, ' cluster(s) registered.'))
 
