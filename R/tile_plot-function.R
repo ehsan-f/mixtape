@@ -246,7 +246,7 @@ tile_plot <- function (prob = 'p_',
     list(lift_train = lift_train, tiles_train = df_train[, 'Tile']) %>% invisible()
   }
   else if (!is.null(df_test)) {
-    list(lift_train = lift_train, lift_lest = lift_test,
+    list(lift_train = lift_train, lift_test = lift_test,
          tiles_train = df_train[, 'Tile'], tiles_test = df_test[, 'Tile']) %>% invisible()
   }
 }
