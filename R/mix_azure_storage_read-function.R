@@ -26,6 +26,7 @@
 mix_azure_storage_read <- function(storage_account_name,
                                    container_name,
                                    file_path,
+                                   regex_pattern = NULL,
                                    single_file = F,
                                    storage_type = 'adls',
                                    max_files = NULL,
@@ -50,6 +51,7 @@ mix_azure_storage_read <- function(storage_account_name,
 
   #-- Packages
   library(arrow)
+  library(readr)
   library(dplyr)
   library(janitor)
   library(AzureStor)
@@ -74,8 +76,15 @@ mix_azure_storage_read <- function(storage_account_name,
     v_object_names <- file_path
   } else {
     ds_storage_files <- list_storage_files(v_target_container, file_path, recursive = T)
+
     v_object_names <- ds_storage_files$name |>
       grep(pattern = paste0('\\.', object_format, '$'), ignore.case = T, value = T)
+
+    #-- Regex
+    if(!is.null(regex_pattern)) {
+      v_object_names <- v_object_names |>
+        grep(pattern = regex_pattern, ignore.case = T, value = T)
+    }
   }
 
 
@@ -205,7 +214,13 @@ mix_azure_storage_read <- function(storage_account_name,
             }
 
             if (object_format == 'csv') {
-              ls_object[[i]] <- read_delim_arrow(file = temp_file, delim = csv_delim, skip = skip_lines, col_names = csv_col_names)
+              ls_object[[i]] <- read_csv(file = temp_file, delim = csv_delim, skip = skip_lines, col_names = csv_col_names)
+
+            }
+
+            if (object_format == 'tsv') {
+              ls_object[[i]] <- read_tsv(file = temp_file, skip = skip_lines, col_names = csv_col_names)
+
             }
 
             if (object_format == 'json') {
