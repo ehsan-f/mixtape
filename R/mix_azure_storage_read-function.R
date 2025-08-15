@@ -214,7 +214,7 @@ mix_azure_storage_read <- function(storage_account_name,
             }
 
             if (object_format == 'csv') {
-              ls_object[[i]] <- read_csv(file = temp_file, delim = csv_delim, skip = skip_lines, col_names = csv_col_names)
+              ls_object[[i]] <- read_delim(file = temp_file, delim = csv_delim, skip = skip_lines, col_names = csv_col_names)
 
             }
 
