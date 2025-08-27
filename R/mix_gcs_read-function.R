@@ -10,7 +10,7 @@
 #' @param object_regex Regular expression to filter objects
 #' @param latest_object_only Whether to only read the latest object (default: FALSE)
 #' @param object_name_wildcard_length Length of the wildcard part in object names (default: 5)
-#' @param object_format Format of the objects to read ('parquet', 'csv', 'xlsx', 'json') (default: 'parquet')
+#' @param object_format Format of the objects to read ('parquet', 'csv', 'tsv', 'xlsx', 'json', 'rds') (default: 'parquet')
 #' @param var_clean_names Whether to clean variable names (default: FALSE)
 #' @param clean_vars Whether to clean variables (convert dates/times) (default: FALSE)
 #' @param add_time_fields Whether to add time fields (default: FALSE)
@@ -104,16 +104,20 @@ mix_gcs_read <- function(project,
           ls_object[[i]] <- read_delim(file = v_file_download_name, delim = csv_delim, skip = skip_lines)
         }
 
+        if (object_format == 'tsv') {
+          ls_object[[i]] <- read_tsv(file = v_file_download_name, skip = skip_lines)
+        }
+
         if (object_format == 'xlsx') {
           ls_object[[i]] <- read_excel(path = v_file_download_name, skip = skip_lines)
         }
 
         if (object_format == 'json') {
-          ls_object[[i]] <- fromJSON(txt = v_file_download_name) %>%
+          ls_object[[i]] <- read_json_arrow(file = v_file_download_name) %>%
             as_tibble()
         }
 
-        if (object_format == 'RDS') {
+        if (object_format == 'rds') {
           ls_object[[i]] <- readRDS(file = v_file_download_name) %>%
             as_tibble()
         }
