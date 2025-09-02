@@ -20,16 +20,6 @@ mix_r_setup <- function() {
     'tidymodels', 'xgboost'
   )
 
-  #-- Install packages
-  for (i in v_core_packages) {
-    message('Core package - installing ', i)
-
-    if (!require(i)) {
-      install.packages(i)
-    } else {
-      message('Already installed.')
-    }
-
-  }
+  install.packages(v_core_packages)
 
 }
