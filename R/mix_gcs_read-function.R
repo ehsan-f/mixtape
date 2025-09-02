@@ -32,7 +32,8 @@ mix_gcs_read <- function(project,
                          add_time_fields = F,
                          time_field = NULL,
                          csv_delim = ',',
-                         skip_lines = 0) {
+                         skip_lines = 0,
+                         max_files = NULL) {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -75,10 +76,15 @@ mix_gcs_read <- function(project,
   #-- Download objects
   ls_object <- NULL
 
+  v_max_files <- length(v_object_names)
+  if (!is.null(max_files)) {
+    v_max_files <- min(max_files, v_max_files)
+  }
+
   tryCatch(
 
     expr = {
-      for (i in 1:length(v_object_names)) {
+      for (i in 1:v_max_files) {
         #- Print progress
         message('Progress: ', i, '/', length(v_object_names))
 
