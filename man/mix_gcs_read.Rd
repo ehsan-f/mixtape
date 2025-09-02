@@ -17,7 +17,8 @@ mix_gcs_read(
   add_time_fields = F,
   time_field = NULL,
   csv_delim = ",",
-  skip_lines = 0
+  skip_lines = 0,
+  max_files = NULL
 )
 }
 \arguments{
@@ -33,7 +34,7 @@ mix_gcs_read(
 
 \item{object_name_wildcard_length}{Length of the wildcard part in object names (default: 5)}
 
-\item{object_format}{Format of the objects to read ('parquet', 'csv', 'xlsx', 'json') (default: 'parquet')}
+\item{object_format}{Format of the objects to read ('parquet', 'csv', 'tsv', 'xlsx', 'json', 'rds') (default: 'parquet')}
 
 \item{var_clean_names}{Whether to clean variable names (default: FALSE)}
 

@@ -8,6 +8,7 @@ mix_azure_storage_read(
   storage_account_name,
   container_name,
   file_path,
+  regex_pattern = NULL,
   single_file = F,
   storage_type = "adls",
   max_files = NULL,
@@ -18,7 +19,10 @@ mix_azure_storage_read(
   add_time_fields = F,
   time_field = NULL,
   csv_delim = ",",
-  skip_lines = 0
+  csv_col_names = T,
+  skip_lines = 0,
+  preserve_partitions = F,
+  partition_column = NULL
 )
 }
 \arguments{
@@ -48,7 +52,13 @@ mix_azure_storage_read(
 
 \item{csv_delim}{Delimiter for CSV files (default: ',')}
 
+\item{csv_col_names}{Colnames for CSV files (default: TRUE)}
+
 \item{skip_lines}{Number of lines to skip (default: 0)}
+
+\item{preserve_partitions}{Whether to extract and preserve partition columns from directory structure (default: FALSE)}
+
+\item{partition_column}{Name of the partition column to extract from file paths (required if preserve_partitions is TRUE)}
 }
 \description{
 Reads data files from Azure Storage (Blob or ADLS). Supports different file formats
