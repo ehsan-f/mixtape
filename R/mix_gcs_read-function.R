@@ -52,10 +52,15 @@ mix_gcs_read <- function(project,
 
   #-- Bucket objects
   ds_bucket_objects <- gcs_list_objects(bucket = bucket) %>%
-    filter(grepl(pattern = folder_regex, ignore.case = T, x = name))
+    #- Folder regex
+    filter(grepl(pattern = folder_regex, ignore.case = T, x = name)) |>
+    #- Object regex
+    filter(grepl(pattern = object_regex, ignore.case = T, x = name)) |>
+    #- File format
+    filter(grepl(pattern = paste0(object_format, '$'), ignore.case = T, x = name))
 
   #-- Object names
-  v_object_names <- grep(pattern = object_regex, x = ds_bucket_objects$name, ignore.case = T, value = T)
+  v_object_names <- ds_bucket_objects$name
 
   if (latest_object_only == T) {
     ds_object_names <- tibble(
