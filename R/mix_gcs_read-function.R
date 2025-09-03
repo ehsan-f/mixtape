@@ -17,6 +17,8 @@
 #' @param time_field Field to use for time-based operations if add_time_fields is TRUE
 #' @param csv_delim Delimiter for CSV files (default: ',')
 #' @param skip_lines Number of lines to skip (default: 0)
+#' @param max_files Maximum number of files to read (default: NULL)
+#' @param use_direct_url Whether to read parquet files directly from GCS URLs (default: TRUE)
 #'
 #' @export
 mix_gcs_read <- function(project,
@@ -25,7 +27,6 @@ mix_gcs_read <- function(project,
                          object_regex,
                          latest_object_only = F,
                          object_name_wildcard_length = 5,
-                         # destination_file_name,
                          object_format = 'parquet',
                          var_clean_names = F,
                          clean_vars = F,
@@ -33,7 +34,8 @@ mix_gcs_read <- function(project,
                          time_field = NULL,
                          csv_delim = ',',
                          skip_lines = 0,
-                         max_files = NULL) {
+                         max_files = NULL,
+                         use_direct_url = T) {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -78,77 +80,114 @@ mix_gcs_read <- function(project,
     v_object_names <- ds_object_names$object_names
   }
 
-  #-- Download objects
-  ls_object <- NULL
 
+  #-- Max files to read
   v_max_files <- length(v_object_names)
   if (!is.null(max_files)) {
     v_max_files <- min(max_files, v_max_files)
   }
 
-  tryCatch(
+  #-- Empty list
+  ls_object <- NULL
 
-    expr = {
-      for (i in 1:v_max_files) {
-        #- Print progress
-        message('Progress: ', i, '/', length(v_object_names))
+  #-- Direct url reading
+  direct_read_success <- FALSE
 
-        #-- Set file download name
-        v_file_download_name <- v_object_names[i]
-        v_file_download_name <- substr(x = v_file_download_name,
-                                       start = (gregexpr(pattern = '/', text = v_file_download_name, ignore.case = T) %>% unlist() %>% max()) + 1,
-                                       stop = nchar(v_file_download_name))
-        v_file_download_name <- paste0('gcs_', v_file_download_name)
+  if (object_format == 'parquet' & use_direct_url == T) {
+    message('Attempting direct URL reading for parquet files')
 
-        #-- Download
-        gcs_get_object(object_name = v_object_names[i],
-                       bucket = bucket,
-                       overwrite = T,
-                       saveToDisk = v_file_download_name)
+    direct_read_success <- tryCatch(
+      expr = {
+        for (i in 1:v_max_files) {
+          message('Progress: ', i, '/', v_max_files)
 
-        #-- Read file
-        if (object_format == 'parquet') {
-          ls_object[[i]] <- read_parquet(file = v_file_download_name)
+          # Construct GCS URL
+          gcs_url <- paste0('gs://', bucket, '/', v_object_names[i])
+
+          # Read directly from GCS
+          ls_object[[i]] <- read_parquet(file = gcs_url)
         }
-
-        if (object_format == 'csv') {
-          ls_object[[i]] <- read_delim(file = v_file_download_name, delim = csv_delim, skip = skip_lines)
-        }
-
-        if (object_format == 'tsv') {
-          ls_object[[i]] <- read_tsv(file = v_file_download_name, skip = skip_lines)
-        }
-
-        if (object_format == 'xlsx') {
-          ls_object[[i]] <- read_excel(path = v_file_download_name, skip = skip_lines)
-        }
-
-        if (object_format == 'json') {
-          ls_object[[i]] <- read_json_arrow(file = v_file_download_name) %>%
-            as_tibble()
-        }
-
-        if (object_format == 'rds') {
-          ls_object[[i]] <- readRDS(file = v_file_download_name) %>%
-            as_tibble()
-        }
-
-        #-- Remove file
-        file.remove(v_file_download_name)
-        message('Downloaded file deleted.')
-
+        TRUE  # Return TRUE if all files read successfully
+      },
+      error = function(e) {
+        message('Direct URL reading failed, will fall back to download method: ', e$message)
+        FALSE  # Return FALSE if any error occurred
       }
-    },
+    )
+  }
 
-    error = function(e) {
-      #-- Remove downloaded file in case of an error
-      file.remove(v_file_download_name)
-      message('Downloaded file deleted.')
+  if (object_format != 'parquet' | !use_direct_url | !direct_read_success) {
 
-      #-- Output error message
-      stop(e)
+    if (object_format == 'parquet' & use_direct_url & !direct_read_success) {
+      message('Falling back to download method for parquet files')
+      # Reset ls_object in case it has partial data from failed direct read
+      ls_object <- NULL
     }
-  )
+
+    tryCatch(
+      expr = {
+        for (i in 1:v_max_files) {
+          #- Print progress
+          message('Progress: ', i, '/', v_max_files)
+
+          #-- Set file download name
+          v_file_download_name <- v_object_names[i]
+          v_file_download_name <- substr(x = v_file_download_name,
+                                         start = (gregexpr(pattern = '/', text = v_file_download_name, ignore.case = T) %>% unlist() %>% max()) + 1,
+                                         stop = nchar(v_file_download_name))
+          v_file_download_name <- paste0('gcs_', v_file_download_name)
+
+          #-- Download
+          gcs_get_object(object_name = v_object_names[i],
+                         bucket = bucket,
+                         overwrite = T,
+                         saveToDisk = v_file_download_name)
+
+          #-- Read file
+          if (object_format == 'parquet') {
+            ls_object[[i]] <- read_parquet(file = v_file_download_name)
+          }
+
+          if (object_format == 'csv') {
+            ls_object[[i]] <- read_delim(file = v_file_download_name, delim = csv_delim, skip = skip_lines)
+          }
+
+          if (object_format == 'tsv') {
+            ls_object[[i]] <- read_tsv(file = v_file_download_name, skip = skip_lines)
+          }
+
+          if (object_format == 'xlsx') {
+            ls_object[[i]] <- read_excel(path = v_file_download_name, skip = skip_lines)
+          }
+
+          if (object_format == 'json') {
+            ls_object[[i]] <- read_json_arrow(file = v_file_download_name) %>%
+              as_tibble()
+          }
+
+          if (object_format == 'rds') {
+            ls_object[[i]] <- readRDS(file = v_file_download_name) %>%
+              as_tibble()
+          }
+
+          #-- Remove file
+          file.remove(v_file_download_name)
+          message('Downloaded file deleted.')
+        }
+      },
+
+      error = function(e) {
+        #-- Remove downloaded file in case of an error
+        if (exists("v_file_download_name") && file.exists(v_file_download_name)) {
+          file.remove(v_file_download_name)
+          message('Downloaded file deleted.')
+        }
+
+        #-- Output error message
+        stop(e)
+      }
+    )
+  }
 
   #-- Reduce list to dataframe
   ds_object <- ls_object %>%
