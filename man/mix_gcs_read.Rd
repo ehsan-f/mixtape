@@ -18,7 +18,8 @@ mix_gcs_read(
   time_field = NULL,
   csv_delim = ",",
   skip_lines = 0,
-  max_files = NULL
+  max_files = NULL,
+  use_direct_url = T
 )
 }
 \arguments{
@@ -47,6 +48,10 @@ mix_gcs_read(
 \item{csv_delim}{Delimiter for CSV files (default: ',')}
 
 \item{skip_lines}{Number of lines to skip (default: 0)}
+
+\item{max_files}{Maximum number of files to read (default: NULL)}
+
+\item{use_direct_url}{Whether to read parquet files directly from GCS URLs (default: TRUE)}
 }
 \description{
 Reads data files from Google Cloud Storage. Supports different file formats including parquet, csv, xlsx, and json.
