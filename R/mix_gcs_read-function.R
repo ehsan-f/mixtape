@@ -6,7 +6,7 @@
 #'
 #' @param project Google Cloud project ID
 #' @param bucket Name of the Google Cloud Storage bucket
-#' @param folder_regex Regular expression to filter folders (default: '')
+#' @param prefix Path to required folder
 #' @param object_regex Regular expression to filter objects
 #' @param latest_object_only Whether to only read the latest object (default: FALSE)
 #' @param object_name_wildcard_length Length of the wildcard part in object names (default: 5)

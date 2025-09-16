@@ -7,8 +7,8 @@
 mix_gcs_read(
   project,
   bucket,
-  folder_regex = "",
-  object_regex,
+  prefix,
+  object_regex = "",
   latest_object_only = F,
   object_name_wildcard_length = 5,
   object_format = "parquet",
@@ -26,8 +26,6 @@ mix_gcs_read(
 \item{project}{Google Cloud project ID}
 
 \item{bucket}{Name of the Google Cloud Storage bucket}
-
-\item{folder_regex}{Regular expression to filter folders (default: '')}
 
 \item{object_regex}{Regular expression to filter objects}
 
@@ -52,6 +50,8 @@ mix_gcs_read(
 \item{max_files}{Maximum number of files to read (default: NULL)}
 
 \item{use_direct_url}{Whether to read parquet files directly from GCS URLs (default: TRUE)}
+
+\item{folder_regex}{Regular expression to filter folders (default: '')}
 }
 \description{
 Reads data files from Google Cloud Storage. Supports different file formats including parquet, csv, xlsx, and json.
