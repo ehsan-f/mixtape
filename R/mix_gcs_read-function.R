@@ -21,10 +21,11 @@
 #' @param use_direct_url Whether to read parquet files directly from GCS URLs (default: TRUE)
 #'
 #' @export
+
 mix_gcs_read <- function(project,
                          bucket,
-                         folder_regex = '',
-                         object_regex,
+                         prefix,
+                         object_regex = '',
                          latest_object_only = F,
                          object_name_wildcard_length = 5,
                          object_format = 'parquet',
@@ -52,10 +53,15 @@ mix_gcs_read <- function(project,
   library(googleCloudStorageR)
   library(purrr)
 
+  #-- Ensure trailing slash on prefix
+  if (!grepl("/$", prefix)) {
+    prefix <- paste0(prefix, "/")
+  }
+
+  message("Listing under prefix: ", prefix)
+
   #-- Bucket objects
-  ds_bucket_objects <- gcs_list_objects(bucket = bucket) %>%
-    #- Folder regex
-    filter(grepl(pattern = folder_regex, ignore.case = T, x = name)) |>
+  ds_bucket_objects <- gcs_list_objects(bucket = bucket, prefix = prefix) %>%
     #- Object regex
     filter(grepl(pattern = object_regex, ignore.case = T, x = name)) |>
     #- File format
