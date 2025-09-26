@@ -16,7 +16,7 @@ mix_train_index <- function(df = ds, target = 't_', p = 0.7) {
 
   #-- Convert to data.table
   dt <- df
-  if (!is.data.table(dt)) setDT(dt)
+  setDT(dt)
 
   #-- Create index
   train_ids <- createDataPartition(as.factor(dt[[target]]), p = p, list = F)
@@ -42,7 +42,7 @@ mix_train_test_split <- function(df = ds) {
 
   #-- Convert to data.table
   dt <- df
-  if (!is.data.table(dt)) setDT(dt)
+  setDT(dt)
 
   #-- Split data
   list(
