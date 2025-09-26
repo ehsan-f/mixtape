@@ -15,14 +15,14 @@
 #' @param env_var Environment to assign variables to (default: global environment)
 #'
 #' @export
-train_test_split <- function(df = ds,
-                             target = 't_',
-                             p = 0.7,
-                             create_index = F,
-                             split_data = T,
-                             df_train = ds1,
-                             df_test = ds2,
-                             env_var = NULL) {
+mix_train_test_split <- function(df = ds,
+                                 target = 't_',
+                                 p = 0.7,
+                                 create_index = F,
+                                 split_data = T,
+                                 df_train = ds1,
+                                 df_test = ds2,
+                                 env_var = NULL) {
 
   #-- Packages
   library(data.table)

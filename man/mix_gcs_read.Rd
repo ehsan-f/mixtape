@@ -27,6 +27,8 @@ mix_gcs_read(
 
 \item{bucket}{Name of the Google Cloud Storage bucket}
 
+\item{prefix}{Path to required folder}
+
 \item{object_regex}{Regular expression to filter objects}
 
 \item{latest_object_only}{Whether to only read the latest object (default: FALSE)}
@@ -50,8 +52,6 @@ mix_gcs_read(
 \item{max_files}{Maximum number of files to read (default: NULL)}
 
 \item{use_direct_url}{Whether to read parquet files directly from GCS URLs (default: TRUE)}
-
-\item{folder_regex}{Regular expression to filter folders (default: '')}
 }
 \description{
 Reads data files from Google Cloud Storage. Supports different file formats including parquet, csv, xlsx, and json.
