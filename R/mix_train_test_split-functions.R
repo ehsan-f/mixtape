@@ -20,8 +20,8 @@ mix_train_index <- function(df = ds, target = 't_', p = 0.7) {
 
   #-- Create index
   train_ids <- createDataPartition(as.factor(dt[[target]]), p = p, list = F)
-  dt[, train_index := 0L]
-  dt[train_ids, train_index := 1L]
+  set(dt, j = "train_index", value = 0L)
+  set(dt, i = train_ids, j = "train_index", value = 1L)
 
   return(dt)
 }
