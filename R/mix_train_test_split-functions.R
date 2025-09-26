@@ -40,13 +40,12 @@ mix_train_test_split <- function(df = ds) {
   #-- Packages
   library(data.table)
 
-  #-- Convert to data.table
-  dt <- df
-  setDT(dt)
+  #-- Convert to data.table (copy to avoid modifying original)
+  setDT(df)
 
   #-- Split data
   list(
-    train = dt[dt$train_index == 1],
-    test = dt[dt$train_index == 0]
+    train = df[train_index == 1L],
+    test = df[train_index == 0L]
   )
 }
