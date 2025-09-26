@@ -15,14 +15,15 @@ mix_train_index <- function(df = ds, target = 't_', p = 0.7) {
   library(caret)
 
   #-- Convert to data.table
-  setDT(df)
+  dt <- df
+  if (!is.data.table(dt)) setDT(dt)
 
   #-- Create index
-  train_ids <- createDataPartition(as.factor(df[[target]]), p = p, list = F)
-  df[, train_index := 0L]
-  df[train_ids, train_index := 1L]
+  train_ids <- createDataPartition(as.factor(dt[[target]]), p = p, list = F)
+  dt[, train_index := 0L]
+  dt[train_ids, train_index := 1L]
 
-  return(df)
+  return(dt)
 }
 
 
@@ -40,11 +41,12 @@ mix_train_test_split <- function(df = ds) {
   library(data.table)
 
   #-- Convert to data.table
-  setDT(df)
+  dt <- df
+  if (!is.data.table(dt)) setDT(dt)
 
   #-- Split data
   list(
-    train = df[train_index == 1],
-    test = df[train_index == 0]
+    train = dt[train_index == 1],
+    test = dt[train_index == 0]
   )
 }
