@@ -46,7 +46,7 @@ mix_train_test_split <- function(df = ds) {
 
   #-- Split data
   list(
-    train = dt[train_index == 1],
-    test = dt[train_index == 0]
+    train = dt[dt$train_index == 1],
+    test = dt[dt$train_index == 0]
   )
 }
