@@ -49,6 +49,13 @@ mix_gcs_read_parquet_dataset <- function(bucket,
 
     if (!is.null(select)) {
       v_selected_vars <- select
+
+      #-- Check for missing columns
+      v_missing_vars <- setdiff(select, v_object_vars)
+      if (length(v_missing_vars) > 0) {
+        message("Warning: The following variables are not available in the dataset: ",
+                paste(v_missing_vars, collapse = ", "))
+      }
     }
 
     if (!is.null(select_regex)) {
@@ -60,7 +67,7 @@ mix_gcs_read_parquet_dataset <- function(bucket,
             if(length(v_selected_vars) > 20) " ..." else "")
 
     ds_object <- ds_object |>
-      select(all_of(v_selected_vars))
+      select(any_of(v_selected_vars))
   }
 
   #-- Collect if requested
