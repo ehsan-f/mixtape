@@ -27,7 +27,7 @@ gcp_auth <- function(path = NULL) {
 
   #-- Authenticate Arrow
   arrow_temp_creds_file <- tempfile(fileext = ".json")
-  writeLines(google_service_account, temp_creds_file)
-  Sys.setenv(GOOGLE_APPLICATION_CREDENTIALS = temp_creds_file)
+  writeLines(google_service_account, arrow_temp_creds_file)
+  Sys.setenv(GOOGLE_APPLICATION_CREDENTIALS = arrow_temp_creds_file)
 
 }
