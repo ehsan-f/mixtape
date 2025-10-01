@@ -6,6 +6,7 @@
 #'
 #' @param bucket Name of the Google Cloud Storage bucket
 #' @param prefix Path to required folder containing parquet files
+#' @param select Character vector of column names to select (default: NULL for all columns)
 #' @param collect Whether to collect the dataset into memory as a tibble (default: TRUE)
 #' @param var_clean_names Whether to clean variable names (default: FALSE)
 #'
@@ -13,6 +14,7 @@
 
 mix_gcs_read_parquet_dataset <- function(bucket,
                                          prefix,
+                                         select = NULL,
                                          collect = T,
                                          var_clean_names = F) {
 
@@ -36,6 +38,13 @@ mix_gcs_read_parquet_dataset <- function(bucket,
 
   #-- Open dataset
   ds_object <- open_dataset(gcs_uri, format = "parquet")
+
+  #-- Select columns if specified
+  if (!is.null(select)) {
+    message("Selecting columns: ", paste(select, collapse = ", "))
+    ds_object <- ds_object |>
+      select(all_of(select))
+  }
 
   #-- Collect if requested
   if (collect == T) {

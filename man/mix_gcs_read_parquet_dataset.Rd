@@ -4,12 +4,20 @@
 \alias{mix_gcs_read_parquet_dataset}
 \title{Read parquet dataset from Google Cloud Storage using Arrow}
 \usage{
-mix_gcs_read_parquet_dataset(bucket, prefix, collect = T, var_clean_names = F)
+mix_gcs_read_parquet_dataset(
+  bucket,
+  prefix,
+  select = NULL,
+  collect = T,
+  var_clean_names = F
+)
 }
 \arguments{
 \item{bucket}{Name of the Google Cloud Storage bucket}
 
 \item{prefix}{Path to required folder containing parquet files}
+
+\item{select}{Character vector of column names to select (default: NULL for all columns)}
 
 \item{collect}{Whether to collect the dataset into memory as a tibble (default: TRUE)}
 
