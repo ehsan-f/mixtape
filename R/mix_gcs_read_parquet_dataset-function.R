@@ -7,6 +7,7 @@
 #' @param bucket Name of the Google Cloud Storage bucket
 #' @param prefix Path to required folder containing parquet files
 #' @param select Character vector of column names to select (default: NULL for all columns)
+#' @param select_regex Regular expression to select columns matching pattern (default: NULL)
 #' @param collect Whether to collect the dataset into memory as a tibble (default: TRUE)
 #' @param var_clean_names Whether to clean variable names (default: FALSE)
 #'
@@ -15,6 +16,7 @@
 mix_gcs_read_parquet_dataset <- function(bucket,
                                          prefix,
                                          select = NULL,
+                                         select_regex = NULL,
                                          collect = T,
                                          var_clean_names = F) {
 
@@ -39,11 +41,26 @@ mix_gcs_read_parquet_dataset <- function(bucket,
   #-- Open dataset
   ds_object <- open_dataset(gcs_uri, format = "parquet")
 
+  v_object_vars <- names(ds_object)
+
   #-- Select columns if specified
-  if (!is.null(select)) {
-    message("Selecting columns: ", paste(select, collapse = ", "))
+  if (!is.null(select) | !is.null(select_regex)) {
+    v_selected_vars <- c()
+
+    if (!is.null(select)) {
+      v_selected_vars <- select
+    }
+
+    if (!is.null(select_regex)) {
+      v_selected_vars_regex <- grep(pattern = select_regex, x = v_object_vars, ignore.case = T, value = T)
+      v_selected_vars <- c(v_selected_vars, v_selected_vars_regex) |> unique()
+    }
+
+    message("Selecting columns: ", paste(head(v_selected_vars, 20), collapse = ", "),
+            if(length(v_selected_vars) > 20) " ..." else "")
+
     ds_object <- ds_object |>
-      select(all_of(select))
+      select(all_of(v_selected_vars))
   }
 
   #-- Collect if requested
@@ -51,15 +68,11 @@ mix_gcs_read_parquet_dataset <- function(bucket,
     message("Collecting dataset into memory...")
     ds_object <- ds_object |>
       collect()
-  }
 
-  #-- Var names to lower
-  if (var_clean_names == T) {
-    if (collect == T) {
+    #-- Var names to lower
+    if (var_clean_names == T) {
       ds_object <- ds_object |>
         clean_names()
-    } else {
-      message("Note: var_clean_names only applies when collect=TRUE")
     }
   }
 

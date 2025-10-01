@@ -8,6 +8,7 @@ mix_gcs_read_parquet_dataset(
   bucket,
   prefix,
   select = NULL,
+  select_regex = NULL,
   collect = T,
   var_clean_names = F
 )
@@ -18,6 +19,8 @@ mix_gcs_read_parquet_dataset(
 \item{prefix}{Path to required folder containing parquet files}
 
 \item{select}{Character vector of column names to select (default: NULL for all columns)}
+
+\item{select_regex}{Regular expression to select columns matching pattern (default: NULL)}
 
 \item{collect}{Whether to collect the dataset into memory as a tibble (default: TRUE)}
 
