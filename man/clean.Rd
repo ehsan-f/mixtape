@@ -4,13 +4,15 @@
 \alias{clean}
 \title{Clean the R environment}
 \usage{
-clean(except = NULL)
+clean(except = NULL, clean_temp = F)
 }
 \arguments{
 \item{except}{Vector of object names to preserve (optional)}
+
+\item{clean_temp}{Whether to remove temporary files from tempdir() (default: FALSE)}
 }
 \description{
 Removes objects from the global environment, closes graphics devices,
 clears the console, and performs garbage collection.
-Optionally preserves specified objects.
+Optionally preserves specified objects and can clean temporary files.
 }

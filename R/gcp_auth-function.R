@@ -14,6 +14,7 @@ gcp_auth <- function(path = NULL) {
   library(googlesheets4)
   library(bigrquery)
   library(googleCloudStorageR)
+  library(arrow)
 
   #-- Service Account
   google_service_account <- path
@@ -23,5 +24,10 @@ gcp_auth <- function(path = NULL) {
   gs4_auth(path = google_service_account)
   bigrquery::bq_auth(path = google_service_account)
   googleCloudStorageR::gcs_auth(json_file = google_service_account)
+
+  #-- Authenticate Arrow
+  arrow_temp_creds_file <- tempfile(fileext = ".json")
+  writeLines(google_service_account, temp_creds_file)
+  Sys.setenv(GOOGLE_APPLICATION_CREDENTIALS = temp_creds_file)
 
 }
