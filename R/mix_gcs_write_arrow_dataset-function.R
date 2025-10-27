@@ -1,4 +1,4 @@
-#' Write parquet dataset to Google Cloud Storage using Arrow
+#' Write dataset to Google Cloud Storage using Arrow
 #'
 #' @description
 #' Writes a data frame as a parquet dataset to Google Cloud Storage using arrow's write_dataset functionality.

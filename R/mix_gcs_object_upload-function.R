@@ -8,13 +8,13 @@
 #' @param object R object to upload
 #' @param object_name Name for the output file (without extension)
 #' @param bucket Name of the Google Cloud Storage bucket
-#' @param folder Folder path within the bucket (optional)
+#' @param prefix prefix path within the bucket (optional)
 #' @param object_format Format for the output file ('parquet', 'csv', 'rds') (default: 'rds')
 #'
 #' @export
 mix_gcs_object_upload <- function(project,
                                   bucket,
-                                  folder = NULL,
+                                  prefix,
                                   object,
                                   object_name,
                                   object_format = 'rds') {
@@ -32,8 +32,10 @@ mix_gcs_object_upload <- function(project,
   library(googleCloudStorageR)
 
   #----- Data cleaning
-  #-- Folder name
-  folder <- if_else(is.null(folder), "", paste0(folder, "/"))
+  #-- Ensure trailing slash on prefix
+  if (!grepl("/$", prefix)) {
+    prefix <- paste0(prefix, "/")
+  }
 
   #----- Single file upload
   tryCatch(
@@ -57,12 +59,12 @@ mix_gcs_object_upload <- function(project,
       }
 
       #-- Upload to GCS
-      message('Uploading to bucket: ', bucket, '/', folder)
+      message('Uploading to bucket: ', bucket, '/', prefix)
 
       gcs_upload(file = v_file_name,
                  bucket = bucket,
                  type = object_format,
-                 name = paste0(folder, v_file_name),
+                 name = paste0(prefix, v_file_name),
                  predefinedAcl = "default")
 
       #-- Remove file

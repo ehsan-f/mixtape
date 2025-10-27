@@ -7,13 +7,13 @@
 #' @param project Google Cloud project ID
 #' @param object_name Name of the file to read (without extension)
 #' @param bucket Name of the Google Cloud Storage bucket
-#' @param folder Folder path within the bucket (optional)
+#' @param prefix prefix path within the bucket (optional)
 #' @param object_format Format of the file to read ('parquet', 'csv', 'rds') (default: 'rds')
 #'
 #' @export
 mix_gcs_object_read <- function(project,
                                 bucket,
-                                folder = NULL,
+                                prefix,
                                 object_name,
                                 object_format = 'rds') {
 
@@ -30,18 +30,20 @@ mix_gcs_object_read <- function(project,
   library(googleCloudStorageR)
 
   #----- Data cleaning
-  #-- Folder name
-  folder <- if_else(is.null(folder), "", paste0(folder, "/"))
+  #-- Ensure trailing slash on prefix
+  if (!grepl("/$", prefix)) {
+    prefix <- paste0(prefix, "/")
+  }
 
   #----- Single file download and read
   tryCatch(
     expr = {
       #-- File name
       v_file_name <- paste0(object_name, '.', object_format)
-      v_gcs_object_path <- paste0(folder, v_file_name)
+      v_gcs_object_path <- paste0(prefix, v_file_name)
 
       #-- Download from GCS
-      message('Downloading from bucket: ', bucket, '/', folder)
+      message('Downloading from bucket: ', bucket, '/', prefix)
 
       gcs_get_object(object_name = v_gcs_object_path,
                      bucket = bucket,

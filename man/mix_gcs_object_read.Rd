@@ -7,7 +7,7 @@
 mix_gcs_object_read(
   project,
   bucket,
-  folder = NULL,
+  prefix,
   object_name,
   object_format = "rds"
 )
@@ -17,7 +17,7 @@ mix_gcs_object_read(
 
 \item{bucket}{Name of the Google Cloud Storage bucket}
 
-\item{folder}{Folder path within the bucket (optional)}
+\item{prefix}{prefix path within the bucket (optional)}
 
 \item{object_name}{Name of the file to read (without extension)}
 

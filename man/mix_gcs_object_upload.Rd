@@ -7,7 +7,7 @@
 mix_gcs_object_upload(
   project,
   bucket,
-  folder = NULL,
+  prefix,
   object,
   object_name,
   object_format = "rds"
@@ -18,7 +18,7 @@ mix_gcs_object_upload(
 
 \item{bucket}{Name of the Google Cloud Storage bucket}
 
-\item{folder}{Folder path within the bucket (optional)}
+\item{prefix}{prefix path within the bucket (optional)}
 
 \item{object}{R object to upload}
 

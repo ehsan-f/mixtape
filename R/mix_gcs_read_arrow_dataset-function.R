@@ -1,4 +1,4 @@
-#' Read parquet dataset from Google Cloud Storage using Arrow
+#' Read dataset from Google Cloud Storage using Arrow
 #'
 #' @description
 #' Reads parquet files from Google Cloud Storage as a unified dataset using arrow's open_dataset functionality.
