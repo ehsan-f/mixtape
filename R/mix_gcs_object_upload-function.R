@@ -13,10 +13,10 @@
 #'
 #' @export
 mix_gcs_object_upload <- function(project,
-                                  object,
-                                  object_name,
                                   bucket,
                                   folder = NULL,
+                                  object,
+                                  object_name,
                                   object_format = 'rds') {
 
   #-- Start time
