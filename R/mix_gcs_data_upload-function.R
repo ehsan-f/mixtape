@@ -2,7 +2,8 @@
 #'
 #' @description
 #' Uploads a data frame to Google Cloud Storage with optional batching for large datasets.
-#' Supports different file formats and handles error conditions.
+#' Supports different file formats and handles error conditions. Note: RDS files are always
+#' uploaded as single files without batching, regardless of size.
 #'
 #' @param project Google Cloud project ID
 #' @param df Data frame to upload
@@ -11,7 +12,7 @@
 #' @param bucket Name of the Google Cloud Storage bucket
 #' @param folder Folder path within the bucket (optional)
 #' @param max_object_size_mb Maximum size of each output file in MB (default: 50)
-#' @param object_format Format for the output files ('parquet', 'csv') (default: 'parquet')
+#' @param object_format Format for the output files ('parquet', 'csv', 'rds') (default: 'parquet')
 #'
 #' @export
 mix_gcs_data_upload <- function(project,
@@ -40,19 +41,55 @@ mix_gcs_data_upload <- function(project,
   #-- Folder name
   folder <- if_else(is.null(folder), "", paste0(folder, "/"))
 
-  #-- Actual sizes
-  v_size_mb <- format(object.size(df), 'Mb') %>%
-    gsub(pattern = '[a-zA-Z]| ', replacement = '') %>%
-    as.numeric()
+  #-- Skip batch upload for RDS files
+  if (tolower(object_format) == 'rds') {
+    tryCatch(
+      expr = {
+        #-- File name
+        v_file_name <- paste0(object_name, '.', object_format)
 
-  v_rows <- nrow(df)
+        #-- Write data
+        message('Writing to file: ', v_file_name)
+        saveRDS(object = df, file = v_file_name)
 
-  #-- Estimated (conservative) compression factor
-  v_compresson_factor <- 4 # 2109 / 468
+        #-- Upload to GCS
+        message('Uploading to bucket: ', bucket, '/', folder)
+
+        gcs_upload(file = v_file_name,
+                   bucket = bucket,
+                   type = object_format,
+                   name = paste0(folder, v_file_name),
+                   predefinedAcl = "default")
+
+        #-- Remove file
+        file.remove(v_file_name)
+        message('Local file deleted.')
+      },
+      error = function(e) {
+        #-- Remove local file in case of an error
+        if (file.exists(v_file_name)) {
+          file.remove(v_file_name)
+          message('Local file deleted.')
+        }
+
+        #-- Output error message
+        stop(e)
+      }
+    )
+  } else {
+    #-- Actual sizes
+    v_size_mb <- format(object.size(df), 'Mb') %>%
+      gsub(pattern = '[a-zA-Z]| ', replacement = '') %>%
+      as.numeric()
+
+    v_rows <- nrow(df)
+
+    #-- Estimated (conservative) compression factor
+    v_compresson_factor <- 4 # 2109 / 468
 
 
-  #----- Batch upload
-  if (!is.null(max_object_size_mb) & v_rows > 0) {
+    #----- Batch upload
+    if (!is.null(max_object_size_mb) & v_rows > 0) {
     #-- Row limit
     v_batch_size_limit <- (v_size_mb / v_compresson_factor) / max_object_size_mb
     v_batch_row_limit <- (v_rows / v_batch_size_limit) %>% round() %>% if_na(replacement = 0)
@@ -91,11 +128,6 @@ mix_gcs_data_upload <- function(project,
           if (object_format == 'csv') {
             write_csv(x = df[(v_batch_seq[(i-1)]+1):v_batch_seq[i],],
                       file = v_file_name)
-          }
-
-          if (object_format == 'RDS') {
-            saveRDS(object = df[(v_batch_seq[(i-1)]+1):v_batch_seq[i],],
-                    file = v_file_name)
           }
 
           #-- Upload to GCS
@@ -145,11 +177,6 @@ mix_gcs_data_upload <- function(project,
                     file = v_file_name)
         }
 
-        if (object_format == 'RDS') {
-          saveRDS(object = df,
-                  file = v_file_name)
-        }
-
         #-- Upload to GCS
         message('Uploading to bucket: ', bucket, '/', folder)
 
@@ -173,6 +200,7 @@ mix_gcs_data_upload <- function(project,
         stop(e)
       }
     )
+    }
   }
 
   #-- End Time
