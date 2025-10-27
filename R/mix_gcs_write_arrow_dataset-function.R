@@ -9,17 +9,19 @@
 #' @param prefix Path to destination folder
 #' @param partitioning Column names to partition by (default: NULL)
 #' @param min_files Minimum number of files to create (default: 100)
+#' @param object_format Format of the file to read ('parquet', 'csv', 'rds') (default: 'parquet')
 #' @param basename_template Template for output file names (default: "part-{i}.parquet")
 #' @param compression Compression algorithm ('snappy', 'gzip', 'zstd', 'none') (default: 'snappy')
 #'
 #' @export
-mix_gcs_write_parquet_dataset <- function(df,
-                                          bucket,
-                                          prefix,
-                                          partitioning = NULL,
-                                          min_files = 100,
-                                          basename_template = "part-{i}.parquet",
-                                          compression = 'snappy') {
+mix_gcs_write_arrow_dataset <- function(df,
+                                        bucket,
+                                        prefix,
+                                        partitioning = NULL,
+                                        min_files = 100,
+                                        object_format = 'parquet',
+                                        basename_template = "part-{i}",
+                                        compression = 'snappy') {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -60,10 +62,10 @@ mix_gcs_write_parquet_dataset <- function(df,
   write_dataset(
     dataset = df,
     path = gcs_uri,
-    format = "parquet",
+    format = object_format,
     partitioning = partitioning,
     max_rows_per_file = v_max_rows_per_file,
-    basename_template = basename_template,
+    basename_template = paste0(basename_template, '.', object_format),
     compression = compression,
     hive_style = TRUE
   )

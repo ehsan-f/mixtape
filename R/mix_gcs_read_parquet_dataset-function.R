@@ -8,17 +8,19 @@
 #' @param prefix Path to required folder containing parquet files
 #' @param select Character vector of column names to select (default: NULL for all columns)
 #' @param select_regex Regular expression to select columns matching pattern (default: NULL)
+#' @param object_format Format of the file to read ('parquet', 'csv', 'rds') (default: 'parquet')
 #' @param collect Whether to collect the dataset into memory as a tibble (default: TRUE)
 #' @param var_clean_names Whether to clean variable names (default: FALSE)
 #'
 #' @export
 
-mix_gcs_read_parquet_dataset <- function(bucket,
-                                         prefix,
-                                         select = NULL,
-                                         select_regex = NULL,
-                                         collect = T,
-                                         var_clean_names = F) {
+mix_gcs_read_arrow_dataset <- function(bucket,
+                                       prefix,
+                                       select = NULL,
+                                       select_regex = NULL,
+                                       object_format = 'parquet',
+                                       collect = T,
+                                       var_clean_names = F) {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -39,7 +41,7 @@ mix_gcs_read_parquet_dataset <- function(bucket,
   message("Opening dataset from: ", gcs_uri)
 
   #-- Open dataset
-  ds_object <- open_dataset(gcs_uri, format = "parquet")
+  ds_object <- open_dataset(gcs_uri, format = object_format)
 
   v_object_vars <- names(ds_object)
 
