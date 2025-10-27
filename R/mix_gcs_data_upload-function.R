@@ -40,55 +40,19 @@ mix_gcs_data_upload <- function(project,
   #-- Folder name
   folder <- if_else(is.null(folder), "", paste0(folder, "/"))
 
-  #-- Skip batch upload for RDS files
-  if (tolower(object_format) == 'rds') {
-    tryCatch(
-      expr = {
-        #-- File name
-        v_file_name <- paste0(object_name, '.', object_format)
+  #-- Actual sizes
+  v_size_mb <- format(object.size(df), 'Mb') %>%
+    gsub(pattern = '[a-zA-Z]| ', replacement = '') %>%
+    as.numeric()
 
-        #-- Write data
-        message('Writing to file: ', v_file_name)
-        saveRDS(object = df, file = v_file_name)
+  v_rows <- nrow(df)
 
-        #-- Upload to GCS
-        message('Uploading to bucket: ', bucket, '/', folder)
-
-        gcs_upload(file = v_file_name,
-                   bucket = bucket,
-                   type = object_format,
-                   name = paste0(folder, v_file_name),
-                   predefinedAcl = "default")
-
-        #-- Remove file
-        file.remove(v_file_name)
-        message('Local file deleted.')
-      },
-      error = function(e) {
-        #-- Remove local file in case of an error
-        if (file.exists(v_file_name)) {
-          file.remove(v_file_name)
-          message('Local file deleted.')
-        }
-
-        #-- Output error message
-        stop(e)
-      }
-    )
-  } else {
-    #-- Actual sizes
-    v_size_mb <- format(object.size(df), 'Mb') %>%
-      gsub(pattern = '[a-zA-Z]| ', replacement = '') %>%
-      as.numeric()
-
-    v_rows <- nrow(df)
-
-    #-- Estimated (conservative) compression factor
-    v_compresson_factor <- 4 # 2109 / 468
+  #-- Estimated (conservative) compression factor
+  v_compresson_factor <- 4 # 2109 / 468
 
 
-    #----- Batch upload
-    if (!is.null(max_object_size_mb) & v_rows > 0) {
+  #----- Batch upload
+  if (!is.null(max_object_size_mb) & v_rows > 0) {
     #-- Row limit
     v_batch_size_limit <- (v_size_mb / v_compresson_factor) / max_object_size_mb
     v_batch_row_limit <- (v_rows / v_batch_size_limit) %>% round() %>% if_na(replacement = 0)
