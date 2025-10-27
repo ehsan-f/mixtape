@@ -1,23 +1,23 @@
-#' Upload data to Google Cloud Storage
+#' Upload object to Google Cloud Storage
 #'
 #' @description
-#' Uploads a data frame to Google Cloud Storage as a single file.
+#' Uploads an R object to Google Cloud Storage as a single file.
 #' Supports different file formats and handles error conditions.
 #'
 #' @param project Google Cloud project ID
-#' @param df Data frame to upload
+#' @param object R object to upload
 #' @param object_name Name for the output file (without extension)
 #' @param bucket Name of the Google Cloud Storage bucket
 #' @param folder Folder path within the bucket (optional)
-#' @param object_format Format for the output file ('parquet', 'csv', 'rds') (default: 'parquet')
+#' @param object_format Format for the output file ('parquet', 'csv', 'rds') (default: 'rds')
 #'
 #' @export
-mix_gcs_data_upload <- function(project,
-                                df,
-                                object_name,
-                                bucket,
-                                folder = NULL,
-                                object_format = 'parquet') {
+mix_gcs_object_upload <- function(project,
+                                  object,
+                                  object_name,
+                                  bucket,
+                                  folder = NULL,
+                                  object_format = 'rds') {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -45,15 +45,15 @@ mix_gcs_data_upload <- function(project,
       message('Writing to file: ', v_file_name)
 
       if (tolower(object_format) == 'parquet') {
-        write_parquet(x = df, sink = v_file_name)
+        write_parquet(x = object, sink = v_file_name)
       }
 
       if (tolower(object_format) == 'csv') {
-        write_csv(x = df, file = v_file_name)
+        write_csv(x = object, file = v_file_name)
       }
 
       if (tolower(object_format) == 'rds') {
-        saveRDS(object = df, file = v_file_name)
+        saveRDS(object = object, file = v_file_name)
       }
 
       #-- Upload to GCS
