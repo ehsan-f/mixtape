@@ -58,6 +58,9 @@ mix_gcs_write_arrow_dataset <- function(df,
   message("Max rows per file: ", format(v_max_rows_per_file, big.mark = ","))
   message("Estimated files: ", ceiling(v_rows / v_max_rows_per_file))
 
+  #-- Set compression to 'none' for non-parquet formats
+  compression <- if(object_format != 'parquet') 'none' else compression
+
   #-- Write dataset
   write_dataset(
     dataset = df,
