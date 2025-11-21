@@ -58,24 +58,20 @@ mix_gcs_write_arrow_dataset <- function(df,
   message("Max rows per file: ", format(v_max_rows_per_file, big.mark = ","))
   message("Estimated files: ", ceiling(v_rows / v_max_rows_per_file))
 
+  #-- Set compression to 'none' for non-parquet formats
+  compression <- if(object_format != 'parquet') 'none' else compression
+
   #-- Write dataset
-  # Build arguments list - compression only valid for parquet
-  write_args <- list(
+  write_dataset(
     dataset = df,
     path = gcs_uri,
     format = object_format,
     partitioning = partitioning,
     max_rows_per_file = v_max_rows_per_file,
     basename_template = paste0(basename_template, '.', object_format),
+    compression = compression,
     hive_style = TRUE
   )
-
-  # Only add compression for parquet format
-  if (object_format == 'parquet') {
-    write_args$compression <- compression
-  }
-
-  do.call(write_dataset, write_args)
 
   #-- End time
   v_end_time <- Sys.time()
