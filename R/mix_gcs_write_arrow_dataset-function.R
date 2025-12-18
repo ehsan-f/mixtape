@@ -9,9 +9,8 @@
 #' @param prefix Path to destination folder
 #' @param partitioning Column names to partition by (default: NULL)
 #' @param min_files Minimum number of files to create (default: 100)
-#' @param object_format Format of the file to read ('parquet', 'csv', 'rds') (default: 'parquet')
+#' @param object_format Format of the file to read ('parquet', 'csv') (default: 'parquet')
 #' @param basename_template Template for output file names (default: "part-{i}.parquet")
-#' @param compression Compression algorithm ('snappy', 'gzip', 'zstd', 'none') (default: 'snappy')
 #'
 #' @export
 mix_gcs_write_arrow_dataset <- function(df,
@@ -20,8 +19,7 @@ mix_gcs_write_arrow_dataset <- function(df,
                                         partitioning = NULL,
                                         min_files = 100,
                                         object_format = 'parquet',
-                                        basename_template = "part-{i}",
-                                        compression = 'snappy') {
+                                        basename_template = "part-{i}") {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -30,16 +28,10 @@ mix_gcs_write_arrow_dataset <- function(df,
   library(arrow)
   library(dplyr)
 
-  #-- Ensure trailing slash on prefix
-  if (!grepl("/$", prefix)) {
-    prefix <- paste0(prefix, "/")
-  }
-
   #-- Construct GCS URI
   gcs_uri <- paste0('gs://', bucket, '/', prefix)
 
-  message("Writing dataset to: ", gcs_uri)
-
+  #-- Partitioning
   if (!is.null(partitioning)) {
     message("Partitioning by: ", paste(partitioning, collapse = ", "))
   }
@@ -58,20 +50,41 @@ mix_gcs_write_arrow_dataset <- function(df,
   message("Max rows per file: ", format(v_max_rows_per_file, big.mark = ","))
   message("Estimated files: ", ceiling(v_rows / v_max_rows_per_file))
 
-  #-- Set compression to 'none' for non-parquet formats
-  compression <- if(object_format != 'parquet') 'none' else compression
-
   #-- Write dataset
-  write_dataset(
-    dataset = df,
-    path = gcs_uri,
-    format = object_format,
-    partitioning = partitioning,
-    max_rows_per_file = v_max_rows_per_file,
-    basename_template = paste0(basename_template, '.', object_format),
-    compression = compression,
-    hive_style = TRUE
-  )
+  if (object_format == 'csv') {
+
+    #-- Ensure trailing file format on gcs_Uri
+    if (!grepl(".csv$", gcs_uri)) {
+      gcs_uri <- paste0(gcs_uri, ".csv")
+    }
+
+    message("Writing dataset to: ", gcs_uri)
+
+    write_csv_arrow(
+      x = df,
+      sink = gcs_uri,
+      include_header = TRUE
+    )
+
+  } else {
+
+    #-- Ensure trailing slash on gcs_uri
+    if (!grepl("/$", gcs_uri)) {
+      gcs_uri <- paste0(gcs_uri, "/")
+    }
+
+    message("Writing dataset to: ", gcs_uri)
+
+    write_dataset(
+      dataset = df,
+      path = gcs_uri,
+      format = object_format,
+      partitioning = partitioning,
+      max_rows_per_file = v_max_rows_per_file,
+      basename_template = paste0(basename_template, '.', object_format),
+      hive_style = TRUE
+    )
+  }
 
   #-- End time
   v_end_time <- Sys.time()
