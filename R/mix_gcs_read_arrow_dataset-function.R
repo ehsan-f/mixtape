@@ -30,11 +30,6 @@ mix_gcs_read_arrow_dataset <- function(bucket,
   library(dplyr)
   library(janitor)
 
-  #-- Ensure trailing slash on prefix
-  if (!grepl("/$", prefix)) {
-    prefix <- paste0(prefix, "/")
-  }
-
   #-- Construct GCS URI
   gcs_uri <- paste0('gs://', bucket, '/', prefix)
 
