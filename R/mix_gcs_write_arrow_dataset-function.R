@@ -19,6 +19,7 @@ mix_gcs_write_arrow_dataset <- function(df,
                                         partitioning = NULL,
                                         min_files = 100,
                                         object_format = 'parquet',
+                                        single_file = F,
                                         basename_template = "part-{i}") {
 
   #-- Start time
@@ -43,14 +44,7 @@ mix_gcs_write_arrow_dataset <- function(df,
     stop("Cannot write empty data frame")
   }
 
-  v_max_rows_per_file <- max(100000, ceiling(v_rows / min_files))
-
-  message("Total rows: ", format(v_rows, big.mark = ","))
-  message("Target minimum files: ", min_files)
-  message("Max rows per file: ", format(v_max_rows_per_file, big.mark = ","))
-  message("Estimated files: ", ceiling(v_rows / v_max_rows_per_file))
-
-  #-- Write dataset
+  #----- Write dataset
   if (object_format == 'csv') {
 
     #-- Ensure trailing file format on gcs_Uri
@@ -58,12 +52,28 @@ mix_gcs_write_arrow_dataset <- function(df,
       gcs_uri <- paste0(gcs_uri, ".csv")
     }
 
-    message("Writing dataset to: ", gcs_uri)
+    #-- Write dataset
+    message("Writing CSV dataset to: ", gcs_uri)
 
     write_csv_arrow(
       x = df,
       sink = gcs_uri,
       include_header = TRUE
+    )
+
+  } else if (object_format == 'parquet' & single_file == T) {
+
+    #-- Ensure trailing file format on gcs_Uri
+    if (!grepl(".parquet$", gcs_uri)) {
+      gcs_uri <- paste0(gcs_uri, ".parquet")
+    }
+
+    #-- Write dataset
+    message("Writing PARQUET dataset to: ", gcs_uri)
+
+    write_parquet(
+      x = df,
+      sink = gcs_uri
     )
 
   } else {
@@ -73,7 +83,16 @@ mix_gcs_write_arrow_dataset <- function(df,
       gcs_uri <- paste0(gcs_uri, "/")
     }
 
-    message("Writing dataset to: ", gcs_uri)
+    #-- File uploda info
+    v_max_rows_per_file <- max(100000, ceiling(v_rows / min_files))
+
+    message("Total rows: ", format(v_rows, big.mark = ","))
+    message("Target minimum files: ", min_files)
+    message("Max rows per file: ", format(v_max_rows_per_file, big.mark = ","))
+    message("Estimated files: ", ceiling(v_rows / v_max_rows_per_file))
+
+    #-- Write dataset
+    message("Writing PARQUET dataset to: ", gcs_uri)
 
     write_dataset(
       dataset = df,
