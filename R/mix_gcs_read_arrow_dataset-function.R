@@ -36,7 +36,11 @@ mix_gcs_read_arrow_dataset <- function(bucket,
   message("Opening dataset from: ", gcs_uri)
 
   #-- Open dataset
-  ds_object <- open_dataset(gcs_uri, format = object_format)
+  if (object_format == 'csv') {
+    ds_object <- open_csv_dataset(gcs_uri)
+  } else {
+    ds_object <- open_dataset(gcs_uri, format = object_format)
+  }
 
   v_object_vars <- names(ds_object)
 
