@@ -7,7 +7,7 @@
 #' @param path Path to the Google service account JSON key file
 #'
 #' @export
-gcp_auth <- function(path = NULL, auth_arrow = F) {
+gcp_auth <- function(path = NULL, auth_arrow = T) {
 
   #-- Load Packages
   library(googledrive)
