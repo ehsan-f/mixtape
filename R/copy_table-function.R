@@ -5,7 +5,7 @@
 #' Works cross-platform on both Unix-like systems and Windows.
 #'
 #' @param x Data frame to copy
-#' @param sep Separator for columns (default: '\t')
+#' @param sep Separator for columns (default: '\\t')
 #' @param row.names Whether to include row names (default: FALSE)
 #' @param col.names Whether to include column names (default: TRUE)
 #' @param ... Additional arguments passed to write.table()

@@ -50,7 +50,7 @@ mix_ml_model_metrics <- function(prob, y,
                            df_train = df_train, df_test = df_test,
                            generate_output = F)
 
-  ls_model_metrics$auc <- list(train = ls_model_auc$log_auc_train, test = ls_model_auc$log_auc_test)
+  ls_model_metrics$roc_plot <- ls_model_auc$gg_roc
 
   #----- Lift charts
   ls_model_lift <- lift_chart(prob = 'p', y = 'y', measure = 'y',
@@ -61,7 +61,7 @@ mix_ml_model_metrics <- function(prob, y,
   ls_model_metrics$lift <- ls_model_lift[setdiff(names(ls_model_lift), c('tiles_train', 'tiles_test'))]
   ls_model_metrics$tiles <- ls_model_lift[c('tiles_train', 'tiles_test')]
 
-  #----- Classification Metrics (Accuracy, Precision, Recall, Lift)
+  #----- Classification Metrics (AUC, Accuracy, Precision, Recall, Lift)
   #-- Probability cutoff
   roc_obj <- pROC::roc(df_train$y, df_train$p)
   ls_model_metrics$p_optimum_cutoff <- pROC::coords(roc_obj, "best", best.method = "closest.topleft")
@@ -78,12 +78,14 @@ mix_ml_model_metrics <- function(prob, y,
 
   ls_model_metrics$classification <- list(
     train = tibble(
+      auc = ls_model_auc$log_auc_train,
       accuracy = accuracy_vec(y_train_factor, pred_train),
       precision = precision_vec(y_train_factor, pred_train, event_level = "second"),
       recall = recall_vec(y_train_factor, pred_train, event_level = "second"),
       lift = ls_model_metrics$lift$lift_factor_train
     ),
     test = tibble(
+      auc = ls_model_auc$log_auc_test,
       accuracy = accuracy_vec(y_test_factor, pred_test),
       precision = precision_vec(y_test_factor, pred_test, event_level = "second"),
       recall = recall_vec(y_test_factor, pred_test, event_level = "second"),
@@ -108,6 +110,17 @@ mix_ml_model_metrics <- function(prob, y,
   if (!is.null(training_time)) {
     ls_model_metrics$training_time <- training_time
   }
+
+  #----- Re-Order
+  ls_model_metrics <- list(
+    classification = ls_model_metrics$classification,
+    roc_plot = ls_model_metrics$roc_plot,
+    lift = ls_model_metrics$lift,
+    feature_importance = ls_model_metrics$feature_importance,
+    p_optimum_cutoff = ls_model_metrics$p_optimum_cutoff,
+    tiles = ls_model_metrics$tiles,
+    training_time = ls_model_metrics$training_time
+  )
 
   #-- Export
   return(ls_model_metrics)

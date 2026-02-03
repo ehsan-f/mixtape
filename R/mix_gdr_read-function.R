@@ -7,8 +7,8 @@
 #' @param file_id Google Drive file ID
 #' @param read_fn Function to use for reading the file
 #'
+#' @importFrom googledrive as_id drive_download
 #' @import dplyr
-#' @import googledrive
 #' @export
 mix_gdr_read <- function(file_id, read_fn) {
 

@@ -6,8 +6,8 @@
 #'
 #' @param path Path to the Google service account JSON key file
 #'
-#' @import googledrive
-#' @import googlesheets4
+#' @importFrom googledrive drive_auth
+#' @importFrom googlesheets4 gs4_auth
 #' @import bigrquery
 #' @import googleCloudStorageR
 #' @import arrow
