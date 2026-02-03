@@ -23,7 +23,7 @@
 #' @importFrom xgboost xgb.importance
 #' @importFrom yardstick accuracy_vec precision_vec recall_vec
 #' @export
-mix_ml_model_metrics <- function(prob, y,
+mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
                                  df_train,
                                  df_test,
                                  df_features = ds_features,
@@ -44,6 +44,11 @@ mix_ml_model_metrics <- function(prob, y,
   if (is.factor(df_train$y)) {
     df_train$y <- df_train$y |> as_nlevels()
     df_test$y <- df_test$y |> as_nlevels()
+  }
+
+  if (!is.null(y_pred)) {
+    df_train[, 'y_pred'] <- df_train[, y_pred]
+    df_test[, 'y_pred'] <- df_test[, y_pred]
   }
 
   #----- ROC / AUC
@@ -74,8 +79,13 @@ mix_ml_model_metrics <- function(prob, y,
   y_train_factor <- df_train$y |> as.factor()
   y_test_factor <- df_test$y |> as.factor()
 
-  pred_train <- ifelse(df_train$p >= v_cutoff, 1, 0) |> as.factor()
-  pred_test <- ifelse(df_test$p >= v_cutoff, 1, 0) |> as.factor()
+  if (!is.null(y_pred)) {
+    pred_train <- df_train$y_pred |> as.factor()
+    pred_test <- df_test$y_pred |> as.factor()
+  } else {
+    pred_train <- ifelse(df_train$p >= v_cutoff, 1, 0) |> as.factor()
+    pred_test <- ifelse(df_test$p >= v_cutoff, 1, 0) |> as.factor()
+  }
 
   ls_model_metrics$classification <- list(
     train = tibble(
