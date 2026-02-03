@@ -8,10 +8,11 @@
 #' @param lat Column name for latitude values
 #' @param h3_res H3 resolution level
 #'
-#' @import sf
-#' @import h3jsr
 #' @export
 mix_point_to_h3 <- function(df, long, lat, h3_res) {
+  library(sf)
+  library(h3jsr)
+
   #-- Create points
   xy_point <- st_multipoint(x = as.matrix(df[,c(long, lat)]))
 
