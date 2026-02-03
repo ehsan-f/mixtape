@@ -4,7 +4,7 @@
 \alias{gcp_auth}
 \title{Authenticate with Google Cloud Platform services}
 \usage{
-gcp_auth(path = NULL)
+gcp_auth(path = NULL, auth_arrow = T)
 }
 \arguments{
 \item{path}{Path to the Google service account JSON key file}

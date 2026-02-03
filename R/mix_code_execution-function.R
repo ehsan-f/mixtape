@@ -11,6 +11,8 @@
 #' @param script_prefix Prefix to add to the script name in logs (optional)
 #' @param ... Additional arguments
 #'
+#' @import dplyr
+#' @import devtools
 #' @export
 mix_code_execution <-  function(script_path = NULL,
                                 script_url = NULL,
@@ -18,10 +20,6 @@ mix_code_execution <-  function(script_path = NULL,
                                 sheet_name = 'R_Code_Logs',
                                 script_prefix = NULL,
                                 ...) {
-
-  ##### Packages #####
-  library(dplyr)
-  library(devtools)
 
   ##### Variables #####
   script_path <- paste0(script_path,

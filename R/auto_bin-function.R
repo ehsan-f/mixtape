@@ -62,4 +62,5 @@ auto_bin <- function(sbin, df = ds) {
   #-- Output
   df$var_CC <- as.numeric(df$var_CC)
 
+  return(df)
 }

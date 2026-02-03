@@ -10,6 +10,10 @@
 #' @param prefix prefix path within the bucket (optional)
 #' @param object_format Format of the file to read ('parquet', 'csv', 'rds') (default: 'rds')
 #'
+#' @import arrow
+#' @import dplyr
+#' @import readr
+#' @import googleCloudStorageR
 #' @export
 mix_gcs_object_read <- function(project,
                                 bucket,
@@ -22,12 +26,6 @@ mix_gcs_object_read <- function(project,
 
   #-- Start process info
   message('Object: ', object_name)
-
-  #-- Packages
-  library(arrow)
-  library(dplyr)
-  library(readr)
-  library(googleCloudStorageR)
 
   #----- Data cleaning
   #-- Ensure trailing slash on prefix

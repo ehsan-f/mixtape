@@ -6,15 +6,13 @@
 #'
 #' @param path Path to the Google service account JSON key file
 #'
+#' @import googledrive
+#' @import googlesheets4
+#' @import bigrquery
+#' @import googleCloudStorageR
+#' @import arrow
 #' @export
 gcp_auth <- function(path = NULL, auth_arrow = T) {
-
-  #-- Load Packages
-  library(googledrive)
-  library(googlesheets4)
-  library(bigrquery)
-  library(googleCloudStorageR)
-  library(arrow)
 
   #-- Service Account
   google_service_account <- path

@@ -17,6 +17,8 @@
 #' @param actual_colour Colour for actual values (default: mix_palette$blue)
 #' @param pred_colour Colour for predicted values (default: mix_palette$red)
 #'
+#' @import dplyr
+#' @import ggplot2
 #' @export
 lift_chart <- function (prob = 'p_',
                         y,
@@ -31,9 +33,6 @@ lift_chart <- function (prob = 'p_',
                         actual_colour = mix_palette$blue,
                         pred_colour = mix_palette$red)
 {
-  #-- Packages
-  library(tidyverse)
-
   #-- Data
   df_train <- as.data.frame(df_train)
 

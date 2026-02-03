@@ -7,10 +7,9 @@
 #' @param x_axis_angle Angle for x-axis text (optional)
 #' @param gg_theme Base ggplot2 theme to extend (default: theme_light())
 #'
+#' @import ggplot2
 #' @export
 mix_theme <- function(x_axis_angle = NULL, gg_theme = theme_light()) {
-  #-- Packages
-  library(ggplot2)
   #-- Theme
   x_angle <- NULL
   if (!is.null(x_axis_angle)) {

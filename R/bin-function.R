@@ -16,13 +16,13 @@
 #' @param custom_colour_scale_start Start color for custom plot gradient (default: '#5720FF')
 #' @param custom_colour_scale_end End color for custom plot gradient (default: 'grey')
 #'
+#' @import smbinning
+#' @import dplyr
+#' @import ggplot2
 #' @export
 bin <- function (x, y, data, type = "a", q = 0.2, cut = NULL, silent = F,
                  custom_plot = T, custom_colour_scale_start = '#5720FF', custom_colour_scale_end = 'grey')
 {
-  #-- Packages
-  library(smbinning)
-
   #-- Dataframe
   data <- as.data.frame(data)
 
@@ -53,16 +53,16 @@ bin <- function (x, y, data, type = "a", q = 0.2, cut = NULL, silent = F,
 
     #- Plot
     if (custom_plot == T) {
-      sbin_gg <- sbin$ivtable %>%
+      sbin_gg <- sbin$ivtable |>
         #-- Fix table
-        as_tibble() %>%
+        as_tibble() |>
         mutate(
           exclude = if_else(Cutpoint == 'Total' | CntRec == 0, 1, 0)
-        ) %>%
-        filter(exclude == 0) %>%
+        ) |>
+        filter(exclude == 0) |>
         mutate(
           WoE = round(WoE, digits = 2)
-        ) %>%
+        ) |>
         #-- Plot
         ggplot(aes(x = Cutpoint, y = WoE, label = WoE, fill = Cutpoint)) +
 
@@ -94,5 +94,5 @@ bin <- function (x, y, data, type = "a", q = 0.2, cut = NULL, silent = F,
     }
   }
 
-  list(info = sbin, type = type) %>% invisible()
+  list(info = sbin, type = type) |> invisible()
 }

@@ -15,6 +15,10 @@
 #' @param object_name_wildcard_length Length of the wildcard part in object names (default: 5)
 #' @param storage_key Azure storage account key for authentication
 #'
+#' @import arrow
+#' @import dplyr
+#' @import janitor
+#' @import AzureStor
 #' @export
 mix_azure_storage_write <- function(storage_account_name,
                                     container_name,
@@ -33,13 +37,6 @@ mix_azure_storage_write <- function(storage_account_name,
   #-- Start process info
   message('Folder path: ', folder_path)
   message('Storage type: ', storage_type)
-
-  #-- Packages
-  library(arrow)
-  library(dplyr)
-  library(janitor)
-  library(AzureStor)
-  library(purrr)
 
   #-- Authentication - select appropriate endpoint based on storage type
   if (tolower(storage_type) == 'adls') {
@@ -93,8 +90,8 @@ mix_azure_storage_write <- function(storage_account_name,
     )
   } else {
     #-- Actual sizes
-    v_size_mb <- format(object.size(df), 'Mb') %>%
-      gsub(pattern = '[a-zA-Z]| ', replacement = '') %>%
+    v_size_mb <- format(object.size(df), 'Mb') |>
+      gsub(pattern = '[a-zA-Z]| ', replacement = '') |>
       as.numeric()
 
     v_rows <- nrow(df)
@@ -106,7 +103,7 @@ mix_azure_storage_write <- function(storage_account_name,
     if (!is.null(max_object_size_mb) & v_rows > 0) {
       #-- Row limit
       v_batch_size_limit <- (v_size_mb / v_compresson_factor) / max_object_size_mb
-      v_batch_row_limit <- (v_rows / v_batch_size_limit) %>% round() %>% if_na(replacement = 0)
+      v_batch_row_limit <- (v_rows / v_batch_size_limit) |> round() |> if_na(replacement = 0)
       v_batch_row_limit <- min(v_batch_row_limit, v_rows)
 
       #-- Batches
@@ -127,7 +124,7 @@ mix_azure_storage_write <- function(storage_account_name,
             j <- j + 1
 
             #-- File name
-            v_file_number <- paste0(paste0(rep('0', object_name_wildcard_length), collapse = ''), j) %>%
+            v_file_number <- paste0(paste0(rep('0', object_name_wildcard_length), collapse = ''), j) |>
               substr_right(n = object_name_wildcard_length)
             v_file_name <- paste0(object_name, v_file_number, '.', object_format)
 

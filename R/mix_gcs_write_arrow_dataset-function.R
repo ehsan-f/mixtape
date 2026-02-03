@@ -12,6 +12,8 @@
 #' @param object_format Format of the file to read ('parquet', 'csv') (default: 'parquet')
 #' @param basename_template Template for output file names (default: "part-{i}.parquet")
 #'
+#' @import arrow
+#' @import dplyr
 #' @export
 mix_gcs_write_arrow_dataset <- function(df,
                                         bucket,
@@ -24,10 +26,6 @@ mix_gcs_write_arrow_dataset <- function(df,
 
   #-- Start time
   v_start_time <- Sys.time()
-
-  #-- Packages
-  library(arrow)
-  library(dplyr)
 
   #-- Construct GCS URI
   gcs_uri <- paste0('gs://', bucket, '/', prefix)
@@ -83,7 +81,7 @@ mix_gcs_write_arrow_dataset <- function(df,
       gcs_uri <- paste0(gcs_uri, "/")
     }
 
-    #-- File uploda info
+    #-- File upload info
     v_max_rows_per_file <- max(100000, ceiling(v_rows / min_files))
 
     message("Total rows: ", format(v_rows, big.mark = ","))

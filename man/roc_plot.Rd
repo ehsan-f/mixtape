@@ -6,20 +6,19 @@
 \usage{
 roc_plot(
   prob = "p_",
-  y = "t_Paid",
+  y,
   df_train = ds1,
   df_test = ds2,
   model = NULL,
-  model_var = "X1",
-  generate_plot = T,
+  generate_output = T,
   train_colour = mix_palette$blue,
   test_colour = mix_palette$red
 )
 }
 \arguments{
-\item{prob}{Prefix for probability column (default: 'p_')}
+\item{prob}{Name of probability column (default: 'p_')}
 
-\item{y}{Name of the target variable column (default: "t_Paid")}
+\item{y}{Name of the target variable column}
 
 \item{df_train}{Training dataset (default: ds1)}
 
@@ -27,9 +26,7 @@ roc_plot(
 
 \item{model}{Model object (optional)}
 
-\item{model_var}{Model variable to use for predictions (default: 'X1')}
-
-\item{generate_plot}{Whether to generate plots (default: TRUE)}
+\item{generate_output}{Whether to generate output (default: TRUE)}
 
 \item{train_colour}{Colour for training curve (default: mix_palette$blue)}
 

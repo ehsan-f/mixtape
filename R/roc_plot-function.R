@@ -13,6 +13,9 @@
 #' @param train_colour Colour for training curve (default: mix_palette$blue)
 #' @param test_colour Colour for test curve (default: mix_palette$red)
 #'
+#' @import dplyr
+#' @import ggplot2
+#' @import ROCR
 #' @export
 roc_plot <- function (prob = 'p_',
                       y,
@@ -23,11 +26,6 @@ roc_plot <- function (prob = 'p_',
                       train_colour = mix_palette$blue,
                       test_colour = mix_palette$red)
 {
-
-  #-- Packages
-  library(tidyverse)
-  library(ROCR)
-  perform <- ROCR::performance
 
   #-- Data
   df_train <- as.data.frame(df_train)
@@ -56,8 +54,8 @@ roc_plot <- function (prob = 'p_',
   #----- Data
   #-- Train
   pred_train <- prediction(df_train[, prob], df_train[,y])
-  perf_train <- perform(pred_train, measure = "tpr", x.measure = "fpr")
-  auc_perf_train <- perform(pred_train, measure = "auc")
+  perf_train <- performance(pred_train, measure = "tpr", x.measure = "fpr")
+  auc_perf_train <- performance(pred_train, measure = "auc")
 
   roc_train <- data.frame('x' = unlist(perf_train@x.values), 'y' = unlist(perf_train@y.values)) |>
     mutate(Data = 'Train')
@@ -65,8 +63,8 @@ roc_plot <- function (prob = 'p_',
   #-- Test
   if (!is.null(df_test)) {
     pred_test <- prediction(df_test[, prob], df_test[,y])
-    perf_test <- perform(pred_test, measure = "tpr", x.measure = "fpr")
-    auc_perf_test <- perform(pred_test, measure = "auc")
+    perf_test <- performance(pred_test, measure = "tpr", x.measure = "fpr")
+    auc_perf_test <- performance(pred_test, measure = "auc")
 
     roc_test <- data.frame('x' = unlist(perf_test@x.values), 'y' = unlist(perf_test@y.values)) |>
       mutate(Data = 'Test')

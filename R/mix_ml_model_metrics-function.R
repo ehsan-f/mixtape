@@ -16,6 +16,11 @@
 #'
 #' @return A list containing auc, lift, tiles, p_optimum_cutoff, classification, feature_importance, and training_time
 #'
+#' @import dplyr
+#' @import pROC
+#' @import yardstick
+#' @importFrom xgboost xgb.importance
+#' @import janitor
 #' @export
 mix_ml_model_metrics <- function(prob, y,
                                  df_train,
@@ -43,7 +48,7 @@ mix_ml_model_metrics <- function(prob, y,
   #----- ROC / AUC
   ls_model_auc <- roc_plot(prob = 'p', y = 'y',
                            df_train = df_train, df_test = df_test,
-                           generate_plot = F)
+                           generate_output = F)
 
   ls_model_metrics$auc <- list(train = ls_model_auc$log_auc_train, test = ls_model_auc$log_auc_test)
 

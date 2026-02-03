@@ -16,10 +16,10 @@ mix_batch_code_execution <- function(directory, run_manual_scripts = NA) {
 
       #-- Get R scripts
       v_dir <- directory
-      v_r_scripts <- dir(v_dir) %>% sort()
+      v_r_scripts <- dir(v_dir) |> sort()
 
       #-- Manual script selection override
-      run_manual_scripts <- run_manual_scripts %>% if_null()
+      run_manual_scripts <- run_manual_scripts |> if_null()
       if (!is.na(run_manual_scripts)) {
         run_manual_scripts <- fromJSON(run_manual_scripts)
         run_manual_scripts <- paste0(run_manual_scripts,
@@ -48,7 +48,7 @@ mix_batch_code_execution <- function(directory, run_manual_scripts = NA) {
         ds_code_results_x <- mix_code_execution(script_path = i)
 
         #- Bring together
-        ds_code_results <- ds_code_results %>%
+        ds_code_results <- ds_code_results |>
           bind_rows(ds_code_results_x)
       }
 
@@ -56,7 +56,7 @@ mix_batch_code_execution <- function(directory, run_manual_scripts = NA) {
       v_end_time <- Sys.time()
 
       #-- Process info
-      v_time_taken_mins <- difftime(v_end_time, v_start_time, units = 'mins') %>% as.numeric()
+      v_time_taken_mins <- difftime(v_end_time, v_start_time, units = 'mins') |> as.numeric()
 
       ds_process_results <- tibble(
         time_taken = v_time_taken_mins,

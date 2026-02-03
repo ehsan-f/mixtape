@@ -16,6 +16,10 @@
 #' @param staging_dataset BigQuery dataset name for staging
 #' @param object_format Format of the source files ('parquet', 'csv', etc.) (default: 'parquet')
 #'
+#' @import googleCloudStorageR
+#' @import bigrquery
+#' @import dplyr
+#' @importFrom purrr list_rbind
 #' @export
 mix_gcs_to_bq <- function(project,
                           bucket,
@@ -34,12 +38,6 @@ mix_gcs_to_bq <- function(project,
 
   #-- Start Process Info
   message('Object: ', object_name)
-
-  #-- Packages
-  library(googleCloudStorageR)
-  library(bigrquery)
-  library(dplyr)
-  library(purrr)
 
   #-- Variables
   v_staging <- max(if_else(!is.null(cluster_index) | !is.null(partition_index), 1, 0), use_staging)
@@ -100,7 +98,7 @@ mix_gcs_to_bq <- function(project,
       ls_staging_bq_fields[[i]] <- tibble(name = v_staging_bq_table_fields[[i]]$name,
                                           type = v_staging_bq_table_fields[[i]]$type)
     }
-    ds_staging_bq_fields <- ls_staging_bq_fields %>% list_rbind()
+    ds_staging_bq_fields <- ls_staging_bq_fields |> list_rbind()
 
     #- Partition / cluster query segments
     v_partition <- if_else(is.null(partition_index),

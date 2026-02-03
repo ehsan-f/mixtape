@@ -7,15 +7,13 @@
 #' @param file_id Google Drive file ID
 #' @param read_fn Function to use for reading the file
 #'
+#' @import dplyr
+#' @import googledrive
 #' @export
 mix_gdr_read <- function(file_id, read_fn) {
 
   #-- Start time
   v_start_time <- Sys.time()
-
-  #-- Packages
-  library(dplyr)
-  library(googledrive)
 
   #-- Google Drive id
   v_drive_file_id <- as_id(file_id)

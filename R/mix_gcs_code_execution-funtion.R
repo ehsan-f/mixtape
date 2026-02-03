@@ -11,6 +11,8 @@
 #' @param google_sheet_id ID of Google Sheet to log execution details (optional)
 #' @param sheet_name Name of the sheet in the Google Sheet for logging (default: 'R_Code_Logs')
 #'
+#' @import dplyr
+#' @import googleCloudStorageR
 #' @export
 mix_gcs_code_execution <- function(project,
                                    bucket,
@@ -27,12 +29,8 @@ mix_gcs_code_execution <- function(project,
   #-- Start process info
   message('Object regex: ', object_regex)
 
-  #-- Packages
-  library(dplyr)
-  library(googleCloudStorageR)
-
   #-- Bucket objects
-  ds_bucket_objects <- gcs_list_objects(bucket = bucket) %>%
+  ds_bucket_objects <- gcs_list_objects(bucket = bucket) |>
     filter(grepl(pattern = folder_regex, ignore.case = T, x = name))
 
   #-- Object names
@@ -49,7 +47,7 @@ mix_gcs_code_execution <- function(project,
         #-- Set file download name
         v_file_download_name <- v_object_names[i]
         v_file_download_name <- substr(x = v_file_download_name,
-                                       start = (gregexpr(pattern = '/', text = v_file_download_name, ignore.case = T) %>% unlist() %>% max()) + 1,
+                                       start = (gregexpr(pattern = '/', text = v_file_download_name, ignore.case = T) |> unlist() |> max()) + 1,
                                        stop = nchar(v_file_download_name))
         v_file_download_name <- paste0('gcs_', v_file_download_name)
 

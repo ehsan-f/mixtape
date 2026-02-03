@@ -9,12 +9,10 @@
 #' @param p Proportion of data to use for training (default: 0.7)
 #' @param env_var Environment to assign the result to (default: global environment)
 #'
+#' @importFrom caret createDataPartition
+#' @import dplyr
 #' @export
 train_index <- function(df = ds, target = 't_', p = 0.7, env_var = NULL) {
-
-  #-- Packages
-  library(caret)
-  library(dplyr)
 
   #-- Environment Variables
   # Current Env = environment(fun = NULL)

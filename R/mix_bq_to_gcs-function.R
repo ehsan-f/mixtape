@@ -13,6 +13,9 @@
 #' @param folder Folder path within the bucket (optional)
 #' @param object_format Format for the exported files (default: 'parquet')
 #'
+#' @import googleCloudStorageR
+#' @import bigrquery
+#' @import dplyr
 #' @export
 mix_bq_to_gcs <- function(project,
                           dataset = NULL,
@@ -26,11 +29,6 @@ mix_bq_to_gcs <- function(project,
 
   #-- Start Time
   v_start_time <- Sys.time()
-
-  #-- Packages
-  library(googleCloudStorageR)
-  library(bigrquery)
-  library(dplyr)
 
   #-- Set vars
   folder <- if_else(is.null(folder), '', paste0(folder, '/'))

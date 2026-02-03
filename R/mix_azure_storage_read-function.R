@@ -22,6 +22,12 @@
 #' @param preserve_partitions Whether to extract and preserve partition columns from directory structure (default: FALSE)
 #' @param partition_column Name of the partition column to extract from file paths (required if preserve_partitions is TRUE)
 #'
+#' @import arrow
+#' @import readr
+#' @import dplyr
+#' @import janitor
+#' @import AzureStor
+#' @importFrom purrr list_rbind
 #' @export
 mix_azure_storage_read <- function(storage_account_name,
                                    container_name,
@@ -48,14 +54,6 @@ mix_azure_storage_read <- function(storage_account_name,
   #-- Start process info
   message('File path: ', file_path)
   message('Storage type: ', storage_type)
-
-  #-- Packages
-  library(arrow)
-  library(readr)
-  library(dplyr)
-  library(janitor)
-  library(AzureStor)
-  library(purrr)
 
   #-- Storage endpoint
   if (tolower(storage_type) == 'adls') {
@@ -224,7 +222,7 @@ mix_azure_storage_read <- function(storage_account_name,
             }
 
             if (object_format == 'json') {
-              ls_object[[i]] <- read_json_arrow(file = temp_file) %>%
+              ls_object[[i]] <- read_json_arrow(file = temp_file) |>
                 as_tibble()
             }
 
@@ -245,7 +243,7 @@ mix_azure_storage_read <- function(storage_account_name,
     }
 
     #-- Reduce list to dataframe
-    ls_object <- ls_object %>%
+    ls_object <- ls_object |>
       list_rbind()
   }
 
@@ -253,13 +251,13 @@ mix_azure_storage_read <- function(storage_account_name,
   if (is.data.frame(ls_object)) {
     #-- Var names to lower
     if (var_clean_names == T) {
-      ls_object <- ls_object %>%
+      ls_object <- ls_object |>
         clean_names()
     }
 
     #-- Fix dataset
     if (clean_vars == T) {
-      ls_object <- ls_object %>%
+      ls_object <- ls_object |>
         mutate(
           across(where(is.character) & ends_with('date'), .fns = as_date),
           across(where(is.character) & ends_with('time'), .fns = as_datetime),
@@ -268,7 +266,7 @@ mix_azure_storage_read <- function(storage_account_name,
 
     #-- Add time fields
     if (add_time_fields == T & !is.null(time_field)) {
-      ls_object <- ls_object %>%
+      ls_object <- ls_object |>
         time_key(x = time_field)
     }
   }

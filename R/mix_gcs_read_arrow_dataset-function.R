@@ -12,6 +12,9 @@
 #' @param collect Whether to collect the dataset into memory as a tibble (default: TRUE)
 #' @param var_clean_names Whether to clean variable names (default: FALSE)
 #'
+#' @import arrow
+#' @import dplyr
+#' @import janitor
 #' @export
 
 mix_gcs_read_arrow_dataset <- function(bucket,
@@ -24,11 +27,6 @@ mix_gcs_read_arrow_dataset <- function(bucket,
 
   #-- Start time
   v_start_time <- Sys.time()
-
-  #-- Packages
-  library(arrow)
-  library(dplyr)
-  library(janitor)
 
   #-- Construct GCS URI
   gcs_uri <- paste0('gs://', bucket, '/', prefix)

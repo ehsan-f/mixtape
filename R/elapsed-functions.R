@@ -7,6 +7,7 @@
 #' @param end_date End date
 #' @param accuracy_type Type of accuracy calculation ('day' or 'sql') (default: 'day')
 #'
+#' @import lubridate
 #' @export
 elapsed_years <- function(start_date, end_date, accuracy_type = 'day') {
   ed <- as.POSIXlt(end_date)
@@ -44,8 +45,6 @@ elapsed_months <- function(start_date, end_date, accuracy_type = 'day') {
 }
 
 elapsed_weeks <- function(start_date, end_date, iso = F) {
-  library(lubridate)
-
   ed <- as.POSIXlt(end_date)
   sd <- as.POSIXlt(start_date)
 
@@ -54,13 +53,14 @@ elapsed_weeks <- function(start_date, end_date, iso = F) {
   } else {
     weeks <- floor(as.numeric(as_date(ed) - as_date(sd))/7)
   }
+
+  return(weeks)
 }
 
 elapsed_days <- function(start_date, end_date) {
-  library(lubridate)
-
   ed <- as_date(end_date)
   sd <- as_date(start_date)
   days <- as.numeric(ed - sd)
-  days
+
+  return(days)
 }

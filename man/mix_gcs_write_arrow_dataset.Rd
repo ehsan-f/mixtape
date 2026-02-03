@@ -2,7 +2,7 @@
 % Please edit documentation in R/mix_gcs_write_arrow_dataset-function.R
 \name{mix_gcs_write_arrow_dataset}
 \alias{mix_gcs_write_arrow_dataset}
-\title{Write parquet dataset to Google Cloud Storage using Arrow}
+\title{Write dataset to Google Cloud Storage using Arrow}
 \usage{
 mix_gcs_write_arrow_dataset(
   df,
@@ -11,8 +11,8 @@ mix_gcs_write_arrow_dataset(
   partitioning = NULL,
   min_files = 100,
   object_format = "parquet",
-  basename_template = "part-{i}",
-  compression = "snappy"
+  single_file = F,
+  basename_template = "part-{i}"
 )
 }
 \arguments{
@@ -26,11 +26,9 @@ mix_gcs_write_arrow_dataset(
 
 \item{min_files}{Minimum number of files to create (default: 100)}
 
-\item{object_format}{Format of the file to read ('parquet', 'csv', 'rds') (default: 'parquet')}
+\item{object_format}{Format of the file to read ('parquet', 'csv') (default: 'parquet')}
 
 \item{basename_template}{Template for output file names (default: "part-{i}.parquet")}
-
-\item{compression}{Compression algorithm ('snappy', 'gzip', 'zstd', 'none') (default: 'snappy')}
 }
 \description{
 Writes a data frame as a parquet dataset to Google Cloud Storage using arrow's write_dataset functionality.

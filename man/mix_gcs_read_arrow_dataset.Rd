@@ -2,7 +2,7 @@
 % Please edit documentation in R/mix_gcs_read_arrow_dataset-function.R
 \name{mix_gcs_read_arrow_dataset}
 \alias{mix_gcs_read_arrow_dataset}
-\title{Read parquet dataset from Google Cloud Storage using Arrow}
+\title{Read dataset from Google Cloud Storage using Arrow}
 \usage{
 mix_gcs_read_arrow_dataset(
   bucket,
