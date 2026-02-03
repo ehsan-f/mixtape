@@ -11,7 +11,7 @@ mix_ml_model_metrics(
   df_test,
   df_features = ds_features,
   model_type = "xgb",
-  mod_xgb = NULL,
+  model = NULL,
   training_time = NULL
 )
 }
@@ -28,7 +28,7 @@ mix_ml_model_metrics(
 
 \item{model_type}{Type of model, used for feature importance extraction (default: 'xgb')}
 
-\item{mod_xgb}{Trained tidymodels workflow object (default: NULL)}
+\item{model}{Trained tidymodels workflow object (default: NULL)}
 
 \item{training_time}{Training time to store in output (default: NULL)}
 }

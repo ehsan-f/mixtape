@@ -10,7 +10,7 @@
 #' @param env_var Environment to assign the result to (default: global environment)
 #'
 #' @importFrom caret createDataPartition
-#' @import dplyr
+#' @importFrom tibble as_tibble
 #' @export
 train_index <- function(df = ds, target = 't_', p = 0.7, env_var = NULL) {
 

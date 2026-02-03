@@ -22,12 +22,14 @@
 #' @param preserve_partitions Whether to extract and preserve partition columns from directory structure (default: FALSE)
 #' @param partition_column Name of the partition column to extract from file paths (required if preserve_partitions is TRUE)
 #'
-#' @import arrow
-#' @import readr
-#' @import dplyr
-#' @import janitor
-#' @import AzureStor
+#' @importFrom arrow read_parquet read_json_arrow
+#' @importFrom AzureStor storage_endpoint list_storage_containers list_storage_files storage_download
+#' @importFrom dplyr mutate across where ends_with
+#' @importFrom janitor clean_names
+#' @importFrom lubridate as_date as_datetime
 #' @importFrom purrr list_rbind
+#' @importFrom readr read_delim read_tsv
+#' @importFrom tibble as_tibble
 #' @export
 mix_azure_storage_read <- function(storage_account_name,
                                    container_name,

@@ -12,9 +12,9 @@
 #' @param collect Whether to collect the dataset into memory as a tibble (default: TRUE)
 #' @param var_clean_names Whether to clean variable names (default: FALSE)
 #'
-#' @import arrow
-#' @import dplyr
-#' @import janitor
+#' @importFrom arrow open_csv_dataset open_dataset
+#' @importFrom dplyr select any_of collect
+#' @importFrom janitor clean_names
 #' @export
 
 mix_gcs_read_arrow_dataset <- function(bucket,

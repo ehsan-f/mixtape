@@ -13,8 +13,9 @@
 #' @param weekend_days Vector of days considered weekends (default: c('Friday', 'Saturday'))
 #' @param group_year Whether to group years (default: FALSE)
 #'
-#' @import lubridate
-#' @import dplyr
+#' @importFrom dplyr rename full_join bind_cols filter slice mutate group_by select left_join
+#' @importFrom lubridate as_date epiweek year
+#' @importFrom tibble as_tibble
 #' @export
 time_key <- function(df = ds,
                      x,

@@ -15,10 +15,10 @@
 #' @param object_name_wildcard_length Length of the wildcard part in object names (default: 5)
 #' @param storage_key Azure storage account key for authentication
 #'
-#' @import arrow
-#' @import dplyr
-#' @import janitor
-#' @import AzureStor
+#' @importFrom arrow write_parquet
+#' @importFrom AzureStor storage_endpoint list_storage_containers storage_upload
+#' @importFrom dplyr if_else
+#' @importFrom readr write_csv
 #' @export
 mix_azure_storage_write <- function(storage_account_name,
                                     container_name,

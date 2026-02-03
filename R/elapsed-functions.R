@@ -7,7 +7,7 @@
 #' @param end_date End date
 #' @param accuracy_type Type of accuracy calculation ('day' or 'sql') (default: 'day')
 #'
-#' @import lubridate
+#' @importFrom lubridate isoweek as_date
 #' @export
 elapsed_years <- function(start_date, end_date, accuracy_type = 'day') {
   ed <- as.POSIXlt(end_date)

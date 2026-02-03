@@ -10,10 +10,9 @@
 #' @param prefix prefix path within the bucket (optional)
 #' @param object_format Format of the file to read ('parquet', 'csv', 'rds') (default: 'rds')
 #'
-#' @import arrow
-#' @import dplyr
-#' @import readr
-#' @import googleCloudStorageR
+#' @importFrom arrow read_parquet
+#' @importFrom googleCloudStorageR gcs_get_object
+#' @importFrom readr read_csv
 #' @export
 mix_gcs_object_read <- function(project,
                                 bucket,

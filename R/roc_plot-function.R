@@ -13,9 +13,9 @@
 #' @param train_colour Colour for training curve (default: mix_palette$blue)
 #' @param test_colour Colour for test curve (default: mix_palette$red)
 #'
-#' @import dplyr
-#' @import ggplot2
-#' @import ROCR
+#' @importFrom dplyr mutate bind_rows
+#' @importFrom ggplot2 ggplot aes geom_abline geom_line ggtitle xlab ylab theme element_blank scale_color_manual
+#' @importFrom ROCR prediction performance
 #' @export
 roc_plot <- function (prob = 'p_',
                       y,

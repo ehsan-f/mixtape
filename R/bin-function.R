@@ -16,9 +16,9 @@
 #' @param custom_colour_scale_start Start color for custom plot gradient (default: '#5720FF')
 #' @param custom_colour_scale_end End color for custom plot gradient (default: 'grey')
 #'
-#' @import smbinning
-#' @import dplyr
-#' @import ggplot2
+#' @importFrom smbinning smbinning smbinning.factor smbinning.custom smbinning.plot
+#' @importFrom dplyr as_tibble mutate if_else filter
+#' @importFrom ggplot2 ggplot aes geom_bar geom_label scale_fill_manual labs xlab theme_minimal theme element_text element_blank
 #' @export
 bin <- function (x, y, data, type = "a", q = 0.2, cut = NULL, silent = F,
                  custom_plot = T, custom_colour_scale_start = '#5720FF', custom_colour_scale_end = 'grey')

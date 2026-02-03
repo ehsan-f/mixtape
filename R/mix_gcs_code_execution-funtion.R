@@ -11,8 +11,8 @@
 #' @param google_sheet_id ID of Google Sheet to log execution details (optional)
 #' @param sheet_name Name of the sheet in the Google Sheet for logging (default: 'R_Code_Logs')
 #'
-#' @import dplyr
-#' @import googleCloudStorageR
+#' @importFrom dplyr filter
+#' @importFrom googleCloudStorageR gcs_list_objects gcs_get_object
 #' @export
 mix_gcs_code_execution <- function(project,
                                    bucket,

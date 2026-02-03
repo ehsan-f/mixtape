@@ -13,9 +13,8 @@
 #' @param folder Folder path within the bucket (optional)
 #' @param object_format Format for the exported files (default: 'parquet')
 #'
-#' @import googleCloudStorageR
-#' @import bigrquery
-#' @import dplyr
+#' @importFrom bigrquery bq_project_query
+#' @importFrom dplyr if_else
 #' @export
 mix_bq_to_gcs <- function(project,
                           dataset = NULL,

@@ -17,8 +17,8 @@
 #' @param actual_colour Colour for actual values (default: mix_palette$blue)
 #' @param pred_colour Colour for predicted values (default: mix_palette$red)
 #'
-#' @import dplyr
-#' @import ggplot2
+#' @importFrom dplyr ntile group_by summarise left_join sym
+#' @importFrom ggplot2 ggplot aes geom_line geom_point ggtitle ylab scale_colour_manual theme element_blank annotate
 #' @export
 lift_chart <- function (prob = 'p_',
                         y,

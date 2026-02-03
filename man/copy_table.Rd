@@ -9,7 +9,7 @@ copy_table(x, sep = "\\t", row.names = FALSE, col.names = TRUE, ...)
 \arguments{
 \item{x}{Data frame to copy}
 
-\item{sep}{Separator for columns (default: '\t')}
+\item{sep}{Separator for columns (default: '\\t')}
 
 \item{row.names}{Whether to include row names (default: FALSE)}
 

@@ -11,8 +11,10 @@
 #' @param script_prefix Prefix to add to the script name in logs (optional)
 #' @param ... Additional arguments
 #'
-#' @import dplyr
-#' @import devtools
+#' @importFrom devtools source_url
+#' @importFrom dplyr if_else
+#' @importFrom googlesheets4 sheet_append as_sheets_id
+#' @importFrom tibble tibble
 #' @export
 mix_code_execution <-  function(script_path = NULL,
                                 script_url = NULL,

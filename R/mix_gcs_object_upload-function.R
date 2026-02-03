@@ -11,10 +11,9 @@
 #' @param prefix prefix path within the bucket (optional)
 #' @param object_format Format for the output file ('parquet', 'csv', 'rds') (default: 'rds')
 #'
-#' @import arrow
-#' @import dplyr
-#' @import readr
-#' @import googleCloudStorageR
+#' @importFrom arrow write_parquet
+#' @importFrom googleCloudStorageR gcs_upload
+#' @importFrom readr write_csv
 #' @export
 mix_gcs_object_upload <- function(project,
                                   bucket,

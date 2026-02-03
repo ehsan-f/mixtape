@@ -16,10 +16,10 @@
 #' @param staging_dataset BigQuery dataset name for staging
 #' @param object_format Format of the source files ('parquet', 'csv', etc.) (default: 'parquet')
 #'
-#' @import googleCloudStorageR
-#' @import bigrquery
-#' @import dplyr
+#' @importFrom bigrquery bq_project_query bq_table_fields
+#' @importFrom dplyr if_else
 #' @importFrom purrr list_rbind
+#' @importFrom tibble tibble
 #' @export
 mix_gcs_to_bq <- function(project,
                           bucket,

@@ -11,23 +11,24 @@
 #' @param df_test Test dataset
 #' @param df_features Features data frame for feature importance join (default: ds_features)
 #' @param model_type Type of model, used for feature importance extraction (default: 'xgb')
-#' @param mod_xgb Trained tidymodels workflow object (default: NULL)
+#' @param model Trained tidymodels workflow object (default: NULL)
 #' @param training_time Training time to store in output (default: NULL)
 #'
 #' @return A list containing auc, lift, tiles, p_optimum_cutoff, classification, feature_importance, and training_time
 #'
-#' @import dplyr
-#' @import pROC
-#' @import yardstick
+#' @importFrom dplyr as_tibble left_join select
+#' @importFrom janitor clean_names
+#' @importFrom pROC roc coords
+#' @importFrom tibble tibble
 #' @importFrom xgboost xgb.importance
-#' @import janitor
+#' @importFrom yardstick accuracy_vec precision_vec recall_vec
 #' @export
 mix_ml_model_metrics <- function(prob, y,
                                  df_train,
                                  df_test,
                                  df_features = ds_features,
                                  model_type = 'xgb',
-                                 mod_xgb = NULL,
+                                 model = NULL,
                                  training_time = NULL) {
 
   #-- List object
@@ -95,7 +96,7 @@ mix_ml_model_metrics <- function(prob, y,
 
   #----- Feature importance
   if (model_type == 'xgb') {
-    ls_model_metrics$feature_importance <- xgboost::xgb.importance(model = extract_fit_engine(mod_xgb)) |>
+    ls_model_metrics$feature_importance <- xgboost::xgb.importance(model = extract_fit_engine(model)) |>
       as_tibble() |>
       clean_names() |>
       left_join(
@@ -104,6 +105,10 @@ mix_ml_model_metrics <- function(prob, y,
             select(feature = variable, variable_group)
         )
       )
+  }
+
+  if (model_type == 'glm') {
+    ls_model_metrics$feature_importance <- anova(model)
   }
 
   #----- Training Time

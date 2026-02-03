@@ -12,8 +12,7 @@
 #' @param object_format Format of the file to read ('parquet', 'csv') (default: 'parquet')
 #' @param basename_template Template for output file names (default: "part-{i}.parquet")
 #'
-#' @import arrow
-#' @import dplyr
+#' @importFrom arrow write_csv_arrow write_parquet write_dataset
 #' @export
 mix_gcs_write_arrow_dataset <- function(df,
                                         bucket,

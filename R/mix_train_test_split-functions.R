@@ -7,7 +7,6 @@
 #' @param target Name of the target variable column for stratified sampling (default: 't_')
 #' @param p Proportion of data to use for training (default: 0.7)
 #'
-#' @import dplyr
 #' @importFrom caret createDataPartition
 #' @export
 mix_train_index <- function(df = ds, target = 't_', p = 0.7) {
@@ -29,7 +28,7 @@ mix_train_index <- function(df = ds, target = 't_', p = 0.7) {
 #'
 #' @param df Data frame with train_index column (default: ds)
 #'
-#' @import dplyr
+#' @importFrom dplyr filter
 #' @export
 mix_train_test_split <- function(df = ds) {
 
