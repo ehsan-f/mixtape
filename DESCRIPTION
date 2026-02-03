@@ -11,7 +11,6 @@ LazyData: true
 URL: https://github.com/Ehsan-F/mixtape
 BugReports: https://github.com/Ehsan-F/mixtape/issues
 Imports:
-    R (>= 4.1.0),
     AzureStor,
     ROCR,
     arrow,
