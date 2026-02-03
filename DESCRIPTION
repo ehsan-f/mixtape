@@ -10,6 +10,32 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/Ehsan-F/mixtape
 BugReports: https://github.com/Ehsan-F/mixtape/issues
-Suggests: roxygen2
+Imports:
+    AzureStor,
+    ROCR,
+    arrow,
+    bigrquery,
+    caret,
+    dplyr,
+    ggplot2,
+    googleCloudStorageR,
+    googledrive,
+    googlesheets4,
+    h3jsr,
+    janitor,
+    lubridate,
+    pROC,
+    purrr,
+    readr,
+    rstudioapi,
+    sf,
+    smbinning,
+    tibble,
+    tidyr,
+    xgboost,
+    yardstick
+Suggests:
+    devtools,
+    roxygen2
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
