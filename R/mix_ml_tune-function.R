@@ -159,7 +159,8 @@ mix_ml_tune <- function(training_data,
   message("Extracting CV models for best parameters...")
 
   # Get the models trained with best parameters from all folds (already slimmed by butcher)
-  best_models_slim <- xgb_tune_results$.extracts |>
+  best_models_slim <- xgb_tune_results |>
+    select(.extracts) |>
     unnest(cols = .extracts) |>
     filter(
       learn_rate == ds_best_params$learn_rate,
