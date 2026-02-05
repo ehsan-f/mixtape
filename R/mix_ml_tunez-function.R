@@ -23,7 +23,7 @@
 #'
 #' @return A list containing:
 #' \describe{
-#'   \item{cv_models}{Slimmed CV models for best hyperparameters (one per fold) for ensemble predictions}
+#'   \item{cv_models}{Slimmed workflow objects for best hyperparameters (one per fold) for ensemble predictions}
 #'   \item{best_params}{Best hyperparameter combination based on ROC AUC}
 #'   \item{tune_results}{Top 20 hyperparameter combinations with performance metrics}
 #'   \item{training_time}{Total time taken for hyperparameter tuning}
@@ -139,7 +139,7 @@ mix_ml_tunez <- function(training_data,
       save_pred = TRUE,
       allow_par = TRUE,
       parallel_over = parallel_type,
-      extract = function(x) butcher::butcher(extract_fit_engine(x))  # Extract and slim immediately
+      extract = function(x) butcher::butcher(x)  # Slim the workflow (includes preprocessing)
     )
   )
 
@@ -169,7 +169,7 @@ mix_ml_tunez <- function(training_data,
   #----- Extract CV models for best parameters
   message("Extracting CV models for best parameters...")
 
-  # Get the models trained with best parameters from all folds (already slimmed by butcher)
+  # Get the workflow objects trained with best parameters from all folds (already slimmed by butcher)
   best_models_slim <- xgb_tune_results |>
     select(.extracts) |>
     unnest(cols = .extracts) |>
@@ -188,7 +188,7 @@ mix_ml_tunez <- function(training_data,
   message("Extracted ", length(best_models_slim), " CV models (one per fold)")
 
   return(list(
-    cv_models = best_models_slim,     # Slimmed CV models for best params (for ensembling)
+    cv_models = best_models_slim,     # Slimmed workflow objects for best params (for ensembling)
     best_params = ds_best_params,     # Best hyperparameters to use for training
     tune_results = ds_results,        # Top 20 parameter combinations with metrics
     training_time = time_taken
