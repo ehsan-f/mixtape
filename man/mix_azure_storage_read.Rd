@@ -32,6 +32,8 @@ mix_azure_storage_read(
 
 \item{file_path}{Path to the files within the container}
 
+\item{regex_pattern}{Optional regex pattern to filter files (default: NULL)}
+
 \item{single_file}{Whether file_path points to a single file rather than a directory (default: FALSE)}
 
 \item{storage_type}{Type of storage ('blob' or 'adls', default: 'blob')}

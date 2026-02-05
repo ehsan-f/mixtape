@@ -7,6 +7,7 @@
 mix_ml_model_metrics(
   prob,
   y,
+  y_pred = NULL,
   df_train,
   df_test,
   df_features = ds_features,
@@ -19,6 +20,8 @@ mix_ml_model_metrics(
 \item{prob}{Name of the probability column}
 
 \item{y}{Name of the target variable column}
+
+\item{y_pred}{Name of the predicted class column (optional, default: NULL)}
 
 \item{df_train}{Training dataset}
 

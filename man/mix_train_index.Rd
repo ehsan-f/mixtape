@@ -4,10 +4,10 @@
 \alias{mix_train_index}
 \title{Create training index}
 \usage{
-mix_train_index(df = ds, target = "t_", p = 0.7)
+mix_train_index(df, target = "t_", p = 0.7)
 }
 \arguments{
-\item{df}{Data frame to add index to (default: ds)}
+\item{df}{Data frame to add index to}
 
 \item{target}{Name of the target variable column for stratified sampling (default: 't_')}
 

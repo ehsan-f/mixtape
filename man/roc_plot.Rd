@@ -7,8 +7,8 @@
 roc_plot(
   prob = "p_",
   y,
-  df_train = ds1,
-  df_test = ds2,
+  df_train,
+  df_test,
   model = NULL,
   generate_output = T,
   train_colour = mix_palette$blue,
@@ -20,9 +20,9 @@ roc_plot(
 
 \item{y}{Name of the target variable column}
 
-\item{df_train}{Training dataset (default: ds1)}
+\item{df_train}{Training dataset}
 
-\item{df_test}{Test dataset (default: ds2)}
+\item{df_test}{Test dataset}
 
 \item{model}{Model object (optional)}
 

@@ -10,6 +10,7 @@
 #' @param partitioning Column names to partition by (default: NULL)
 #' @param min_files Minimum number of files to create (default: 100)
 #' @param object_format Format of the file to read ('parquet', 'csv') (default: 'parquet')
+#' @param single_file Whether to write as a single file instead of a partitioned dataset (default: FALSE)
 #' @param basename_template Template for output file names (default: "part-{i}.parquet")
 #'
 #' @importFrom arrow write_csv_arrow write_parquet write_dataset

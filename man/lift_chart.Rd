@@ -8,8 +8,8 @@ lift_chart(
   prob = "p_",
   y,
   measure = NULL,
-  df_train = ds1,
-  df_test = ds2,
+  df_train,
+  df_test,
   model = NULL,
   n = 10,
   nudge_train = 1.5,
@@ -26,9 +26,9 @@ lift_chart(
 
 \item{measure}{Name of measure column for additional analysis (optional)}
 
-\item{df_train}{Training dataset (default: ds1)}
+\item{df_train}{Training dataset}
 
-\item{df_test}{Test dataset (default: ds2)}
+\item{df_test}{Test dataset}
 
 \item{model}{Model object (optional)}
 

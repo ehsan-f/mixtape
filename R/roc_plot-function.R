@@ -6,8 +6,8 @@
 #'
 #' @param prob Name of probability column (default: 'p_')
 #' @param y Name of the target variable column
-#' @param df_train Training dataset (default: ds1)
-#' @param df_test Test dataset (default: ds2)
+#' @param df_train Training dataset
+#' @param df_test Test dataset
 #' @param model Model object (optional)
 #' @param generate_output Whether to generate output (default: TRUE)
 #' @param train_colour Colour for training curve (default: mix_palette$blue)
@@ -19,8 +19,8 @@
 #' @export
 roc_plot <- function (prob = 'p_',
                       y,
-                      df_train = ds1,
-                      df_test = ds2,
+                      df_train,
+                      df_test,
                       model = NULL,
                       generate_output = T,
                       train_colour = mix_palette$blue,

@@ -16,6 +16,14 @@
 #   '#353744'               # Google Grey
 # )
 
+#' Custom color palette
+#'
+#' @description
+#' A curated list of colors for data visualization, including blue, red, green,
+#' orange, purple, yellow, and various shades for consistent theming.
+#'
+#' @format A list of hex color codes
+#'
 #' @export
 mix_palette <- list()
 mix_palette$blue <- rgb(0, 0.45, 0.7)
@@ -34,11 +42,25 @@ mix_palette$light_grey <- '#EDEDED'
 mix_palette$google_grey <- '#353744'
 mix_palette$serene_purple <- '#5720FF'
 
+#' ggplot2 theme color palette
+#'
+#' @description
+#' Color palette matching ggplot2 default grey scale theme colors.
+#'
+#' @format A list of hex color codes for grey shades
+#'
 #' @export
 mix_palette_gg <- list()
 mix_palette_gg$dark_grey_3 <- '#666666'
 mix_palette_gg$dark_grey_2 <- '#999999'
 
+#' Light color palette
+#'
+#' @description
+#' A collection of light, pastel colors for softer data visualizations.
+#'
+#' @format A list of hex color codes for light/pastel shades
+#'
 #' @export
 mix_palette_light <- list()
 mix_palette_light$red <- '#EF9A9A' # Red
@@ -50,5 +72,12 @@ mix_palette_light$purple <- '#CCAAB3' # Purple
 mix_palette_light$sakura <- '#ECC7C0' # Sakura
 mix_palette_light$blue_grey <- '#B0BEC5' # Blue Grey
 
+#' Colorblind-friendly palette
+#'
+#' @description
+#' A colorblind-friendly palette with 8 distinct colors optimized for accessibility.
+#'
+#' @format A vector of 8 hex color codes
+#'
 #' @export
 mix_palette_cb_jp <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")

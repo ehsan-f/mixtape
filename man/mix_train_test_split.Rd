@@ -4,10 +4,10 @@
 \alias{mix_train_test_split}
 \title{Split data into training and test sets}
 \usage{
-mix_train_test_split(df = ds)
+mix_train_test_split(df)
 }
 \arguments{
-\item{df}{Data frame with train_index column (default: ds)}
+\item{df}{Data frame with train_index column}
 }
 \description{
 Splits a data frame into training and test sets using the train_index column.

@@ -3,13 +3,13 @@
 #' @description
 #' Creates a stratified train_index column using caret's createDataPartition.
 #'
-#' @param df Data frame to add index to (default: ds)
+#' @param df Data frame to add index to
 #' @param target Name of the target variable column for stratified sampling (default: 't_')
 #' @param p Proportion of data to use for training (default: 0.7)
 #'
 #' @importFrom caret createDataPartition
 #' @export
-mix_train_index <- function(df = ds, target = 't_', p = 0.7) {
+mix_train_index <- function(df, target = 't_', p = 0.7) {
 
   #-- Create index
   train_ids <- createDataPartition(as.factor(df[[target]]), p = p, list = FALSE)
@@ -26,11 +26,11 @@ mix_train_index <- function(df = ds, target = 't_', p = 0.7) {
 #' @description
 #' Splits a data frame into training and test sets using the train_index column.
 #'
-#' @param df Data frame with train_index column (default: ds)
+#' @param df Data frame with train_index column
 #'
 #' @importFrom dplyr filter
 #' @export
-mix_train_test_split <- function(df = ds) {
+mix_train_test_split <- function(df) {
 
   #-- Split data
   list(

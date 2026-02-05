@@ -15,24 +15,33 @@ Imports:
     ROCR,
     arrow,
     bigrquery,
+    butcher,
     caret,
+    devtools,
+    doFuture,
     dplyr,
+    foreach,
+    future,
     ggplot2,
     googleCloudStorageR,
     googledrive,
     googlesheets4,
+    httr2,
     janitor,
+    jsonlite,
     lubridate,
     pROC,
     purrr,
     readr,
     smbinning,
     tibble,
+    tidymodels,
     tidyr,
+    tidyverse,
     xgboost,
-    yardstick
+    yardstick,
+    zoo
 Suggests:
-    devtools,
     roxygen2
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3

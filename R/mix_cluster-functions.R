@@ -1,3 +1,14 @@
+#' Create parallel processing cluster
+#'
+#' @description
+#' Initializes a parallel processing cluster using the future package with a specified
+#' number of workers. Automatically terminates any existing clusters before creating a new one.
+#'
+#' @param n Number of workers to create (default: 3)
+#' @param max_n Maximum number of workers allowed (default: 6)
+#'
+#' @return Creates a multisession cluster and prints a confirmation message
+#'
 #' @export
 mix_cluster_make <- function(n = 3, max_n = 6) {
   tryCatch(
@@ -23,6 +34,14 @@ mix_cluster_make <- function(n = 3, max_n = 6) {
 
 }
 
+#' Stop parallel processing cluster
+#'
+#' @description
+#' Terminates the active parallel processing cluster and reports the total uptime
+#' if a cluster was previously created with mix_cluster_make.
+#'
+#' @return Stops the cluster and prints uptime message
+#'
 #' @export
 mix_cluster_stop <- function() {
   #-- Explicitly terminate clusters

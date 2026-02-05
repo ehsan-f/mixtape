@@ -8,6 +8,8 @@ gcp_auth(path = NULL, auth_arrow = T)
 }
 \arguments{
 \item{path}{Path to the Google service account JSON key file}
+
+\item{auth_arrow}{Whether to set up Arrow authentication via environment variable (default: TRUE)}
 }
 \description{
 Authenticates with multiple Google Cloud Platform services using a service account key file.

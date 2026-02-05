@@ -28,6 +28,8 @@ mix_gcs_write_arrow_dataset(
 
 \item{object_format}{Format of the file to read ('parquet', 'csv') (default: 'parquet')}
 
+\item{single_file}{Whether to write as a single file instead of a partitioned dataset (default: FALSE)}
+
 \item{basename_template}{Template for output file names (default: "part-{i}.parquet")}
 }
 \description{

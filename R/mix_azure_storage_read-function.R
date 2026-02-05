@@ -7,6 +7,7 @@
 #' @param storage_account_name Name of the Azure storage account
 #' @param container_name Name of the container in the storage account
 #' @param file_path Path to the files within the container
+#' @param regex_pattern Optional regex pattern to filter files (default: NULL)
 #' @param single_file Whether file_path points to a single file rather than a directory (default: FALSE)
 #' @param storage_type Type of storage ('blob' or 'adls', default: 'blob')
 #' @param max_files Maximum number of files to read (optional)

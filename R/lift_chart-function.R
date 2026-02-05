@@ -7,8 +7,8 @@
 #' @param prob Name of probability column (default: 'p_')
 #' @param y Name of the target variable column
 #' @param measure Name of measure column for additional analysis (optional)
-#' @param df_train Training dataset (default: ds1)
-#' @param df_test Test dataset (default: ds2)
+#' @param df_train Training dataset
+#' @param df_test Test dataset
 #' @param model Model object (optional)
 #' @param n Number of tiles (default: 10)
 #' @param nudge_train Position adjustment for training labels (default: 1.5)
@@ -23,8 +23,8 @@
 lift_chart <- function (prob = 'p_',
                         y,
                         measure = NULL,
-                        df_train = ds1,
-                        df_test = ds2,
+                        df_train,
+                        df_test,
                         model = NULL,
                         n = 10,
                         nudge_train = 1.5,

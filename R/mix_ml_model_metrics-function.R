@@ -7,6 +7,7 @@
 #'
 #' @param prob Name of the probability column
 #' @param y Name of the target variable column
+#' @param y_pred Name of the predicted class column (optional, default: NULL)
 #' @param df_train Training dataset
 #' @param df_test Test dataset
 #' @param df_features Features data frame for feature importance join (default: ds_features)

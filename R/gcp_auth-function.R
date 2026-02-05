@@ -5,6 +5,7 @@
 #' Sets up authentication for Google Drive, Google Sheets, BigQuery, and Google Cloud Storage.
 #'
 #' @param path Path to the Google service account JSON key file
+#' @param auth_arrow Whether to set up Arrow authentication via environment variable (default: TRUE)
 #'
 #' @importFrom bigrquery bq_auth
 #' @importFrom googleCloudStorageR gcs_auth

@@ -4,16 +4,16 @@
 \alias{dts}
 \title{Split data into training and test sets}
 \usage{
-dts(df = ds, x = "train_index", df_train = ds1, df_test = ds2, env_var = NULL)
+dts(df, x = "train_index", df_train, df_test, env_var = NULL)
 }
 \arguments{
-\item{df}{Data frame to split (default: ds)}
+\item{df}{Data frame to split}
 
 \item{x}{Name of the index column (default: "train_index")}
 
-\item{df_train}{Name for the training data frame variable (default: ds1)}
+\item{df_train}{Name for the training data frame variable}
 
-\item{df_test}{Name for the test data frame variable (default: ds2)}
+\item{df_test}{Name for the test data frame variable}
 
 \item{env_var}{Environment to assign variables to (default: global environment)}
 }

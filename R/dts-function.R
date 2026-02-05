@@ -4,14 +4,14 @@
 #' Splits a data frame into training and test sets based on an index column.
 #' Assigns the resulting data frames to the specified variables in the environment.
 #'
-#' @param df Data frame to split (default: ds)
+#' @param df Data frame to split
 #' @param x Name of the index column (default: "train_index")
-#' @param df_train Name for the training data frame variable (default: ds1)
-#' @param df_test Name for the test data frame variable (default: ds2)
+#' @param df_train Name for the training data frame variable
+#' @param df_test Name for the test data frame variable
 #' @param env_var Environment to assign variables to (default: global environment)
 #'
 #' @export
-dts <- function (df = ds, x = "train_index", df_train = ds1, df_test = ds2, env_var = NULL) {
+dts <- function (df, x = "train_index", df_train, df_test, env_var = NULL) {
 
   #-- Environment Variables
   # Current Env = environment(fun = NULL)
