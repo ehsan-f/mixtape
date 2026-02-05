@@ -102,9 +102,15 @@ mix_ml_tunez <- function(training_data,
     )
 
   #----- Create manual hyperparameter grid
+  # Create lookup table for min_n percentage to row count mapping
+  ds_min_n_lookup <- data.frame(
+    min_n_pct = min_n_values,
+    min_n_rows = round(min_n_values * v_nrows_training)
+  )
+
   xgb_grid <- expand.grid(
     learn_rate = learn_rate_values,
-    min_n = round(min_n_values*v_nrows_training),
+    min_n = ds_min_n_lookup$min_n_rows,
     alpha = alpha_values,
     lambda = lambda_values,
     trees = trees_values,
@@ -151,6 +157,11 @@ mix_ml_tunez <- function(training_data,
     slice(1:20)
 
   ds_best_params <- select_best(xgb_tune_results, metric = "roc_auc")
+
+  # Add min_n_pct column to show original percentage input
+  ds_best_params <- ds_best_params |>
+    left_join(ds_min_n_lookup, by = c("min_n" = "min_n_rows")) |>
+    relocate(min_n_pct, .after = min_n)
 
   message("Best parameters found:")
   print(ds_best_params)
