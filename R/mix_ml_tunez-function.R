@@ -30,7 +30,7 @@
 #' }
 #'
 #' @export
-mix_ml_tune <- function(training_data,
+mix_ml_tunez <- function(training_data,
                          recipe,
                          n_folds = 3,
 
