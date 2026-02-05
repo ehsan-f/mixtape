@@ -189,7 +189,7 @@ mix_ml_feature_selection <- function(df_train,
 
   } else {
     ds_selected_features <- ds_importance |>
-      filter(gain >= 0.01, frequency >= 0.01)
+      filter(gain >= 0.001, frequency >= 0.001)
 
     v_important_features <- ds_selected_features |>
       select(feature) |>
