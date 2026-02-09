@@ -33,6 +33,7 @@
 mix_ml_tunez <- function(training_data,
                          recipe,
                          n_folds = 3,
+                         cv_workers = NULL,
 
                          learn_rate_values = c(0.01),
                          min_n_values = c(0.003, 0.005),
@@ -56,9 +57,11 @@ mix_ml_tunez <- function(training_data,
   #----- Setup parallelisation
   total_cores <- ls_config$parallel$max_cores
 
-  cv_workers <- n_folds
-  if (parallel_type == 'everything') {
-    cv_workers <- cv_workers * 2
+  if (is.null(cv_workers)) {
+    cv_workers <- n_folds
+    if (parallel_type == 'everything') {
+      cv_workers <- cv_workers * 2
+    }
   }
 
   xgb_threads_per_worker <- floor((total_cores) / cv_workers)
