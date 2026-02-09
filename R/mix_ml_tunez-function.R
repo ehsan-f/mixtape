@@ -9,6 +9,7 @@
 #' @param training_data Training dataset
 #' @param recipe A tidymodels recipe object defining preprocessing steps
 #' @param n_folds Number of cross-validation folds (default: 3)
+#' @param n_workers Number of parallel workers (optional, auto-calculated if NULL)
 #' @param learn_rate_values Learning rate values to test (default: c(0.01))
 #' @param min_n_values Minimum node size values as proportion of training rows (default: c(0.003, 0.005))
 #' @param alpha_values L1 regularization values to test (default: c(5, 8, 10))
@@ -33,7 +34,7 @@
 mix_ml_tunez <- function(training_data,
                          recipe,
                          n_folds = 3,
-                         cv_workers = NULL,
+                         n_workers = NULL,
 
                          learn_rate_values = c(0.01),
                          min_n_values = c(0.003, 0.005),
@@ -54,32 +55,41 @@ mix_ml_tunez <- function(training_data,
   require(doFuture)
   require(butcher)
 
-  #----- Setup parallelisation
+  #----- Set future options for large datasets
+  options(future.globals.maxSize = +Inf)
+
+  #----- Calculate parallel configuration
   total_cores <- ls_config$parallel$max_cores
 
-  if (is.null(cv_workers)) {
-    cv_workers <- n_folds
+  # Auto-calculate workers if not provided
+  if (is.null(n_workers)) {
+    n_workers <- n_folds
     if (parallel_type == 'everything') {
-      cv_workers <- cv_workers * 2
+      n_workers <- n_workers * 2  # Double workers for fold + hyperparameter parallelism
     }
   }
 
-  xgb_threads_per_worker <- floor((total_cores) / cv_workers)
+  # Allocate threads to each worker
+  xgb_threads_per_worker <- floor(total_cores / n_workers)
 
-  message("Total cores: ", total_cores)
-  message("Using ", cv_workers, " workers with ", xgb_threads_per_worker, " threads per XGBoost instance")
+  #----- Display parallelization setup
+  message("\n=== Parallelization Setup ===")
+  message("Total cores available: ", total_cores)
+  message("Workers (parallel tasks): ", n_workers)
+  message("Threads per XGBoost instance: ", xgb_threads_per_worker)
+  message("Parallel strategy: ", parallel_type)
+  message("=============================\n")
 
-  #----- Configure future
-  mix_cluster_make(n = cv_workers, max_n = cv_workers)
+  #----- Initialize parallel cluster
+  mix_cluster_make(n = n_workers, max_n = n_workers)
   doFuture::registerDoFuture()
-  message("Parallel backend registered: ", foreach::getDoParName())
+  message("Backend: ", foreach::getDoParName(), " with ", foreach::getDoParWorkers(), " workers\n")
 
-  #----- Create CV folds
+  #----- Create cross-validation folds
   data_folds <- vfold_cv(training_data, v = n_folds)
+  v_nrows_training <- nrow(analysis(data_folds$splits[[1]]))
 
-  v_nrows_training <- data_folds$splits[1][[1]] |> nrow()
-
-  #----- Model specification
+  #----- XGBoost model specification
   xgb_tune_spec <- boost_tree(
     mode = "classification",
     trees = tune(),
@@ -90,22 +100,19 @@ mix_ml_tunez <- function(training_data,
   ) |>
     set_engine(
       'xgboost',
-      alpha = tune(),
-      lambda = tune(),
-
-      colsample_bytree = tune(),
+      alpha = tune(),                          # L1 regularization
+      lambda = tune(),                         # L2 regularization
+      colsample_bytree = tune(),               # Column sampling per tree
       counts = FALSE,
-
       early_stopping_rounds = early_stopping_rounds,
       eval_metric = "logloss",
-
-      tree_method = 'hist',
+      tree_method = 'hist',                    # Fast histogram-based algorithm
       nthread = xgb_threads_per_worker,
       verbose = 1
     )
 
-  #----- Create manual hyperparameter grid
-  # Create lookup table for min_n percentage to row count mapping
+  #----- Create hyperparameter grid
+  # Convert min_n from proportion to row count
   ds_min_n_lookup <- data.frame(
     min_n_pct = min_n_values,
     min_n_rows = round(min_n_values * v_nrows_training)
@@ -122,15 +129,19 @@ mix_ml_tunez <- function(training_data,
     colsample_bytree = colsample_bytree_values
   )
 
-  message("Total parameter combinations: ", nrow(xgb_grid))
+  total_tasks <- n_folds * nrow(xgb_grid)
+  message("Hyperparameter combinations: ", nrow(xgb_grid))
+  message("Total tasks (folds × params): ", total_tasks)
+  message("Estimated batches: ", ceiling(total_tasks / n_workers), "\n")
 
-  #----- Workflow
+  #----- Create workflow
   set.seed(seed)
   xgb_wf <- workflow() |>
     add_model(xgb_tune_spec) |>
     add_recipe(recipe)
 
-  #----- Run tuning
+  #----- Run hyperparameter tuning
+  message("Starting tuning (this may take a while)...\n")
   v_start_time <- Sys.time()
 
   xgb_tune_results <- tune_grid(
@@ -142,37 +153,41 @@ mix_ml_tunez <- function(training_data,
       save_pred = TRUE,
       allow_par = TRUE,
       parallel_over = parallel_type,
-      extract = function(x) butcher::butcher(x)  # Slim the workflow (includes preprocessing)
+      extract = function(x) butcher::butcher(x)  # Reduce memory by slimming workflows
     )
   )
 
   v_end_time <- Sys.time()
   time_taken <- difftime(v_end_time, v_start_time, units = "mins")
-  message("Time taken: ", round(as.numeric(time_taken), 2), " mins")
+  message("\n=== Tuning Complete ===")
+  message("Total time: ", round(as.numeric(time_taken), 2), " minutes")
+  message("=======================\n")
 
-  #----- Reset parallel processing
+  #----- Shutdown parallel cluster
   mix_cluster_stop()
 
-  #----- Extract and return only essential tuning information
+  #----- Extract best results
+  # Get top 20 hyperparameter combinations ranked by ROC AUC
   ds_results <- collect_metrics(xgb_tune_results) |>
     filter(.metric == 'roc_auc') |>
     arrange(desc(mean)) |>
     slice(1:20)
 
+  # Select best hyperparameters
   ds_best_params <- select_best(xgb_tune_results, metric = "roc_auc")
 
-  # Add min_n_pct column to show original percentage input
+  # Add original min_n percentage for reference
   ds_best_params <- ds_best_params |>
     left_join(ds_min_n_lookup, by = c("min_n" = "min_n_rows")) |>
     relocate(min_n_pct, .after = min_n)
 
-  message("Best parameters found:")
+  message("Best hyperparameters (by ROC AUC):")
   print(ds_best_params)
 
-  #----- Extract CV models for best parameters
-  message("Extracting CV models for best parameters...")
+  #----- Extract CV models with best hyperparameters
+  message("\nExtracting trained CV models for ensemble predictions...")
 
-  # Get the workflow objects trained with best parameters from all folds (already slimmed by butcher)
+  # Filter for workflows matching best parameters (already slimmed by butcher)
   best_models_slim <- xgb_tune_results |>
     select(.extracts) |>
     unnest(cols = .extracts) |>
@@ -188,12 +203,13 @@ mix_ml_tunez <- function(training_data,
     ) |>
     pull(.extracts)
 
-  message("Extracted ", length(best_models_slim), " CV models (one per fold)")
+  message("Extracted ", length(best_models_slim), " slimmed CV models (one per fold)\n")
 
+  #----- Return results
   return(list(
-    cv_models = best_models_slim,     # Slimmed workflow objects for best params (for ensembling)
-    best_params = ds_best_params,     # Best hyperparameters to use for training
-    tune_results = ds_results,        # Top 20 parameter combinations with metrics
+    cv_models = best_models_slim,
+    best_params = ds_best_params,
+    tune_results = ds_results,
     training_time = time_taken
   ))
 }
