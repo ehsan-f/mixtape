@@ -24,6 +24,7 @@
 #'   - v_important_features: Vector of selected feature names
 #'   - ds_importance: All features with importance scores
 #'   - model_auc: Training AUC of initial model
+#'   - training_time: Total time taken for feature selection
 #'
 #' @importFrom dplyr filter select left_join group_by arrange slice ungroup pull
 #' @importFrom dplyr all_of
@@ -145,6 +146,7 @@ mix_ml_feature_selection <- function(df_train,
 
   #-- Fit model
   message('Model training')
+  v_start_time <- Sys.time()
 
   xgb_wf_train <- fit(xgb_wf, data = df_train)
 
@@ -196,13 +198,17 @@ mix_ml_feature_selection <- function(df_train,
       pull()
   }
 
+  v_end_time <- Sys.time()
+  time_taken <- difftime(v_end_time, v_start_time, units = "mins")
+  message("Time taken: ", round(as.numeric(time_taken), 2), " mins")
 
   #----- Final Output
   ls_output <- list(
     ds_selected_features = ds_selected_features,
     v_important_features = v_important_features,
     ds_importance = ds_importance,
-    model_auc = ls_model_auc$log_auc_train
+    model_auc = ls_model_auc$log_auc_train,
+    training_time = time_taken
   )
 
   return(ls_output)
