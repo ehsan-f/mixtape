@@ -49,6 +49,7 @@ List with:
 \item v_important_features: Vector of selected feature names
 \item ds_importance: All features with importance scores
 \item model_auc: Training AUC of initial model
+\item training_time: Total time taken for feature selection
 }
 }
 \description{

@@ -8,6 +8,7 @@ mix_ml_tunez(
   training_data,
   recipe,
   n_folds = 3,
+  n_workers = NULL,
   learn_rate_values = c(0.01),
   min_n_values = c(0.003, 0.005),
   alpha_values = c(5, 8, 10),
@@ -27,6 +28,8 @@ mix_ml_tunez(
 \item{recipe}{A tidymodels recipe object defining preprocessing steps}
 
 \item{n_folds}{Number of cross-validation folds (default: 3)}
+
+\item{n_workers}{Number of parallel workers (optional, auto-calculated if NULL)}
 
 \item{learn_rate_values}{Learning rate values to test (default: c(0.01))}
 
@@ -53,7 +56,7 @@ mix_ml_tunez(
 \value{
 A list containing:
 \describe{
-\item{cv_models}{Slimmed CV models for best hyperparameters (one per fold) for ensemble predictions}
+\item{cv_models}{Slimmed workflow objects for best hyperparameters (one per fold) for ensemble predictions}
 \item{best_params}{Best hyperparameter combination based on ROC AUC}
 \item{tune_results}{Top 20 hyperparameter combinations with performance metrics}
 \item{training_time}{Total time taken for hyperparameter tuning}

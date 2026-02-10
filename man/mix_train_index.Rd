@@ -4,7 +4,7 @@
 \alias{mix_train_index}
 \title{Create training index}
 \usage{
-mix_train_index(df, target = "t_", p = 0.7)
+mix_train_index(df, target = "t_", p = 0.7, group = NULL)
 }
 \arguments{
 \item{df}{Data frame to add index to}
@@ -12,7 +12,13 @@ mix_train_index(df, target = "t_", p = 0.7)
 \item{target}{Name of the target variable column for stratified sampling (default: 't_')}
 
 \item{p}{Proportion of data to use for training (default: 0.7)}
+
+\item{group}{Optional column name for group-level splitting (e.g., 'user_id').
+When provided, stratification is done on a group-level "ever bad" flag (max of target per group),
+and all rows for a group are assigned to the same split.}
 }
 \description{
 Creates a stratified train_index column using caret's createDataPartition.
+Optionally splits at the group level (e.g., by user_id) to prevent the same
+group from appearing in both train and test sets.
 }
