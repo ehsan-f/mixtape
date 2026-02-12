@@ -10,6 +10,7 @@ mix_code_execution(
   google_sheet_id = NULL,
   sheet_name = "R_Code_Logs",
   script_prefix = NULL,
+  gcp_auth_var = NULL,
   ...
 )
 }
@@ -23,6 +24,8 @@ mix_code_execution(
 \item{sheet_name}{Name of the sheet in the Google Sheet for logging (default: 'R_Code_Logs')}
 
 \item{script_prefix}{Prefix to add to the script name in logs (optional)}
+
+\item{gcp_auth_var}{Path to GCP authentication JSON file for Google Sheets API access (optional)}
 
 \item{...}{Additional arguments}
 }

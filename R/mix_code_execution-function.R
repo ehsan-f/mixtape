@@ -9,6 +9,7 @@
 #' @param google_sheet_id ID of Google Sheet to log execution details (optional)
 #' @param sheet_name Name of the sheet in the Google Sheet for logging (default: 'R_Code_Logs')
 #' @param script_prefix Prefix to add to the script name in logs (optional)
+#' @param gcp_auth_var Path to GCP authentication JSON file for Google Sheets API access (optional)
 #' @param ... Additional arguments
 #'
 #' @importFrom devtools source_url
@@ -21,6 +22,7 @@ mix_code_execution <-  function(script_path = NULL,
                                 google_sheet_id = NULL,
                                 sheet_name = 'R_Code_Logs',
                                 script_prefix = NULL,
+                                gcp_auth_var = NULL,
                                 ...) {
 
   ##### Variables #####
@@ -72,6 +74,11 @@ mix_code_execution <-  function(script_path = NULL,
 
   #-- Google Sheet output
   if (!is.null(google_sheet_id)) {
+    #-- Auth
+    if (!is.null(gcp_auth_var)) {
+      gcp_auth(path = gcp_auth_var, auth_arrow = F)
+    }
+
     #-- Export
     sheet_append(data = ds_status, ss = as_sheets_id(google_sheet_id), sheet = sheet_name)
   }
