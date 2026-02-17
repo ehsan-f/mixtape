@@ -16,6 +16,10 @@
 #' @param group_features_n Integer. Number of top features to select per group
 #'   when grouped_selection = TRUE. Default: 5
 #' @param target_var Character. Name of binary target variable. Default: "t_bad_y"
+#' @param feature_selection_type Character. Column selection method when building
+#'   the model recipe: \code{"all_of"} requires all features in \code{v_features}
+#'   to exist in \code{df_train} (errors if any are missing), \code{"any_of"} silently
+#'   uses only the subset of features that are present. Default: \code{"any_of"}
 #' @param max_cores Integer. Maximum cores for parallel processing. Default: NULL
 #'   (tries ls_config$parallel$max_cores, falls back to detectCores() - 2)
 #'
@@ -27,7 +31,7 @@
 #'   - training_time: Total time taken for feature selection
 #'
 #' @importFrom dplyr filter select left_join group_by arrange slice ungroup pull
-#' @importFrom dplyr all_of
+#' @importFrom dplyr all_of any_of
 #' @importFrom recipes recipe
 #' @importFrom workflows workflow add_recipe add_model
 #' @importFrom parsnip boost_tree set_engine fit extract_fit_engine
@@ -61,6 +65,7 @@ mix_ml_feature_selection <- function(df_train,
                                      grouped_selection = T,
                                      group_features_n = 5,
                                      target_var = "t_bad_y",
+                                     feature_selection_type = "all_of",
                                      max_cores = NULL) {
 
   #----- Initial Spec
@@ -134,9 +139,18 @@ mix_ml_feature_selection <- function(df_train,
 
   #-- Create recipe
   recipe_formula <- as.formula(paste(target_var, "~ ."))
-  ds_recipe <- df_train |>
-    select(all_of(c(target_var, v_features))) |>
-    recipe(recipe_formula)
+
+  if (feature_selection_type == 'all_of') {
+    ds_recipe <- df_train |>
+      select(all_of(c(target_var, v_features))) |>
+      recipe(recipe_formula)
+  }
+
+  if (feature_selection_type == 'any_of') {
+    ds_recipe <- df_train |>
+      select(all_of(target_var), any_of(v_features)) |>
+      recipe(recipe_formula)
+  }
 
   #----- Fit Model
   #-- Initial workflow

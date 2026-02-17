@@ -14,6 +14,7 @@ mix_ml_feature_selection(
   grouped_selection = T,
   group_features_n = 5,
   target_var = "t_bad_y",
+  feature_selection_type = "all_of",
   max_cores = NULL
 )
 }
@@ -38,6 +39,11 @@ If FALSE, uses gain/frequency thresholds. Default: TRUE}
 when grouped_selection = TRUE. Default: 5}
 
 \item{target_var}{Character. Name of binary target variable. Default: "t_bad_y"}
+
+\item{feature_selection_type}{Character. Column selection method when building
+the model recipe: \code{"all_of"} requires all features in \code{v_features}
+to exist in \code{df_train} (errors if any are missing), \code{"any_of"} silently
+uses only the subset of features that are present. Default: \code{"any_of"}}
 
 \item{max_cores}{Integer. Maximum cores for parallel processing. Default: NULL
 (tries ls_config$parallel$max_cores, falls back to detectCores() - 2)}
