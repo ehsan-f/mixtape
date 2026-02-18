@@ -221,6 +221,7 @@ lift_chart <- function (prob = 'p_',
     lift_train = lift_train,
     lift_factor_train = v_lift_factor_train,
     tiles_train = df_train$tile,
+    tile_breaks = v_breaks,
     gg_train = gg_train
   )
 

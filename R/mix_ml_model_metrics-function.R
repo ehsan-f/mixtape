@@ -65,8 +65,9 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
                               df_test = df_test,
                               generate_output = F)
 
-  ls_model_metrics$lift <- ls_model_lift[setdiff(names(ls_model_lift), c('tiles_train', 'tiles_test'))]
+  ls_model_metrics$lift <- ls_model_lift[setdiff(names(ls_model_lift), c('tiles_train', 'tiles_test', 'tile_breaks'))]
   ls_model_metrics$tiles <- ls_model_lift[c('tiles_train', 'tiles_test')]
+  ls_model_metrics$tile_breaks <- ls_model_lift$tile_breaks
 
   #----- Classification Metrics (AUC, Accuracy, Precision, Recall, Lift)
   #-- Probability cutoff
@@ -135,6 +136,7 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
     feature_importance = ls_model_metrics$feature_importance,
     p_optimum_cutoff = ls_model_metrics$p_optimum_cutoff,
     tiles = ls_model_metrics$tiles,
+    tile_breaks = ls_model_metrics$tile_breaks,
     training_time = ls_model_metrics$training_time
   )
 
