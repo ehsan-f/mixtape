@@ -8,7 +8,8 @@ mix_ml_shap_prob_bands(
   shap_values,
   model_bias,
   prob_thresholds = c(0.025, 0.05, 0.1),
-  labels = NULL
+  labels = NULL,
+  output_type = "bands"
 )
 }
 \arguments{
@@ -21,9 +22,13 @@ Default: c(0.025, 0.05, 0.10) creates 4 bands (high/medium/low risk + neutral)}
 
 \item{labels}{Character vector of custom labels, or NULL for numeric codes (-3, -2, -1, 0).
 If provided, must match the number of bands (length of prob_thresholds + 1)}
+
+\item{output_type}{Character. Either "bands" (default) for an ordered factor of risk bands,
+or "prob" for a numeric vector of probability contributions (change in P(bad) due to each SHAP value)}
 }
 \value{
-Ordered factor with SHAP values categorized into risk bands
+Ordered factor of risk bands when output_type = "bands", or numeric vector of
+probability contributions when output_type = "prob"
 }
 \description{
 Converts SHAP values into categorical risk bands based on their impact on
