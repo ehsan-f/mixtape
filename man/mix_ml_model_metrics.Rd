@@ -12,6 +12,7 @@ mix_ml_model_metrics(
   df_test,
   df_features = ds_features,
   model_type = "xgb",
+  tile_breaks = NULL,
   model = NULL,
   training_time = NULL
 )
@@ -30,6 +31,8 @@ mix_ml_model_metrics(
 \item{df_features}{Features data frame for feature importance join (default: ds_features)}
 
 \item{model_type}{Type of model, used for feature importance extraction (default: 'xgb')}
+
+\item{tile_breaks}{Pre-computed tile breaks to pass to lift_chart (default: NULL)}
 
 \item{model}{Trained tidymodels workflow object (default: NULL)}
 

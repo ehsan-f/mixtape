@@ -11,6 +11,7 @@ lift_chart(
   df_train,
   df_test,
   model = NULL,
+  tile_breaks = NULL,
   n = 10,
   nudge_train = 1.5,
   nudge_test = 1.5,
@@ -31,6 +32,8 @@ lift_chart(
 \item{df_test}{Test dataset}
 
 \item{model}{Model object (optional)}
+
+\item{tile_breaks}{Pre-computed tile breaks to use instead of deriving from train data (default: NULL)}
 
 \item{n}{Number of tiles (default: 10)}
 

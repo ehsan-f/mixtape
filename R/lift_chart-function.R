@@ -10,6 +10,7 @@
 #' @param df_train Training dataset
 #' @param df_test Test dataset
 #' @param model Model object (optional)
+#' @param tile_breaks Pre-computed tile breaks to use instead of deriving from train data (default: NULL)
 #' @param n Number of tiles (default: 10)
 #' @param nudge_train Position adjustment for training labels (default: 1.5)
 #' @param nudge_test Position adjustment for test labels (default: 1.5)
@@ -26,6 +27,7 @@ lift_chart <- function (prob = 'p_',
                         df_train,
                         df_test,
                         model = NULL,
+                        tile_breaks = NULL,
                         n = 10,
                         nudge_train = 1.5,
                         nudge_test = 1.5,
@@ -61,10 +63,15 @@ lift_chart <- function (prob = 'p_',
   #================================================================================#
 
   #-- Assign tiles
-  df_train$tile <- ntile(df_train[,prob], n)
+  if (!is.null(tile_breaks)) {
+    v_breaks <- tile_breaks
+    df_train$tile <- cut(df_train[, prob], breaks = v_breaks, labels = FALSE)
+  } else {
+    df_train$tile <- ntile(df_train[,prob], n)
+    v_breaks <- c(-Inf, sapply(1:(n-1), function(i) max(df_train[df_train$tile == i, prob])), Inf)
+  }
 
   if (!is.null(df_test)) {
-    v_breaks <- c(-Inf, sapply(1:(n-1), function(i) max(df_train[df_train$tile == i, prob])), Inf)
     df_test$tile <- cut(df_test[, prob], breaks = v_breaks, labels = FALSE)
   }
 

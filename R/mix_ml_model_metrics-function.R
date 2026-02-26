@@ -12,6 +12,7 @@
 #' @param df_test Test dataset
 #' @param df_features Features data frame for feature importance join (default: ds_features)
 #' @param model_type Type of model, used for feature importance extraction (default: 'xgb')
+#' @param tile_breaks Pre-computed tile breaks to pass to lift_chart (default: NULL)
 #' @param model Trained tidymodels workflow object (default: NULL)
 #' @param training_time Training time to store in output (default: NULL)
 #'
@@ -29,6 +30,7 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
                                  df_test,
                                  df_features = ds_features,
                                  model_type = 'xgb',
+                                 tile_breaks = NULL,
                                  model = NULL,
                                  training_time = NULL) {
 
@@ -37,19 +39,21 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
 
   #-- Fix vars
   df_train[, 'p'] <- df_train[, prob]
-  df_test[, 'p'] <- df_test[, prob]
-
   df_train[, 'y'] <- df_train[, y]
-  df_test[, 'y'] <- df_test[, y]
+
+  if (!is.null(df_test)) {
+    df_test[, 'p'] <- df_test[, prob]
+    df_test[, 'y'] <- df_test[, y]
+  }
 
   if (is.factor(df_train$y)) {
     df_train$y <- df_train$y |> as_nlevels()
-    df_test$y <- df_test$y |> as_nlevels()
+    if (!is.null(df_test)) df_test$y <- df_test$y |> as_nlevels()
   }
 
   if (!is.null(y_pred)) {
     df_train[, 'y_pred'] <- df_train[, y_pred]
-    df_test[, 'y_pred'] <- df_test[, y_pred]
+    if (!is.null(df_test)) df_test[, 'y_pred'] <- df_test[, y_pred]
   }
 
   #----- ROC / AUC
@@ -63,6 +67,7 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
   ls_model_lift <- lift_chart(prob = 'p', y = 'y', measure = 'y',
                               df_train = df_train,
                               df_test = df_test,
+                              tile_breaks = tile_breaks,
                               generate_output = F)
 
   ls_model_metrics$lift <- ls_model_lift[setdiff(names(ls_model_lift), c('tiles_train', 'tiles_test', 'tile_breaks'))]
@@ -79,14 +84,11 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
 
   #-- Metrics
   y_train_factor <- df_train$y |> as.factor()
-  y_test_factor <- df_test$y |> as.factor()
 
   if (!is.null(y_pred)) {
     pred_train <- df_train$y_pred |> as.factor()
-    pred_test <- df_test$y_pred |> as.factor()
   } else {
     pred_train <- ifelse(df_train$p >= v_cutoff, 1, 0) |> as.factor()
-    pred_test <- ifelse(df_test$p >= v_cutoff, 1, 0) |> as.factor()
   }
 
   ls_model_metrics$classification <- list(
@@ -97,13 +99,17 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
       recall = recall_vec(y_train_factor, pred_train, event_level = "second"),
       lift = ls_model_metrics$lift$lift_factor_train
     ),
-    test = tibble(
-      auc = ls_model_auc$log_auc_test,
-      accuracy = accuracy_vec(y_test_factor, pred_test),
-      precision = precision_vec(y_test_factor, pred_test, event_level = "second"),
-      recall = recall_vec(y_test_factor, pred_test, event_level = "second"),
-      lift = ls_model_metrics$lift$lift_factor_test
-    )
+    test = if (!is.null(df_test)) {
+      y_test_factor <- df_test$y |> as.factor()
+      pred_test <- if (!is.null(y_pred)) df_test$y_pred |> as.factor() else ifelse(df_test$p >= v_cutoff, 1, 0) |> as.factor()
+      tibble(
+        auc = ls_model_auc$log_auc_test,
+        accuracy = accuracy_vec(y_test_factor, pred_test),
+        precision = precision_vec(y_test_factor, pred_test, event_level = "second"),
+        recall = recall_vec(y_test_factor, pred_test, event_level = "second"),
+        lift = ls_model_metrics$lift$lift_factor_test
+      )
+    } else NULL
   )
 
   #----- Feature importance
