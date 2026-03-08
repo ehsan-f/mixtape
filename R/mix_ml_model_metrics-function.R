@@ -15,6 +15,7 @@
 #' @param tile_breaks Pre-computed tile breaks to pass to lift_chart (default: NULL)
 #' @param model Trained tidymodels workflow object (default: NULL)
 #' @param training_time Training time to store in output (default: NULL)
+#' @param prob_cutoff Manual probability threshold for classification (default: NULL, auto-computed via ROC)
 #'
 #' @return A list containing auc, lift, tiles, p_optimum_cutoff, classification, feature_importance, and training_time
 #'
@@ -32,7 +33,8 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
                                  model_type = 'xgb',
                                  tile_breaks = NULL,
                                  model = NULL,
-                                 training_time = NULL) {
+                                 training_time = NULL,
+                                 prob_cutoff = NULL) {
 
   #-- List object
   ls_model_metrics <- list()
@@ -80,7 +82,7 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
   ls_model_metrics$p_optimum_cutoff <- pROC::coords(roc_obj, "best", best.method = "closest.topleft")
 
   #-- Cutoff
-  v_cutoff <- ls_model_metrics$p_optimum_cutoff$threshold
+  v_cutoff <- if (!is.null(prob_cutoff)) prob_cutoff else ls_model_metrics$p_optimum_cutoff$threshold
 
   #-- Metrics
   y_train_factor <- df_train$y |> as.factor()
