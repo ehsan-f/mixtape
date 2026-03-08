@@ -14,7 +14,8 @@ mix_ml_model_metrics(
   model_type = "xgb",
   tile_breaks = NULL,
   model = NULL,
-  training_time = NULL
+  training_time = NULL,
+  prob_cutoff = NULL
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ mix_ml_model_metrics(
 \item{model}{Trained tidymodels workflow object (default: NULL)}
 
 \item{training_time}{Training time to store in output (default: NULL)}
+
+\item{prob_cutoff}{Manual probability threshold for classification (default: NULL, auto-computed via ROC)}
 }
 \value{
 A list containing auc, lift, tiles, p_optimum_cutoff, classification, feature_importance, and training_time
