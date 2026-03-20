@@ -12,6 +12,7 @@ mix_ml_model_metrics(
   df_test,
   df_features = ds_features,
   model_type = "xgb",
+  n_tiles = 10,
   tile_breaks = NULL,
   model = NULL,
   training_time = NULL,
