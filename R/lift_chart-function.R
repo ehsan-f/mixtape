@@ -156,11 +156,12 @@ lift_chart <- function (prob = 'p_',
   #-- Train
   gg_train <- lift_train |>
     ggplot(aes(x = tile)) +
-    geom_line(aes(y = actual_train, color = 'Actual')) +
-    geom_point(aes(y = actual_train, color = 'Actual'), size = 2) +
 
     geom_line(aes(y = pred_train, color = 'Predict')) +
     geom_point(aes(y = pred_train, color = 'Predict'), size = 2) +
+
+    geom_line(aes(y = actual_train, color = 'Actual')) +
+    geom_point(aes(y = actual_train, color = 'Actual'), size = 2) +
 
     ggtitle('Lift Chart - Train', subtitle = paste0('Lift = ', round(v_lift_factor_train, 2), 'x')) +
     ylab(prob) +
@@ -190,11 +191,13 @@ lift_chart <- function (prob = 'p_',
   if (!is.null(df_test)) {
     gg_test <- lift_test |>
       ggplot(aes(x = tile)) +
-      geom_line(aes(y = actual_test, color = 'Actual')) +
-      geom_point(aes(y = actual_test, color = 'Actual'), size = 2) +
 
       geom_line(aes(y = pred_test, color = 'Predict')) +
       geom_point(aes(y = pred_test, color = 'Predict'), size = 2) +
+
+      geom_line(aes(y = actual_test, color = 'Actual')) +
+      geom_point(aes(y = actual_test, color = 'Actual'), size = 2) +
+
 
       ggtitle('Lift Chart - Test', subtitle = paste0('Lift = ', round(v_lift_factor_test, 2), 'x')) +
       ylab(prob) +
