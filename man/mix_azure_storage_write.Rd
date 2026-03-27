@@ -5,40 +5,40 @@
 \title{Write data to Azure Storage (Blob or ADLS)}
 \usage{
 mix_azure_storage_write(
+  df,
   storage_account_name,
   container_name,
-  folder_path,
+  prefix,
+  storage_key,
   storage_type = "adls",
-  object_name = "part_",
-  df,
   object_format = "parquet",
-  max_object_size_mb = 50,
-  object_name_wildcard_length = 5,
-  storage_key
+  object_name = "part_",
+  single_file = F,
+  max_rows_per_file = 1e+05
 )
 }
 \arguments{
+\item{df}{Data frame to write}
+
 \item{storage_account_name}{Name of the Azure storage account}
 
 \item{container_name}{Name of the container in the storage account}
 
-\item{folder_path}{Path to the folder within the container}
+\item{prefix}{Path to the destination folder within the container}
 
-\item{storage_type}{Type of storage ('blob' or 'adls', default: 'blob')}
+\item{storage_key}{Azure storage account key for authentication}
+
+\item{storage_type}{Type of storage ('blob' or 'adls', default: 'adls')}
+
+\item{object_format}{Format for the output files ('parquet', 'csv') (default: 'parquet')}
 
 \item{object_name}{Base name for the output files (default: 'part_')}
 
-\item{df}{Data frame to write}
+\item{single_file}{Whether to write as a single file instead of multiple parts (default: FALSE)}
 
-\item{object_format}{Format for the output files ('parquet', 'csv', 'rds') (default: 'parquet')}
-
-\item{max_object_size_mb}{Maximum size of each output file in MB (default: 50)}
-
-\item{object_name_wildcard_length}{Length of the wildcard part in object names (default: 5)}
-
-\item{storage_key}{Azure storage account key for authentication}
+\item{max_rows_per_file}{Maximum number of rows per file (default: 1000000)}
 }
 \description{
-Writes a data frame to Azure Storage (Blob or ADLS) in batches.
-Supports different file formats and handles error conditions.
+Writes a data frame to Azure Storage (Blob or ADLS). Supports parquet and csv formats,
+with optional splitting into multiple files by row limit.
 }

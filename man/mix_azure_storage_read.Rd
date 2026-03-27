@@ -7,22 +7,11 @@
 mix_azure_storage_read(
   storage_account_name,
   container_name,
-  file_path,
-  regex_pattern = NULL,
-  single_file = F,
-  storage_type = "adls",
-  max_files = NULL,
-  object_format = "parquet",
+  prefix,
   storage_key,
-  var_clean_names = F,
-  clean_vars = F,
-  add_time_fields = F,
-  time_field = NULL,
-  csv_delim = ",",
-  csv_col_names = T,
-  skip_lines = 0,
-  preserve_partitions = F,
-  partition_column = NULL
+  storage_type = "adls",
+  object_format = "parquet",
+  regex_pattern = NULL
 )
 }
 \arguments{
@@ -30,39 +19,17 @@ mix_azure_storage_read(
 
 \item{container_name}{Name of the container in the storage account}
 
-\item{file_path}{Path to the files within the container}
-
-\item{regex_pattern}{Optional regex pattern to filter files (default: NULL)}
-
-\item{single_file}{Whether file_path points to a single file rather than a directory (default: FALSE)}
-
-\item{storage_type}{Type of storage ('blob' or 'adls', default: 'blob')}
-
-\item{max_files}{Maximum number of files to read (optional)}
-
-\item{object_format}{Format of the files to read ('parquet', 'csv', 'json', 'rds') (default: 'parquet')}
+\item{prefix}{Path to the folder or single file within the container}
 
 \item{storage_key}{Azure storage account key for authentication}
 
-\item{var_clean_names}{Whether to clean variable names (default: FALSE)}
+\item{storage_type}{Type of storage ('blob' or 'adls', default: 'adls')}
 
-\item{clean_vars}{Whether to clean variables (convert dates/times) (default: FALSE)}
+\item{object_format}{Format of the files to read ('parquet', 'csv', 'tsv', 'json') (default: 'parquet')}
 
-\item{add_time_fields}{Whether to add time fields (default: FALSE)}
-
-\item{time_field}{Field to use for time-based operations if add_time_fields is TRUE}
-
-\item{csv_delim}{Delimiter for CSV files (default: ',')}
-
-\item{csv_col_names}{Colnames for CSV files (default: TRUE)}
-
-\item{skip_lines}{Number of lines to skip (default: 0)}
-
-\item{preserve_partitions}{Whether to extract and preserve partition columns from directory structure (default: FALSE)}
-
-\item{partition_column}{Name of the partition column to extract from file paths (required if preserve_partitions is TRUE)}
+\item{regex_pattern}{Optional regex pattern to filter files (default: NULL)}
 }
 \description{
-Reads data files from Azure Storage (Blob or ADLS). Supports different file formats
-including parquet, csv, json, and rds. Handles authentication and error conditions.
+Reads parquet, csv, tsv, or json files from Azure Storage (Blob or ADLS) directly
+into memory without writing temp files.
 }
