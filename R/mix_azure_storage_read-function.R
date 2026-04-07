@@ -11,6 +11,7 @@
 #' @param storage_type Type of storage ('blob' or 'adls', default: 'adls')
 #' @param object_format Format of the files to read ('parquet', 'csv', 'tsv', 'json') (default: 'parquet')
 #' @param regex_pattern Optional regex pattern to filter files (default: NULL)
+#' @param n_files Number of files to read; if NULL, reads all files (default: NULL)
 #'
 #' @importFrom arrow read_parquet read_json_arrow
 #' @importFrom AzureStor storage_endpoint list_storage_containers list_storage_files storage_download
@@ -24,7 +25,8 @@ mix_azure_storage_read <- function(storage_account_name,
                                    storage_key,
                                    storage_type = 'adls',
                                    object_format = 'parquet',
-                                   regex_pattern = NULL) {
+                                   regex_pattern = NULL,
+                                   n_files = NULL) {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -60,6 +62,11 @@ mix_azure_storage_read <- function(storage_account_name,
   }
 
   message('Files found: ', length(v_object_names))
+
+  if (!is.null(n_files)) {
+    v_object_names <- head(v_object_names, n_files)
+    message('Files to read: ', length(v_object_names))
+  }
 
   #-- Read files into memory (no temp files)
   ls_object <- vector("list", length(v_object_names))

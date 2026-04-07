@@ -11,7 +11,8 @@ mix_azure_storage_read(
   storage_key,
   storage_type = "adls",
   object_format = "parquet",
-  regex_pattern = NULL
+  regex_pattern = NULL,
+  n_files = NULL
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ mix_azure_storage_read(
 \item{object_format}{Format of the files to read ('parquet', 'csv', 'tsv', 'json') (default: 'parquet')}
 
 \item{regex_pattern}{Optional regex pattern to filter files (default: NULL)}
+
+\item{n_files}{Number of files to read; if NULL, reads all files (default: NULL)}
 }
 \description{
 Reads parquet, csv, tsv, or json files from Azure Storage (Blob or ADLS) directly
