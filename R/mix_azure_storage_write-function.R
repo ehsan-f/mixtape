@@ -10,14 +10,16 @@
 #' @param prefix Path to the destination folder within the container
 #' @param storage_key Azure storage account key for authentication
 #' @param storage_type Type of storage ('blob' or 'adls', default: 'adls')
-#' @param object_format Format for the output files ('parquet', 'csv') (default: 'parquet')
+#' @param object_format Format for the output files ('parquet', 'csv', 'json') (default: 'parquet')
 #' @param object_name Base name for the output files (default: 'part_')
 #' @param single_file Whether to write as a single file instead of multiple parts (default: FALSE)
+#' @param compress_json Whether to gzip-compress JSON output. When TRUE, files get a .json.gz extension; when FALSE, plain .json (default: TRUE, only applies when object_format = 'json')
 #' @param max_rows_per_file Maximum number of rows per file (default: 1000000)
 #'
 #' @importFrom arrow write_parquet
 #' @importFrom AzureStor storage_endpoint list_storage_containers storage_upload
 #' @importFrom readr write_csv
+#' @importFrom jsonlite toJSON write_json
 #' @export
 mix_azure_storage_write <- function(df,
                                     storage_account_name,
@@ -28,6 +30,7 @@ mix_azure_storage_write <- function(df,
                                     object_format = 'parquet',
                                     object_name = 'part_',
                                     single_file = F,
+                                    compress_json = T,
                                     max_rows_per_file = 100000) {
 
   #-- Start time
@@ -56,10 +59,13 @@ mix_azure_storage_write <- function(df,
 
   message('Total rows: ', format(v_rows, big.mark = ','))
 
+  #-- File extension
+  v_file_ext <- if (object_format == 'json' && compress_json == T) 'json.gz' else object_format
+
   #-- Single file upload
   if (single_file == T) {
-    v_file_name <- paste0(object_name, '.', object_format)
-    temp_file <- tempfile(fileext = paste0('.', object_format))
+    v_file_name <- paste0(object_name, '.', v_file_ext)
+    temp_file <- tempfile(fileext = paste0('.', v_file_ext))
     on.exit(if (file.exists(temp_file)) file.remove(temp_file), add = TRUE)
 
     message('Writing: ', v_file_name)
@@ -68,6 +74,14 @@ mix_azure_storage_write <- function(df,
       write_parquet(x = df, sink = temp_file)
     } else if (object_format == 'csv') {
       write_csv(x = df, file = temp_file)
+    } else if (object_format == 'json') {
+      if (compress_json == T) {
+        con <- gzfile(temp_file, 'wb')
+        writeLines(toJSON(df, auto_unbox = T), con)
+        close(con)
+      } else {
+        write_json(df, temp_file, auto_unbox = T)
+      }
     }
 
     storage_upload(v_target_container,
@@ -84,8 +98,8 @@ mix_azure_storage_write <- function(df,
 
     for (i in seq_len(v_n_files)) {
       v_file_number <- formatC(i, width = 5, flag = '0')
-      v_file_name <- paste0(object_name, v_file_number, '.', object_format)
-      temp_file <- tempfile(fileext = paste0('.', object_format))
+      v_file_name <- paste0(object_name, v_file_number, '.', v_file_ext)
+      temp_file <- tempfile(fileext = paste0('.', v_file_ext))
       on.exit(if (file.exists(temp_file)) file.remove(temp_file), add = TRUE)
 
       df_batch <- df[(v_batch_seq[i] + 1):v_batch_seq[i + 1], ]
@@ -96,6 +110,14 @@ mix_azure_storage_write <- function(df,
         write_parquet(x = df_batch, sink = temp_file)
       } else if (object_format == 'csv') {
         write_csv(x = df_batch, file = temp_file)
+      } else if (object_format == 'json') {
+        if (compress_json == T) {
+          con <- gzfile(temp_file, 'wb')
+          writeLines(toJSON(df_batch, auto_unbox = T), con)
+          close(con)
+        } else {
+          write_json(df_batch, temp_file, auto_unbox = T)
+        }
       }
 
       storage_upload(v_target_container,

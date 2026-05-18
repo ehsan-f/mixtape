@@ -12,12 +12,13 @@
 #' @param object_format Format of the files to read ('parquet', 'csv', 'tsv', 'json') (default: 'parquet')
 #' @param regex_pattern Optional regex pattern to filter files (default: NULL)
 #' @param n_files Number of files to read; if NULL, reads all files (default: NULL)
+#' @param return_list If TRUE, returns a list of data frames/objects instead of combining into one (default: FALSE)
 #'
-#' @importFrom arrow read_parquet read_json_arrow
+#' @importFrom arrow read_parquet
 #' @importFrom AzureStor storage_endpoint list_storage_containers list_storage_files storage_download
+#' @importFrom jsonlite read_json fromJSON
 #' @importFrom purrr list_rbind
 #' @importFrom readr read_csv read_tsv
-#' @importFrom tibble as_tibble
 #' @export
 mix_azure_storage_read <- function(storage_account_name,
                                    container_name,
@@ -26,7 +27,8 @@ mix_azure_storage_read <- function(storage_account_name,
                                    storage_type = 'adls',
                                    object_format = 'parquet',
                                    regex_pattern = NULL,
-                                   n_files = NULL) {
+                                   n_files = NULL,
+                                   return_list = F) {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -49,8 +51,9 @@ mix_azure_storage_read <- function(storage_account_name,
   #-- List files
   ds_storage_files <- list_storage_files(v_target_container, prefix, recursive = T)
 
+  v_ext_pattern <- if (object_format == 'json') '\\.json(\\.gz)?$' else paste0('\\.', object_format, '$')
   v_object_names <- ds_storage_files$name |>
-    grep(pattern = paste0('\\.', object_format, '$'), ignore.case = T, value = T)
+    grep(pattern = v_ext_pattern, ignore.case = T, value = T)
 
   if (!is.null(regex_pattern)) {
     v_object_names <- v_object_names |>
@@ -83,16 +86,23 @@ mix_azure_storage_read <- function(storage_account_name,
     } else if (object_format == 'tsv') {
       read_tsv(I(buf), show_col_types = F)
     } else if (object_format == 'json') {
-      read_json_arrow(buf) |> as_tibble()
+      if (grepl('\\.gz$', v_object_names[i], ignore.case = T)) {
+        buf <- memDecompress(buf, type = 'gzip')
+      }
+      fromJSON(rawToChar(buf), simplifyVector = T)
     }
   }
-
-  #-- Combine
-  ds_object <- ls_object |> list_rbind()
 
   #-- End time
   v_time_taken <- difftime(Sys.time(), v_start_time, units = 'mins')
   message('Time taken: ', round(as.numeric(v_time_taken), 3), ' mins')
 
-  return(ds_object)
+  #-- Return data
+  if (return_list == T) {
+    return(ls_object)
+  } else {
+    ds_object <- ls_object |> list_rbind()
+    return(ds_object)
+  }
+
 }

@@ -14,6 +14,7 @@ mix_azure_storage_write(
   object_format = "parquet",
   object_name = "part_",
   single_file = F,
+  compress_json = T,
   max_rows_per_file = 1e+05
 )
 }
@@ -30,11 +31,13 @@ mix_azure_storage_write(
 
 \item{storage_type}{Type of storage ('blob' or 'adls', default: 'adls')}
 
-\item{object_format}{Format for the output files ('parquet', 'csv') (default: 'parquet')}
+\item{object_format}{Format for the output files ('parquet', 'csv', 'json') (default: 'parquet')}
 
 \item{object_name}{Base name for the output files (default: 'part_')}
 
 \item{single_file}{Whether to write as a single file instead of multiple parts (default: FALSE)}
+
+\item{compress_json}{Whether to gzip-compress JSON output. When TRUE, files get a .json.gz extension; when FALSE, plain .json (default: TRUE, only applies when object_format = 'json')}
 
 \item{max_rows_per_file}{Maximum number of rows per file (default: 1000000)}
 }
