@@ -82,7 +82,7 @@ mix_azure_storage_write <- function(df,
         writeLines(toJSON(df, auto_unbox = T), con)
         close(con)
       } else {
-        write_json(df, temp_file, auto_unbox = T)
+        write_json(df, temp_file, auto_unbox = T, na = 'null')
       }
     }
 
