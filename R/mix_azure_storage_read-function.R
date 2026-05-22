@@ -12,6 +12,7 @@
 #' @param object_format Format of the files to read ('parquet', 'csv', 'tsv', 'json') (default: 'parquet')
 #' @param regex_pattern Optional regex pattern to filter files (default: NULL)
 #' @param n_files Number of files to read; if NULL, reads all files (default: NULL)
+#' @param single_file If TRUE, treats `prefix` as the full path to a single file and skips file listing (default: FALSE)
 #' @param return_list If TRUE, returns a list of data frames/objects instead of combining into one (default: FALSE)
 #'
 #' @importFrom arrow read_parquet
@@ -27,8 +28,15 @@ mix_azure_storage_read <- function(storage_account_name,
                                    storage_type = 'adls',
                                    object_format = 'parquet',
                                    regex_pattern = NULL,
+                                   single_file = F,
                                    n_files = NULL,
                                    return_list = F) {
+
+  #-- Validate inputs
+  stopifnot(
+    isTRUE(single_file) || isFALSE(single_file),
+    isTRUE(return_list) || isFALSE(return_list)
+  )
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -49,26 +57,34 @@ mix_azure_storage_read <- function(storage_account_name,
   v_target_container <- ls_storage_containers[[container_name]]
 
   #-- List files
-  ds_storage_files <- list_storage_files(v_target_container, prefix, recursive = T)
+  if (single_file == T) {
 
-  v_ext_pattern <- if (object_format == 'json') '\\.json(\\.gz)?$' else paste0('\\.', object_format, '$')
-  v_object_names <- ds_storage_files$name |>
-    grep(pattern = v_ext_pattern, ignore.case = T, value = T)
+    v_object_names <- prefix
 
-  if (!is.null(regex_pattern)) {
-    v_object_names <- v_object_names |>
-      grep(pattern = regex_pattern, ignore.case = T, value = T)
-  }
+  } else {
 
-  if (length(v_object_names) == 0) {
-    stop("No ", object_format, " files found at: ", prefix)
-  }
+    ds_storage_files <- list_storage_files(v_target_container, prefix, recursive = T)
 
-  message('Files found: ', length(v_object_names))
+    v_ext_pattern <- if (object_format == 'json') '\\.json(\\.gz)?$' else paste0('\\.', object_format, '$')
+    v_object_names <- ds_storage_files$name |>
+      grep(pattern = v_ext_pattern, ignore.case = T, value = T)
 
-  if (!is.null(n_files)) {
-    v_object_names <- head(v_object_names, n_files)
-    message('Files to read: ', length(v_object_names))
+    if (!is.null(regex_pattern)) {
+      v_object_names <- v_object_names |>
+        grep(pattern = regex_pattern, ignore.case = T, value = T)
+    }
+
+    if (length(v_object_names) == 0) {
+      stop("No ", object_format, " files found at: ", prefix)
+    }
+
+    message('Files found: ', length(v_object_names))
+
+    if (!is.null(n_files)) {
+      v_object_names <- head(v_object_names, n_files)
+      message('Files to read: ', length(v_object_names))
+    }
+
   }
 
   #-- Read files into memory (no temp files)

@@ -12,6 +12,7 @@ mix_azure_storage_read(
   storage_type = "adls",
   object_format = "parquet",
   regex_pattern = NULL,
+  single_file = F,
   n_files = NULL,
   return_list = F
 )
@@ -30,6 +31,8 @@ mix_azure_storage_read(
 \item{object_format}{Format of the files to read ('parquet', 'csv', 'tsv', 'json') (default: 'parquet')}
 
 \item{regex_pattern}{Optional regex pattern to filter files (default: NULL)}
+
+\item{single_file}{If TRUE, treats \code{prefix} as the full path to a single file and skips file listing (default: FALSE)}
 
 \item{n_files}{Number of files to read; if NULL, reads all files (default: NULL)}
 
