@@ -79,7 +79,7 @@ mix_azure_storage_write <- function(df,
     } else if (object_format == 'json') {
       if (compress_json == T) {
         con <- gzfile(temp_file, 'wb')
-        writeLines(toJSON(df, auto_unbox = T), con)
+        writeLines(toJSON(df, auto_unbox = T, na = 'null'), con)
         close(con)
       } else {
         write_json(df, temp_file, auto_unbox = T, na = 'null')
@@ -118,10 +118,10 @@ mix_azure_storage_write <- function(df,
       } else if (object_format == 'json') {
         if (compress_json == T) {
           con <- gzfile(temp_file, 'wb')
-          writeLines(toJSON(df_batch, auto_unbox = T), con)
+          writeLines(toJSON(df_batch, auto_unbox = T, na = 'null'), con)
           close(con)
         } else {
-          write_json(df_batch, temp_file, auto_unbox = T)
+          write_json(df_batch, temp_file, auto_unbox = T, na = 'null')
         }
       }
 
