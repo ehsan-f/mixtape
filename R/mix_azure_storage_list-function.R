@@ -23,6 +23,9 @@ mix_azure_storage_list <- function(storage_account_name,
                                    object_format = NULL,
                                    regex_pattern = NULL) {
 
+  #-- Start time
+  v_start_time <- Sys.time()
+
   message('File path: ', prefix)
   message('Storage type: ', storage_type)
 
@@ -55,6 +58,10 @@ mix_azure_storage_list <- function(storage_account_name,
     keep <- grepl(regex_pattern, ds_storage_files$name, ignore.case = T)
     ds_storage_files <- ds_storage_files[keep, ]
   }
+
+  #-- End time
+  v_time_taken <- difftime(Sys.time(), v_start_time, units = 'mins')
+  message('Time taken: ', round(as.numeric(v_time_taken), 3), ' mins')
 
   #-- Return data
   message('Files found: ', nrow(ds_storage_files))
