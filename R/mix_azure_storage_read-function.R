@@ -1,26 +1,3 @@
-#' Read data from Azure Storage (Blob or ADLS)
-#'
-#' @description
-#' Reads parquet, csv, tsv, or json files from Azure Storage (Blob or ADLS) directly
-#' into memory without writing temp files.
-#'
-#' @param storage_account_name Name of the Azure storage account
-#' @param container_name Name of the container in the storage account
-#' @param prefix Path to the folder or single file within the container
-#' @param storage_key Azure storage account key for authentication
-#' @param storage_type Type of storage ('blob' or 'adls', default: 'adls')
-#' @param object_format Format of the files to read ('parquet', 'csv', 'tsv', 'json') (default: 'parquet')
-#' @param regex_pattern Optional regex pattern to filter files (default: NULL)
-#' @param n_files Number of files to read; if NULL, reads all files (default: NULL)
-#' @param single_file If TRUE, treats `prefix` as the full path to a single file and skips file listing (default: FALSE)
-#' @param return_list If TRUE, returns a list of data frames/objects instead of combining into one (default: FALSE)
-#'
-#' @importFrom arrow read_parquet
-#' @importFrom AzureStor storage_endpoint list_storage_containers list_storage_files storage_download
-#' @importFrom jsonlite read_json fromJSON
-#' @importFrom purrr list_rbind
-#' @importFrom readr read_csv read_tsv
-#' @export
 mix_azure_storage_read <- function(storage_account_name,
                                    container_name,
                                    prefix,
@@ -114,11 +91,16 @@ mix_azure_storage_read <- function(storage_account_name,
   message('Time taken: ', round(as.numeric(v_time_taken), 3), ' mins')
 
   #-- Return data
-  if (return_list == T) {
-    return(ls_object)
+  if (single_file == T) {
+    return(ls_object[[1]])
   } else {
-    ds_object <- ls_object |> list_rbind()
-    return(ds_object)
+    if (return_list == T) {
+      return(ls_object)
+    } else {
+      ds_object <- ls_object |> list_rbind()
+      return(ds_object)
+    }
   }
+
 
 }
