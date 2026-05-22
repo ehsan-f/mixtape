@@ -39,8 +39,12 @@ mix_azure_storage_write <- function(df,
   message('Prefix: ', prefix)
   message('Storage type: ', storage_type)
 
-  v_rows <- nrow(df)
-  if (v_rows == 0) stop("Cannot write empty data frame")
+  if (!is.data.frame(df)) {
+    if (object_format != 'json') stop("Non-data.frame input only supported with object_format = 'json'")
+    single_file <- T
+  } else {
+    if (nrow(df) == 0) stop("Cannot write empty data frame")
+  }
 
   #-- Storage endpoint
   if (tolower(storage_type) == 'adls') {
@@ -57,8 +61,6 @@ mix_azure_storage_write <- function(df,
   #-- Folder path trailing slash
   prefix <- paste0(gsub('/$', '', prefix), '/')
 
-  message('Total rows: ', format(v_rows, big.mark = ','))
-
   #-- File extension
   v_file_ext <- if (object_format == 'json' && compress_json == T) 'json.gz' else object_format
 
@@ -66,7 +68,7 @@ mix_azure_storage_write <- function(df,
   if (single_file == T) {
     v_file_name <- paste0(object_name, '.', v_file_ext)
     temp_file <- tempfile(fileext = paste0('.', v_file_ext))
-    on.exit(if (file.exists(temp_file)) file.remove(temp_file), add = TRUE)
+    on.exit(if (file.exists(temp_file)) file.remove(temp_file), add = T)
 
     message('Writing: ', v_file_name)
 
@@ -90,6 +92,9 @@ mix_azure_storage_write <- function(df,
 
   } else {
     #-- Build row index splits
+    v_rows <- nrow(df)
+    message('Total rows: ', format(v_rows, big.mark = ','))
+
     v_batch_seq <- c(seq(0, v_rows, by = max_rows_per_file), v_rows)
     v_batch_seq <- unique(v_batch_seq)
 
@@ -100,7 +105,7 @@ mix_azure_storage_write <- function(df,
       v_file_number <- formatC(i, width = 5, flag = '0')
       v_file_name <- paste0(object_name, v_file_number, '.', v_file_ext)
       temp_file <- tempfile(fileext = paste0('.', v_file_ext))
-      on.exit(if (file.exists(temp_file)) file.remove(temp_file), add = TRUE)
+      on.exit(if (file.exists(temp_file)) file.remove(temp_file), add = T)
 
       df_batch <- df[(v_batch_seq[i] + 1):v_batch_seq[i + 1], ]
 
