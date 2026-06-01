@@ -1,3 +1,24 @@
+#' Read data files from Azure Storage
+#'
+#' @param storage_account_name Name of the Azure storage account
+#' @param container_name Name of the container in the storage account
+#' @param prefix Path prefix (folder or full file path) within the container
+#' @param storage_key Azure storage account key for authentication
+#' @param storage_type Type of storage endpoint ('adls' or 'blob', default: 'adls')
+#' @param object_format File format to read ('parquet', 'csv', 'tsv', or 'json', default: 'parquet')
+#' @param regex_pattern Optional regex to filter file names
+#' @param single_file If TRUE, treat prefix as a single file path (default: FALSE)
+#' @param n_files Optional maximum number of files to read
+#' @param return_list If TRUE, return a list of data frames instead of a single combined data frame (default: FALSE)
+#'
+#' @return A data frame (or list of data frames if return_list is TRUE)
+#'
+#' @importFrom AzureStor storage_endpoint list_storage_containers list_storage_files storage_download
+#' @importFrom arrow read_parquet
+#' @importFrom readr read_csv read_tsv
+#' @importFrom jsonlite fromJSON
+#' @importFrom purrr list_rbind
+#' @export
 mix_azure_storage_read <- function(storage_account_name,
                                    container_name,
                                    prefix,

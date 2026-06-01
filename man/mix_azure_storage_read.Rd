@@ -2,7 +2,7 @@
 % Please edit documentation in R/mix_azure_storage_read-function.R
 \name{mix_azure_storage_read}
 \alias{mix_azure_storage_read}
-\title{Read data from Azure Storage (Blob or ADLS)}
+\title{Read data files from Azure Storage}
 \usage{
 mix_azure_storage_read(
   storage_account_name,
@@ -22,23 +22,25 @@ mix_azure_storage_read(
 
 \item{container_name}{Name of the container in the storage account}
 
-\item{prefix}{Path to the folder or single file within the container}
+\item{prefix}{Path prefix (folder or full file path) within the container}
 
 \item{storage_key}{Azure storage account key for authentication}
 
-\item{storage_type}{Type of storage ('blob' or 'adls', default: 'adls')}
+\item{storage_type}{Type of storage endpoint ('adls' or 'blob', default: 'adls')}
 
-\item{object_format}{Format of the files to read ('parquet', 'csv', 'tsv', 'json') (default: 'parquet')}
+\item{object_format}{File format to read ('parquet', 'csv', 'tsv', or 'json', default: 'parquet')}
 
-\item{regex_pattern}{Optional regex pattern to filter files (default: NULL)}
+\item{regex_pattern}{Optional regex to filter file names}
 
-\item{single_file}{If TRUE, treats \code{prefix} as the full path to a single file and skips file listing (default: FALSE)}
+\item{single_file}{If TRUE, treat prefix as a single file path (default: FALSE)}
 
-\item{n_files}{Number of files to read; if NULL, reads all files (default: NULL)}
+\item{n_files}{Optional maximum number of files to read}
 
-\item{return_list}{If TRUE, returns a list of data frames/objects instead of combining into one (default: FALSE)}
+\item{return_list}{If TRUE, return a list of data frames instead of a single combined data frame (default: FALSE)}
+}
+\value{
+A data frame (or list of data frames if return_list is TRUE)
 }
 \description{
-Reads parquet, csv, tsv, or json files from Azure Storage (Blob or ADLS) directly
-into memory without writing temp files.
+Read data files from Azure Storage
 }
