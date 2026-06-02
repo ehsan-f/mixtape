@@ -23,6 +23,7 @@
 bin <- function (x, y, data, type = "a", q = 0.2, cut = NULL, silent = F,
                  custom_plot = T, custom_colour_scale_start = '#5720FF', custom_colour_scale_end = 'grey')
 {
+
   #-- Dataframe
   data <- as.data.frame(data)
 
