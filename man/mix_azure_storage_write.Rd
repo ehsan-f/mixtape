@@ -31,7 +31,7 @@ mix_azure_storage_write(
 
 \item{storage_type}{Type of storage ('blob' or 'adls', default: 'adls')}
 
-\item{object_format}{Format for the output files ('parquet', 'csv', 'json') (default: 'parquet')}
+\item{object_format}{Format for the output files ('parquet', 'csv', 'json', 'rds') (default: 'parquet')}
 
 \item{object_name}{Base name for the output files (default: 'part_')}
 

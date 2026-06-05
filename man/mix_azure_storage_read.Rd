@@ -28,7 +28,7 @@ mix_azure_storage_read(
 
 \item{storage_type}{Type of storage endpoint ('adls' or 'blob', default: 'adls')}
 
-\item{object_format}{File format to read ('parquet', 'csv', 'tsv', or 'json', default: 'parquet')}
+\item{object_format}{File format to read ('parquet', 'csv', 'tsv', 'json', or 'rds', default: 'parquet')}
 
 \item{regex_pattern}{Optional regex to filter file names}
 

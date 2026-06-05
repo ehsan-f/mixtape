@@ -5,7 +5,7 @@
 #' @param prefix Path prefix (folder or full file path) within the container
 #' @param storage_key Azure storage account key for authentication
 #' @param storage_type Type of storage endpoint ('adls' or 'blob', default: 'adls')
-#' @param object_format File format to read ('parquet', 'csv', 'tsv', or 'json', default: 'parquet')
+#' @param object_format File format to read ('parquet', 'csv', 'tsv', 'json', or 'rds', default: 'parquet')
 #' @param regex_pattern Optional regex to filter file names
 #' @param single_file If TRUE, treat prefix as a single file path (default: FALSE)
 #' @param n_files Optional maximum number of files to read
@@ -104,6 +104,11 @@ mix_azure_storage_read <- function(storage_account_name,
         buf <- memDecompress(buf, type = 'gzip')
       }
       fromJSON(rawToChar(buf), simplifyVector = T)
+    } else if (object_format == 'rds') {
+      con <- rawConnection(buf)
+      result <- readRDS(con)
+      close(con)
+      result
     }
   }
 

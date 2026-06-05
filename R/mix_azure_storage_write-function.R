@@ -10,7 +10,7 @@
 #' @param prefix Path to the destination folder within the container
 #' @param storage_key Azure storage account key for authentication
 #' @param storage_type Type of storage ('blob' or 'adls', default: 'adls')
-#' @param object_format Format for the output files ('parquet', 'csv', 'json') (default: 'parquet')
+#' @param object_format Format for the output files ('parquet', 'csv', 'json', 'rds') (default: 'parquet')
 #' @param object_name Base name for the output files (default: 'part_')
 #' @param single_file Whether to write as a single file instead of multiple parts (default: FALSE)
 #' @param compress_json Whether to gzip-compress JSON output. When TRUE, files get a .json.gz extension; when FALSE, plain .json (default: TRUE, only applies when object_format = 'json')
@@ -84,6 +84,8 @@ mix_azure_storage_write <- function(df,
       } else {
         write_json(df, temp_file, auto_unbox = T, na = 'null')
       }
+    } else if (object_format == 'rds') {
+      saveRDS(df, file = temp_file)
     }
 
     storage_upload(v_target_container,
@@ -123,6 +125,8 @@ mix_azure_storage_write <- function(df,
         } else {
           write_json(df_batch, temp_file, auto_unbox = T, na = 'null')
         }
+      } else if (object_format == 'rds') {
+        saveRDS(df_batch, file = temp_file)
       }
 
       storage_upload(v_target_container,
