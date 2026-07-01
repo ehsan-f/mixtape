@@ -40,7 +40,7 @@ mix_azure_storage_write <- function(df,
   message('Storage type: ', storage_type)
 
   if (!is.data.frame(df)) {
-    if (object_format != 'json') stop("Non-data.frame input only supported with object_format = 'json'")
+    if (!object_format %in% c('json', 'rds')) stop("Non-data.frame input only supported with object_formats 'json' and 'rds'")
     single_file <- T
   } else {
     if (nrow(df) == 0) stop("Cannot write empty data frame")
