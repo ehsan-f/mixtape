@@ -25,7 +25,7 @@
 #'
 #' @return List with:
 #'   - ds_selected_features: Selected features with importance scores
-#'   - v_important_features: Vector of selected feature names
+#'   - v_selected_features: Vector of selected feature names
 #'   - ds_importance: All features with importance scores
 #'   - model_auc: Training AUC of initial model
 #'   - training_time: Total time taken for feature selection
@@ -199,7 +199,7 @@ mix_ml_feature_selection <- function(df_train,
       ungroup() |>
       arrange(desc(gain))
 
-    v_important_features <- ds_selected_features |>
+    v_selected_features <- ds_selected_features |>
       select(feature) |>
       pull()
 
@@ -207,7 +207,7 @@ mix_ml_feature_selection <- function(df_train,
     ds_selected_features <- ds_importance |>
       filter(gain >= 0.001, frequency >= 0.001)
 
-    v_important_features <- ds_selected_features |>
+    v_selected_features <- ds_selected_features |>
       select(feature) |>
       pull()
   }
@@ -219,7 +219,7 @@ mix_ml_feature_selection <- function(df_train,
   #----- Final Output
   ls_output <- list(
     ds_selected_features = ds_selected_features,
-    v_important_features = v_important_features,
+    v_selected_features = v_selected_features,
     ds_importance = ds_importance,
     model_auc = ls_model_auc$log_auc_train,
     training_time = time_taken

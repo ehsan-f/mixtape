@@ -52,7 +52,7 @@ uses only the subset of features that are present. Default: \code{"any_of"}}
 List with:
 \itemize{
 \item ds_selected_features: Selected features with importance scores
-\item v_important_features: Vector of selected feature names
+\item v_selected_features: Vector of selected feature names
 \item ds_importance: All features with importance scores
 \item model_auc: Training AUC of initial model
 \item training_time: Total time taken for feature selection
