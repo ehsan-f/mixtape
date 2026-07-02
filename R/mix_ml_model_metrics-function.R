@@ -13,11 +13,13 @@
 #' @param df_features Features data frame for feature importance join (default: ds_features)
 #' @param model_type Type of model, used for feature importance extraction (default: 'xgb')
 #' @param tile_breaks Pre-computed tile breaks to pass to lift_chart (default: NULL)
+#' @param n_percentiles Number of equal-sized groups for the percentile lift chart / breaks (default: 100)
+#' @param percentile_breaks Pre-computed percentile breaks to pass to lift_chart (default: NULL)
 #' @param model Trained tidymodels workflow object (default: NULL)
 #' @param training_time Training time to store in output (default: NULL)
 #' @param prob_cutoff Manual probability threshold for classification (default: NULL, auto-computed via ROC)
 #'
-#' @return A list containing auc, lift, tiles, p_optimum_cutoff, classification, feature_importance, and training_time
+#' @return A list containing classification, roc_plot, feature_importance, p_optimum_cutoff, tile_lift, tile_breaks, percentile_lift, percentile_breaks, and training_time
 #'
 #' @importFrom dplyr as_tibble left_join select
 #' @importFrom janitor clean_names
@@ -33,6 +35,8 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
                                  model_type = 'xgb',
                                  n_tiles = 10,
                                  tile_breaks = NULL,
+                                 n_percentiles = 100,
+                                 percentile_breaks = NULL,
                                  model = NULL,
                                  training_time = NULL,
                                  prob_cutoff = NULL) {
@@ -66,17 +70,27 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
 
   ls_model_metrics$roc_plot <- ls_model_auc$gg_roc
 
-  #----- Lift charts
-  ls_model_lift <- lift_chart(prob = 'p', y = 'y', measure = 'y',
+  #----- Lift charts (tiles)
+  ls_model_tile_lift <- lift_chart(prob = 'p', y = 'y', measure = 'y',
                               df_train = df_train,
                               df_test = df_test,
                               n = n_tiles,
                               tile_breaks = tile_breaks,
                               generate_output = F)
 
-  ls_model_metrics$lift <- ls_model_lift[setdiff(names(ls_model_lift), c('tiles_train', 'tiles_test', 'tile_breaks'))]
-  ls_model_metrics$tiles <- ls_model_lift[c('tiles_train', 'tiles_test')]
-  ls_model_metrics$tile_breaks <- ls_model_lift$tile_breaks
+  ls_model_metrics$tile_lift <- ls_model_tile_lift[setdiff(names(ls_model_tile_lift), c('tiles_train', 'tiles_test', 'tile_breaks'))]
+  ls_model_metrics$tile_breaks <- ls_model_tile_lift$tile_breaks
+
+  #----- Lift charts (percentiles) - same mechanics as tiles, just n_percentiles groups
+  ls_model_percentile_lift <- lift_chart(prob = 'p', y = 'y', measure = 'y',
+                                         df_train = df_train,
+                                         df_test = df_test,
+                                         n = n_percentiles,
+                                         tile_breaks = percentile_breaks,
+                                         generate_output = F)
+
+  ls_model_metrics$percentile_lift <- ls_model_percentile_lift[setdiff(names(ls_model_percentile_lift), c('tiles_train', 'tiles_test', 'tile_breaks'))]
+  ls_model_metrics$percentile_breaks <- ls_model_percentile_lift$tile_breaks
 
   #----- Classification Metrics (AUC, Accuracy, Precision, Recall, Lift)
   #-- Probability cutoff
@@ -101,7 +115,7 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
       accuracy = accuracy_vec(y_train_factor, pred_train),
       precision = precision_vec(y_train_factor, pred_train, event_level = "second"),
       recall = recall_vec(y_train_factor, pred_train, event_level = "second"),
-      lift = ls_model_metrics$lift$lift_factor_train
+      lift = ls_model_metrics$tile_lift$lift_factor_train
     ),
     test = if (!is.null(df_test)) {
       y_test_factor <- df_test$y |> as.factor()
@@ -111,7 +125,7 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
         accuracy = accuracy_vec(y_test_factor, pred_test),
         precision = precision_vec(y_test_factor, pred_test, event_level = "second"),
         recall = recall_vec(y_test_factor, pred_test, event_level = "second"),
-        lift = ls_model_metrics$lift$lift_factor_test
+        lift = ls_model_metrics$tile_lift$lift_factor_test
       )
     } else NULL
   )
@@ -142,11 +156,16 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
   ls_model_metrics <- list(
     classification = ls_model_metrics$classification,
     roc_plot = ls_model_metrics$roc_plot,
-    lift = ls_model_metrics$lift,
+
     feature_importance = ls_model_metrics$feature_importance,
     p_optimum_cutoff = ls_model_metrics$p_optimum_cutoff,
-    tiles = ls_model_metrics$tiles,
+
+    tile_lift = ls_model_metrics$tile_lift,
     tile_breaks = ls_model_metrics$tile_breaks,
+
+    percentile_lift = ls_model_metrics$percentile_lift,
+    percentile_breaks = ls_model_metrics$percentile_breaks,
+
     training_time = ls_model_metrics$training_time
   )
 

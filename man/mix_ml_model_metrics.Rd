@@ -14,6 +14,8 @@ mix_ml_model_metrics(
   model_type = "xgb",
   n_tiles = 10,
   tile_breaks = NULL,
+  n_percentiles = 100,
+  percentile_breaks = NULL,
   model = NULL,
   training_time = NULL,
   prob_cutoff = NULL
@@ -36,6 +38,10 @@ mix_ml_model_metrics(
 
 \item{tile_breaks}{Pre-computed tile breaks to pass to lift_chart (default: NULL)}
 
+\item{n_percentiles}{Number of equal-sized groups for the percentile lift chart / breaks (default: 100)}
+
+\item{percentile_breaks}{Pre-computed percentile breaks to pass to lift_chart (default: NULL)}
+
 \item{model}{Trained tidymodels workflow object (default: NULL)}
 
 \item{training_time}{Training time to store in output (default: NULL)}
@@ -43,7 +49,7 @@ mix_ml_model_metrics(
 \item{prob_cutoff}{Manual probability threshold for classification (default: NULL, auto-computed via ROC)}
 }
 \value{
-A list containing auc, lift, tiles, p_optimum_cutoff, classification, feature_importance, and training_time
+A list containing classification, roc_plot, feature_importance, p_optimum_cutoff, tile_lift, tile_breaks, percentile_lift, percentile_breaks, and training_time
 }
 \description{
 Computes key performance metrics for a trained classification model,
