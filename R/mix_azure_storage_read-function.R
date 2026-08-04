@@ -105,7 +105,7 @@ mix_azure_storage_read <- function(storage_account_name,
       }
       fromJSON(rawToChar(buf), simplifyVector = T)
     } else if (object_format == 'rds') {
-      con <- rawConnection(buf)
+      con <- gzcon(rawConnection(buf))
       result <- readRDS(con)
       close(con)
       result
