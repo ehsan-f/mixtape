@@ -17,9 +17,13 @@
 #' @param generate_output Whether to generate output (default: TRUE)
 #' @param actual_colour Colour for actual values (default: mix_palette$blue)
 #' @param pred_colour Colour for predicted values (default: mix_palette$red)
+#' @param line_width Width of the actual/predict lines (default: 1.1)
+#' @param point_size Size of the actual/predict points (default: 2.5)
+#' @param lift_bar_x X position of the lift bar drawn to the right of the last tile (default: 10.5)
+#' @param lift_bar_colour Colour of the lift bar and its label (default: mix_palette$serene_purple)
 #'
-#' @importFrom dplyr ntile group_by summarise left_join sym
-#' @importFrom ggplot2 ggplot aes geom_line geom_point ggtitle ylab scale_colour_manual theme element_blank annotate
+#' @importFrom dplyr ntile group_by summarise left_join sym n
+#' @importFrom ggplot2 ggplot aes geom_line geom_point ggtitle ylab scale_colour_manual scale_x_continuous theme element_blank annotate expand_limits
 #' @export
 lift_chart <- function (prob = 'p_',
                         y,
@@ -33,7 +37,11 @@ lift_chart <- function (prob = 'p_',
                         nudge_test = 1.5,
                         generate_output = T,
                         actual_colour = mix_palette$blue,
-                        pred_colour = mix_palette$red)
+                        pred_colour = mix_palette$red,
+                        line_width = 1.1,
+                        point_size = 2.5,
+                        lift_bar_x = 10.5,
+                        lift_bar_colour = mix_palette$serene_purple)
 {
   #-- Data
   df_train <- as.data.frame(df_train)
@@ -70,6 +78,9 @@ lift_chart <- function (prob = 'p_',
     df_train$tile <- ntile(df_train[,prob], n)
     v_breaks <- c(-Inf, sapply(1:(n-1), function(i) max(df_train[df_train$tile == i, prob])), Inf)
   }
+
+  #- Number of tiles (from the breaks, so it also holds when tile_breaks is supplied)
+  v_n_tiles <- length(v_breaks) - 1
 
   if (!is.null(df_test)) {
     df_test$tile <- cut(df_test[, prob], breaks = v_breaks, labels = FALSE)
@@ -153,20 +164,42 @@ lift_chart <- function (prob = 'p_',
 
   #================================================================================#
   #----- Lift Charts
+  #-- Draws the lift bar: a vertical segment to the right of the last tile spanning the first
+  #   tile's actual rate up to the last tile's actual rate - the lift, drawn to scale - capped
+  #   at both ends, with the lift factor written alongside it reading bottom-up.
+  add_lift_bar <- function(gg, v_actual, v_lift_factor) {
+    v_low <- v_actual[1]
+    v_high <- v_actual[length(v_actual)]
+    v_cap <- 0.12
+
+    gg +
+      annotate('segment', x = lift_bar_x, xend = lift_bar_x, y = v_low, yend = v_high,
+               colour = lift_bar_colour, linewidth = line_width) +
+      annotate('segment', x = lift_bar_x - v_cap, xend = lift_bar_x + v_cap, y = v_low, yend = v_low,
+               colour = lift_bar_colour, linewidth = line_width) +
+      annotate('segment', x = lift_bar_x - v_cap, xend = lift_bar_x + v_cap, y = v_high, yend = v_high,
+               colour = lift_bar_colour, linewidth = line_width) +
+      annotate('text', x = lift_bar_x + 0.3, y = mean(c(v_low, v_high)),
+               label = paste0(round(v_lift_factor, 1), 'x lift'),
+               angle = 90, colour = lift_bar_colour, fontface = 'bold') +
+      expand_limits(x = lift_bar_x + 0.7)
+  }
+
   #-- Train
   gg_train <- lift_train |>
     ggplot(aes(x = tile)) +
 
-    geom_line(aes(y = pred_train, color = 'Predict')) +
-    geom_point(aes(y = pred_train, color = 'Predict'), size = 2) +
+    geom_line(aes(y = pred_train, color = 'Predict'), linewidth = line_width) +
+    geom_point(aes(y = pred_train, color = 'Predict'), size = point_size) +
 
-    geom_line(aes(y = actual_train, color = 'Actual')) +
-    geom_point(aes(y = actual_train, color = 'Actual'), size = 2) +
+    geom_line(aes(y = actual_train, color = 'Actual'), linewidth = line_width) +
+    geom_point(aes(y = actual_train, color = 'Actual'), size = point_size) +
 
     ggtitle('Lift Chart - Train', subtitle = paste0('Lift = ', round(v_lift_factor_train, 2), 'x')) +
     ylab(prob) +
 
     scale_colour_manual(values = c(actual_colour, pred_colour)) +
+    scale_x_continuous(breaks = 1:v_n_tiles) +
 
     mix_theme() +
     theme(legend.title = element_blank(),
@@ -183,6 +216,8 @@ lift_chart <- function (prob = 'p_',
                color = mix_palette$green)
   }
 
+  gg_train <- add_lift_bar(gg_train, lift_train$actual_train, v_lift_factor_train)
+
   if (generate_output == T) {
     print(gg_train)
   }
@@ -192,17 +227,18 @@ lift_chart <- function (prob = 'p_',
     gg_test <- lift_test |>
       ggplot(aes(x = tile)) +
 
-      geom_line(aes(y = pred_test, color = 'Predict')) +
-      geom_point(aes(y = pred_test, color = 'Predict'), size = 2) +
+      geom_line(aes(y = pred_test, color = 'Predict'), linewidth = line_width) +
+      geom_point(aes(y = pred_test, color = 'Predict'), size = point_size) +
 
-      geom_line(aes(y = actual_test, color = 'Actual')) +
-      geom_point(aes(y = actual_test, color = 'Actual'), size = 2) +
+      geom_line(aes(y = actual_test, color = 'Actual'), linewidth = line_width) +
+      geom_point(aes(y = actual_test, color = 'Actual'), size = point_size) +
 
 
       ggtitle('Lift Chart - Test', subtitle = paste0('Lift = ', round(v_lift_factor_test, 2), 'x')) +
       ylab(prob) +
 
       scale_colour_manual(values = c(actual_colour, pred_colour)) +
+      scale_x_continuous(breaks = 1:v_n_tiles) +
 
       mix_theme() +
       theme(legend.title = element_blank(),
@@ -218,6 +254,8 @@ lift_chart <- function (prob = 'p_',
                  label = paste0('Top 3 = ', pretty_perc(top_3_test, 1)),
                  color = mix_palette$green)
     }
+
+    gg_test <- add_lift_bar(gg_test, lift_test$actual_test, v_lift_factor_test)
 
     if (generate_output == T) {
       print(gg_test)

@@ -7,15 +7,16 @@
 #' @param end_date End date
 #' @param accuracy_type Type of accuracy calculation ('day' or 'sql') (default: 'day')
 #'
-#' @importFrom lubridate isoweek as_date
+#' @importFrom lubridate isoweek as_date interval time_length
 #' @export
 elapsed_years <- function(start_date, end_date, accuracy_type = 'day') {
   ed <- as.POSIXlt(end_date)
   sd <- as.POSIXlt(start_date)
 
   if (accuracy_type == 'day') {
-    years <- (ed$year - sd$year)
-    years <- ifelse(ed$yday < sd$yday, years - 1, years)
+    years <- interval(as_date(start_date), as_date(end_date)) |>
+      time_length('years') |>
+      floor()
   }
 
   if (accuracy_type == 'sql') {

@@ -1,0 +1,46 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup R
+        uses: r-lib/actions/setup-r@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2
+        with:
+          use-public-rspm: true
+
+      - name: Setup R dependencies
+        uses: r-lib/actions/setup-r-dependencies@f9a764fea8d5c63df6ef9a5c7795bf7deb5d7e05 # v2
+        with:
+          extra-packages: |
+            any::AzureAuth
+            any::testthat
+            any::withr
+            any::xml2
+
+      - name: Run tests
+        run: |
+          Rscript -e "results_path <- file.path(getwd(), 'test-results.xml'); testthat::test_local(reporter = testthat::MultiReporter\$new(reporters = list(testthat::SummaryReporter\$new(), testthat::JunitReporter\$new(file = results_path))))"
+
+      - name: Publish test results
+        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
+        if: success() || failure()
+        with:
+          name: Unit Tests
+          path: test-results.xml
+          reporter: java-junit

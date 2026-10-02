@@ -7,18 +7,20 @@
 #' @param storage_account_name Name of the Azure storage account
 #' @param container_name Name of the container in the storage account
 #' @param prefix Path to the folder within the container
-#' @param storage_key Azure storage account key for authentication
+#' @param storage_key Azure storage account key for authentication (optional if token is provided or if using managed identity/interactive auth)
+#' @param token Azure authentication token object (optional). If supplied along with storage_key, storage_key takes priority. If neither is supplied, attempts to resolve via managed identity or interactive authentication.
 #' @param storage_type Type of storage ('blob' or 'adls', default: 'adls')
 #' @param object_format Format to filter files by ('parquet', 'csv', 'tsv', 'json', or NULL for all files) (default: NULL)
 #' @param regex_pattern Optional regex pattern to further filter file names (default: NULL)
 #'
-#' @importFrom AzureStor storage_endpoint list_storage_containers list_storage_files
+#' @importFrom AzureStor list_storage_containers list_storage_files
 #' @importFrom tibble as_tibble
 #' @export
 mix_azure_storage_list <- function(storage_account_name,
                                    container_name,
                                    prefix,
-                                   storage_key,
+                                   storage_key = NULL,
+                                   token = NULL,
                                    storage_type = 'adls',
                                    object_format = NULL,
                                    regex_pattern = NULL) {
@@ -37,7 +39,7 @@ mix_azure_storage_list <- function(storage_account_name,
   }
 
   #-- Authentication
-  v_storage_account <- storage_endpoint(endpoint = v_endpoint, key = storage_key)
+  v_storage_account <- mix_azure_resolve_endpoint(v_endpoint, storage_key, token)
   ls_storage_containers <- list_storage_containers(v_storage_account)
   v_target_container <- ls_storage_containers[[container_name]]
 

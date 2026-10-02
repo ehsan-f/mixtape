@@ -47,6 +47,11 @@ Imports:
     yardstick,
     zoo
 Suggests:
-    roxygen2
+    AzureAuth,
+    data.table,
+    roxygen2,
+    testthat (>= 3.0.0),
+    withr
+Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3

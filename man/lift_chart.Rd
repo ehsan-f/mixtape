@@ -17,7 +17,11 @@ lift_chart(
   nudge_test = 1.5,
   generate_output = T,
   actual_colour = mix_palette$blue,
-  pred_colour = mix_palette$red
+  pred_colour = mix_palette$red,
+  line_width = 1.1,
+  point_size = 2.5,
+  lift_bar_x = 10.5,
+  lift_bar_colour = mix_palette$serene_purple
 )
 }
 \arguments{
@@ -46,6 +50,14 @@ lift_chart(
 \item{actual_colour}{Colour for actual values (default: mix_palette$blue)}
 
 \item{pred_colour}{Colour for predicted values (default: mix_palette$red)}
+
+\item{line_width}{Width of the actual/predict lines (default: 1.1)}
+
+\item{point_size}{Size of the actual/predict points (default: 2.5)}
+
+\item{lift_bar_x}{X position of the lift bar drawn to the right of the last tile (default: 10.5)}
+
+\item{lift_bar_colour}{Colour of the lift bar and its label (default: mix_palette$serene_purple)}
 }
 \description{
 Creates lift charts for model evaluation by binning predictions into tiles.

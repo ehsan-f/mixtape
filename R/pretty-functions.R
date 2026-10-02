@@ -23,7 +23,8 @@ pretty_num <- function(x, p = 1) {
 #'
 #' @export
 pretty_curr <- function(x, p = 0, curr = "") {
-  x <- ifelse(is.na(x), NA, paste(curr, prettyNum(round(x, p), big.mark = ","), sep = " "))
+  x <- ifelse(is.na(x), NA, paste(curr, prettyNum(round(x, p), big.mark = ","), sep = " ")) |>
+    trimws(which = 'both')
   x
 }
 

@@ -8,7 +8,8 @@ mix_azure_storage_read(
   storage_account_name,
   container_name,
   prefix,
-  storage_key,
+  storage_key = NULL,
+  token = NULL,
   storage_type = "adls",
   object_format = "parquet",
   regex_pattern = NULL,
@@ -24,7 +25,9 @@ mix_azure_storage_read(
 
 \item{prefix}{Path prefix (folder or full file path) within the container}
 
-\item{storage_key}{Azure storage account key for authentication}
+\item{storage_key}{Azure storage account key for authentication (optional if token is provided or if using managed identity/interactive auth)}
+
+\item{token}{Azure authentication token object (optional). If supplied along with storage_key, storage_key takes priority. If neither is supplied, attempts to resolve via managed identity or interactive authentication.}
 
 \item{storage_type}{Type of storage endpoint ('adls' or 'blob', default: 'adls')}
 
