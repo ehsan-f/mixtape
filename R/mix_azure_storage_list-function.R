@@ -16,14 +16,16 @@
 #' @importFrom AzureStor list_storage_containers list_storage_files
 #' @importFrom tibble as_tibble
 #' @export
-mix_azure_storage_list <- function(storage_account_name,
-                                   container_name,
-                                   prefix,
-                                   storage_key = NULL,
-                                   token = NULL,
-                                   storage_type = 'adls',
-                                   object_format = NULL,
-                                   regex_pattern = NULL) {
+mix_azure_storage_list <- function(
+  storage_account_name,
+  container_name,
+  prefix,
+  storage_key = NULL,
+  token = NULL,
+  storage_type = 'adls',
+  object_format = NULL,
+  regex_pattern = NULL
+) {
 
   #-- Start time
   v_start_time <- Sys.time()

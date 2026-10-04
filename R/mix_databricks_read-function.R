@@ -23,9 +23,11 @@
 #' @importFrom odbc databricks
 #' @importFrom tibble as_tibble
 #' @export
-mix_databricks_read <- function(query = NULL,
-                                table = NULL,
-                                config_db = ls_config$databricks) {
+mix_databricks_read <- function(
+  query = NULL,
+  table = NULL,
+  config_db = ls_config$databricks
+) {
 
   #-- Validate inputs (need exactly one of query / table)
   stopifnot(xor(is.null(query), is.null(table)))
@@ -40,12 +42,16 @@ mix_databricks_read <- function(query = NULL,
   token <- Sys.getenv(config_db$token_env_var)
 
   if (!nzchar(config_db$host) || !nzchar(path)) {
-    stop("Databricks host / http_path not set. Add DATABRICKS_HOST and ",
-         "DATABRICKS_HTTP_PATH to .Renviron and restart R.")
+    stop(
+      'Databricks host / http_path not set. Add DATABRICKS_HOST and ',
+      'DATABRICKS_HTTP_PATH to .Renviron and restart R.'
+    )
   }
   if (!nzchar(token)) {
-    stop("Databricks token not found in env var '", config_db$token_env_var,
-         "'. Add it to .Renviron and restart R.")
+    stop(
+      "Databricks token not found in env var '", config_db$token_env_var,
+      "'. Add it to .Renviron and restart R."
+    )
   }
 
   #-- Start time
@@ -60,18 +66,20 @@ mix_databricks_read <- function(query = NULL,
 
   con <- dbConnect(
     databricks(),
-    driver   = driver,
+    driver = driver,
     httpPath = path
   )
-  on.exit(dbDisconnect(con), add = TRUE)
+  on.exit(dbDisconnect(con), add = T)
 
   #-- Read
   ds_object <- dbGetQuery(con, query) |> as_tibble()
 
   #-- End time
   v_time_taken <- difftime(Sys.time(), v_start_time, units = 'mins')
-  message('Rows read: ', nrow(ds_object),
-          ' | Time taken: ', round(as.numeric(v_time_taken), 3), ' mins')
+  message(
+    'Rows read: ', nrow(ds_object),
+    ' | Time taken: ', round(as.numeric(v_time_taken), 3), ' mins'
+  )
 
   return(ds_object)
 }

@@ -49,42 +49,50 @@
 #' results <- mix_ml_feature_selection(df_train, df_features)
 #'
 #' # Threshold-based selection
-#' results <- mix_ml_feature_selection(df_train, df_features,
-#'                                     grouped_selection = FALSE)
+#' results <- mix_ml_feature_selection(
+#'   df_train,
+#'   df_features,
+#'   grouped_selection = F
+#' )
 #'
 #' # Exclude specific features
-#' results <- mix_ml_feature_selection(df_train, df_features,
-#'                                     excl_features = c("feature1", "feature2"))
+#' results <- mix_ml_feature_selection(
+#'   df_train,
+#'   df_features,
+#'   excl_features = c('feature1', 'feature2')
+#' )
 #' }
-mix_ml_feature_selection <- function(df_train,
-                                     df_features,
-                                     excl_features = NULL,
-                                     excl_features_regex = NULL,
-                                     use_neg_bal_features = F,
-                                     use_amount_based_features = T,
-                                     grouped_selection = T,
-                                     group_features_n = 5,
-                                     target_var = "t_bad_y",
-                                     feature_selection_type = "all_of",
-                                     max_cores = NULL) {
+mix_ml_feature_selection <- function(
+  df_train,
+  df_features,
+  excl_features = NULL,
+  excl_features_regex = NULL,
+  use_neg_bal_features = F,
+  use_amount_based_features = T,
+  grouped_selection = T,
+  group_features_n = 5,
+  target_var = 't_bad_y',
+  feature_selection_type = 'all_of',
+  max_cores = NULL
+) {
 
   #----- Initial Spec
   #-- Set max cores
   if (is.null(max_cores)) {
     max_cores <- tryCatch(
       ls_config$parallel$max_cores,
-      error = function(e) parallel::detectCores(logical = TRUE) - 2
+      error = function(e) parallel::detectCores(logical = T) - 2
     )
 
     # If ls_config exists but max_cores is NULL, use fallback
     if (is.null(max_cores)) {
-      max_cores <- parallel::detectCores(logical = TRUE) - 2
+      max_cores <- parallel::detectCores(logical = T) - 2
     }
   }
 
   #-- Model spec
   xgb_spec <- boost_tree(
-    mode = "classification",
+    mode = 'classification',
     trees = 2000,
     learn_rate = 0.01,
     tree_depth = 10,
@@ -96,7 +104,7 @@ mix_ml_feature_selection <- function(df_train,
       alpha = 1,
       lambda = 1,
       colsample_bytree = 0.8,
-      counts = FALSE,
+      counts = F,
       early_stopping_rounds = 20,
       eval_metric = 'logloss',
       tree_method = 'hist',
@@ -138,7 +146,7 @@ mix_ml_feature_selection <- function(df_train,
   v_features <- df_features$variable
 
   #-- Create recipe
-  recipe_formula <- as.formula(paste(target_var, "~ ."))
+  recipe_formula <- as.formula(paste(target_var, '~ .'))
 
   if (feature_selection_type == 'all_of') {
     ds_recipe <- df_train |>
@@ -148,7 +156,10 @@ mix_ml_feature_selection <- function(df_train,
 
   if (feature_selection_type == 'any_of') {
     ds_recipe <- df_train |>
-      select(all_of(target_var), any_of(v_features)) |>
+      select(
+        all_of(target_var),
+        any_of(v_features)
+      ) |>
       recipe(recipe_formula)
   }
 
@@ -167,9 +178,11 @@ mix_ml_feature_selection <- function(df_train,
   #-- AUC
   df_train$p_bad <- predict(xgb_wf_train, new_data = df_train, type = 'prob')$.pred_1
 
-  ls_model_auc <- roc_plot(prob = 'p_bad', y = target_var,
-                           df_train = df_train, df_test = NULL,
-                           generate_output = F)
+  ls_model_auc <- roc_plot(
+    prob = 'p_bad', y = target_var,
+    df_train = df_train, df_test = NULL,
+    generate_output = F
+  )
 
   #----- Important Features - XGBoost
   message('Important Feature - XGBoost')
@@ -184,7 +197,7 @@ mix_ml_feature_selection <- function(df_train,
           feature = variable,
           variable_group
         ),
-      by = "feature"
+      by = 'feature'
     )
 
 
@@ -205,7 +218,10 @@ mix_ml_feature_selection <- function(df_train,
 
   } else {
     ds_selected_features <- ds_importance |>
-      filter(gain >= 0.001, frequency >= 0.001)
+      filter(
+        gain >= 0.001,
+        frequency >= 0.001
+      )
 
     v_selected_features <- ds_selected_features |>
       select(feature) |>
@@ -213,8 +229,8 @@ mix_ml_feature_selection <- function(df_train,
   }
 
   v_end_time <- Sys.time()
-  time_taken <- difftime(v_end_time, v_start_time, units = "mins")
-  message("Time taken: ", round(as.numeric(time_taken), 2), " mins")
+  time_taken <- difftime(v_end_time, v_start_time, units = 'mins')
+  message('Time taken: ', round(as.numeric(time_taken), 2), ' mins')
 
   #----- Final Output
   ls_output <- list(

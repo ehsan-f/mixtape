@@ -32,12 +32,14 @@
 #' }
 #'
 #' @export
-mix_azure_get_token <- function(resource = 'https://storage.azure.com/',
-                                tenant_id = NULL,
-                                app_id = NULL,
-                                is_interactive = interactive()) {
+mix_azure_get_token <- function(
+  resource = 'https://storage.azure.com/',
+  tenant_id = NULL,
+  app_id = NULL,
+  is_interactive = interactive()
+) {
 
-  if (!requireNamespace('AzureAuth', quietly = TRUE)) {
+  if (!requireNamespace('AzureAuth', quietly = T)) {
     stop(
       'The AzureAuth package is required for token-based authentication but is not installed. ',
       'Install it with: install.packages("AzureAuth")'
@@ -54,8 +56,10 @@ mix_azure_get_token <- function(resource = 'https://storage.azure.com/',
       identity_header <- Sys.getenv('IDENTITY_HEADER', unset = NA_character_)
       mi_client_id <- Sys.getenv('AZURE_CLIENT_ID', unset = NA_character_)
 
-      if (!is.na(identity_endpoint) && nzchar(identity_endpoint) &&
-          !is.na(identity_header) && nzchar(identity_header)) {
+      if (
+        !is.na(identity_endpoint) && nzchar(identity_endpoint) &&
+        !is.na(identity_header) && nzchar(identity_header)
+      ) {
         request <- httr2::request(identity_endpoint) |>
           httr2::req_url_query(
             resource = resource,
@@ -151,8 +155,10 @@ mix_azure_get_token <- function(resource = 'https://storage.azure.com/',
         auth_type = 'authorization_code'
       ),
       error = function(e) {
-        stop('Both managed identity and interactive authentication failed. ',
-             'Last error: ', conditionMessage(e))
+        stop(
+          'Both managed identity and interactive authentication failed. ',
+          'Last error: ', conditionMessage(e)
+        )
       }
     )
   }

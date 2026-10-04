@@ -17,14 +17,16 @@
 #' @importFrom lubridate as_date epiweek year
 #' @importFrom tibble as_tibble
 #' @export
-time_key <- function(df = ds,
-                     x,
-                     start = '2019-01-01',
-                     end = Sys.Date(),
-                     end_of_week = 'Saturday',
-                     week_days = 7,
-                     weekend_days = c('Friday', 'Saturday'),
-                     group_year = F) {
+time_key <- function(
+  df = ds,
+  x,
+  start = '2019-01-01',
+  end = Sys.Date(),
+  end_of_week = 'Saturday',
+  week_days = 7,
+  weekend_days = c('Friday', 'Saturday'),
+  group_year = F
+) {
 
   #-- Variables
   d <- seq(as_date(start), as_date(end), by = 'days')
@@ -38,13 +40,17 @@ time_key <- function(df = ds,
   #----- Month and day numbers
   ds_time_key <- ds_time_key |>
     full_join(
-      bind_cols(month = unique(ds_time_key$month),
-                month_no = seq_along(unique(ds_time_key$month))),
+      bind_cols(
+        month = unique(ds_time_key$month),
+        month_no = seq_along(unique(ds_time_key$month))
+      ),
       by = 'month'
     ) |>
     full_join(
-      bind_cols(date = unique(ds_time_key$date),
-                day_no = seq_along(unique(ds_time_key$date))),
+      bind_cols(
+        date = unique(ds_time_key$date),
+        day_no = seq_along(unique(ds_time_key$date))
+      ),
       by = 'date'
     )
 
@@ -60,9 +66,7 @@ time_key <- function(df = ds,
 
   #-- Week 1
   ds_time_key <- ds_time_key |>
-    mutate(
-      week_no = ifelse(day_no <= end_week_one, 1, week_no)
-    )
+    mutate(week_no = ifelse(day_no <= end_week_one, 1, week_no))
 
   #-- Rest of the weeks
   for (i in 2:length(t)) {
@@ -71,19 +75,21 @@ time_key <- function(df = ds,
 
   #-- Latest Week
   ds_time_key <- ds_time_key |>
-    mutate(
-      week_no = ifelse(week_no == 0, max(week_no) + 1, week_no)
-    )
+    mutate(week_no = ifelse(week_no == 0, max(week_no) + 1, week_no))
 
   #-- year
   if (group_year == T) {
     ds_time_key <- ds_time_key |>
       mutate(
-        year = ifelse(month < '2021-06',
-                      '<= 2021-H1',
-                      ifelse(month >= '2021-06' & year == '2021',
-                             '2021-H2',
-                             year))
+        year = ifelse(
+          month < '2021-06',
+          '<= 2021-H1',
+          ifelse(
+            month >= '2021-06' & year == '2021',
+            '2021-H2',
+            year
+          )
+        )
       )
   }
 
@@ -98,7 +104,17 @@ time_key <- function(df = ds,
     ) |>
     mutate() |>
     rename(day = 'date') |>
-    select(day, day_no, week_start_date, week_no, calendar_week_no, month, month_no, year, weekend)
+    select(
+      day,
+      day_no,
+      week_start_date,
+      week_no,
+      calendar_week_no,
+      month,
+      month_no,
+      year,
+      weekend
+    )
 
   #----- Output
   if (is.null(df)) {

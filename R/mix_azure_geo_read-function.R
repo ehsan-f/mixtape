@@ -13,13 +13,15 @@
 #' @importFrom AzureStor list_storage_containers storage_download
 #' @importFrom sf st_read
 #' @export
-mix_azure_geo_read <- function(storage_account_name,
-                               container_name,
-                               prefix,
-                               storage_key = NULL,
-                               token = NULL,
-                               storage_type = 'adls',
-                               driver = 'GeoJSON') {
+mix_azure_geo_read <- function(
+  storage_account_name,
+  container_name,
+  prefix,
+  storage_key = NULL,
+  token = NULL,
+  storage_type = 'adls',
+  driver = 'GeoJSON'
+) {
 
   v_start_time <- Sys.time()
   message('File path: ', prefix)
@@ -32,16 +34,16 @@ mix_azure_geo_read <- function(storage_account_name,
     v_endpoint <- sprintf('https://%s.blob.core.windows.net', storage_account_name)
   }
 
-  v_storage_account     <- mix_azure_resolve_endpoint(v_endpoint, storage_key, token)
+  v_storage_account <- mix_azure_resolve_endpoint(v_endpoint, storage_key, token)
   ls_storage_containers <- list_storage_containers(v_storage_account)
-  v_target_container    <- ls_storage_containers[[container_name]]
+  v_target_container <- ls_storage_containers[[container_name]]
 
   temp_file <- tempfile(fileext = paste0('.', v_file_ext))
-  on.exit(if (file.exists(temp_file)) file.remove(temp_file), add = TRUE)
+  on.exit(if (file.exists(temp_file)) file.remove(temp_file), add = T)
 
   message('Reading: ', prefix)
   storage_download(v_target_container, src = prefix, dest = temp_file)
-  df <- sf::st_read(temp_file, quiet = TRUE)
+  df <- sf::st_read(temp_file, quiet = T)
 
   v_time_taken <- difftime(Sys.time(), v_start_time, units = 'mins')
   message('Time taken: ', round(as.numeric(v_time_taken), 3), ' mins')

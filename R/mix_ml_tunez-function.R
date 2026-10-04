@@ -31,23 +31,25 @@
 #' }
 #'
 #' @export
-mix_ml_tunez <- function(training_data,
-                         recipe,
-                         n_folds = 3,
-                         n_workers = NULL,
+mix_ml_tunez <- function(
+  training_data,
+  recipe,
+  n_folds = 3,
+  n_workers = NULL,
 
-                         learn_rate_values = c(0.01),
-                         min_n_values = c(0.003, 0.005),
-                         alpha_values = c(5, 8, 10),
-                         lambda_values = c(5, 10, 15),
-                         trees_values = c(1500, 2000),
-                         tree_depth_values = c(8, 10, 12),
-                         sample_size_values = c(0.75),
-                         colsample_bytree_values = c(0.75),
+  learn_rate_values = c(0.01),
+  min_n_values = c(0.003, 0.005),
+  alpha_values = c(5, 8, 10),
+  lambda_values = c(5, 10, 15),
+  trees_values = c(1500, 2000),
+  tree_depth_values = c(8, 10, 12),
+  sample_size_values = c(0.75),
+  colsample_bytree_values = c(0.75),
 
-                         early_stopping_rounds = 20,
-                         seed = 123,
-                         parallel_type = 'everything') { #resamples
+  early_stopping_rounds = 20,
+  seed = 123,
+  parallel_type = 'everything'
+) { #resamples
 
   #----- Load required packages
   require(tidymodels)
@@ -73,17 +75,17 @@ mix_ml_tunez <- function(training_data,
   xgb_threads_per_worker <- floor(total_cores / n_workers)
 
   #----- Display parallelization setup
-  message("\n=== Parallelization Setup ===")
-  message("Total cores available: ", total_cores)
-  message("Workers (parallel tasks): ", n_workers)
-  message("Threads per XGBoost instance: ", xgb_threads_per_worker)
-  message("Parallel strategy: ", parallel_type)
-  message("=============================\n")
+  message('\n=== Parallelization Setup ===')
+  message('Total cores available: ', total_cores)
+  message('Workers (parallel tasks): ', n_workers)
+  message('Threads per XGBoost instance: ', xgb_threads_per_worker)
+  message('Parallel strategy: ', parallel_type)
+  message('=============================\n')
 
   #----- Initialize parallel cluster
   mix_cluster_make(n = n_workers, max_n = n_workers)
   doFuture::registerDoFuture()
-  message("Backend: ", foreach::getDoParName(), " with ", foreach::getDoParWorkers(), " workers\n")
+  message('Backend: ', foreach::getDoParName(), ' with ', foreach::getDoParWorkers(), ' workers\n')
 
   #----- Create cross-validation folds
   data_folds <- vfold_cv(training_data, v = n_folds)
@@ -91,7 +93,7 @@ mix_ml_tunez <- function(training_data,
 
   #----- XGBoost model specification
   xgb_tune_spec <- boost_tree(
-    mode = "classification",
+    mode = 'classification',
     trees = tune(),
     learn_rate = tune(),
     tree_depth = tune(),
@@ -103,9 +105,9 @@ mix_ml_tunez <- function(training_data,
       alpha = tune(),                          # L1 regularization
       lambda = tune(),                         # L2 regularization
       colsample_bytree = tune(),               # Column sampling per tree
-      counts = FALSE,
+      counts = F,
       early_stopping_rounds = early_stopping_rounds,
-      eval_metric = "logloss",
+      eval_metric = 'logloss',
       tree_method = 'hist',                    # Fast histogram-based algorithm
       nthread = xgb_threads_per_worker,
       verbose = 1
@@ -130,9 +132,9 @@ mix_ml_tunez <- function(training_data,
   )
 
   total_tasks <- n_folds * nrow(xgb_grid)
-  message("Hyperparameter combinations: ", nrow(xgb_grid))
-  message("Total tasks (folds × params): ", total_tasks)
-  message("Estimated batches: ", ceiling(total_tasks / n_workers), "\n")
+  message('Hyperparameter combinations: ', nrow(xgb_grid))
+  message('Total tasks (folds × params): ', total_tasks)
+  message('Estimated batches: ', ceiling(total_tasks / n_workers), '\n')
 
   #----- Create workflow
   set.seed(seed)
@@ -141,7 +143,7 @@ mix_ml_tunez <- function(training_data,
     add_recipe(recipe)
 
   #----- Run hyperparameter tuning
-  message("Starting tuning (this may take a while)...\n")
+  message('Starting tuning (this may take a while)...\n')
   v_start_time <- Sys.time()
 
   xgb_tune_results <- tune_grid(
@@ -149,19 +151,19 @@ mix_ml_tunez <- function(training_data,
     resamples = data_folds,
     grid = xgb_grid,
     control = control_grid(
-      verbose = TRUE,
-      save_pred = TRUE,
-      allow_par = TRUE,
+      verbose = T,
+      save_pred = T,
+      allow_par = T,
       parallel_over = parallel_type,
       extract = function(x) butcher::butcher(x)  # Reduce memory by slimming workflows
     )
   )
 
   v_end_time <- Sys.time()
-  time_taken <- difftime(v_end_time, v_start_time, units = "mins")
-  message("\n=== Tuning Complete ===")
-  message("Total time: ", round(as.numeric(time_taken), 2), " minutes")
-  message("=======================\n")
+  time_taken <- difftime(v_end_time, v_start_time, units = 'mins')
+  message('\n=== Tuning Complete ===')
+  message('Total time: ', round(as.numeric(time_taken), 2), ' minutes')
+  message('=======================\n')
 
   #----- Shutdown parallel cluster
   mix_cluster_stop()
@@ -174,18 +176,18 @@ mix_ml_tunez <- function(training_data,
     slice(1:20)
 
   # Select best hyperparameters
-  ds_best_params <- select_best(xgb_tune_results, metric = "roc_auc")
+  ds_best_params <- select_best(xgb_tune_results, metric = 'roc_auc')
 
   # Add original min_n percentage for reference
   ds_best_params <- ds_best_params |>
-    left_join(ds_min_n_lookup, by = c("min_n" = "min_n_rows")) |>
+    left_join(ds_min_n_lookup, by = c('min_n' = 'min_n_rows')) |>
     relocate(min_n_pct, .after = min_n)
 
-  message("Best hyperparameters (by ROC AUC):")
+  message('Best hyperparameters (by ROC AUC):')
   print(ds_best_params)
 
   #----- Extract CV models with best hyperparameters
-  message("\nExtracting trained CV models for ensemble predictions...")
+  message('\nExtracting trained CV models for ensemble predictions...')
 
   # Filter for workflows matching best parameters (already slimmed by butcher)
   best_models_slim <- xgb_tune_results |>
@@ -203,7 +205,7 @@ mix_ml_tunez <- function(training_data,
     ) |>
     pull(.extracts)
 
-  message("Extracted ", length(best_models_slim), " slimmed CV models (one per fold)\n")
+  message('Extracted ', length(best_models_slim), ' slimmed CV models (one per fold)\n')
 
   #----- Return results
   return(list(

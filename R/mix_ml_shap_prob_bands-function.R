@@ -25,18 +25,26 @@
 #' bands <- mix_ml_shap_prob_bands(shap_vals, model_bias = -2.5)
 #'
 #' # Custom thresholds (5 bands)
-#' bands <- mix_ml_shap_prob_bands(shap_vals, model_bias = -2.5,
-#'                                 prob_thresholds = c(0.01, 0.03, 0.05, 0.10))
+#' bands <- mix_ml_shap_prob_bands(
+#'   shap_vals,
+#'   model_bias = -2.5,
+#'   prob_thresholds = c(0.01, 0.03, 0.05, 0.10)
+#' )
 #'
 #' # Custom labels
-#' bands <- mix_ml_shap_prob_bands(shap_vals, model_bias = -2.5,
-#'                                 labels = c("High Risk", "Medium Risk", "Low Risk", "Neutral"))
+#' bands <- mix_ml_shap_prob_bands(
+#'   shap_vals,
+#'   model_bias = -2.5,
+#'   labels = c('High Risk', 'Medium Risk', 'Low Risk', 'Neutral')
+#' )
 #' }
-mix_ml_shap_prob_bands <- function(shap_values,
-                                   model_bias,
-                                   prob_thresholds = c(0.025, 0.05, 0.10),
-                                   labels = NULL,
-                                   output_type = "bands") {
+mix_ml_shap_prob_bands <- function(
+  shap_values,
+  model_bias,
+  prob_thresholds = c(0.025, 0.05, 0.10),
+  labels = NULL,
+  output_type = 'bands'
+) {
 
   #-- Calculate baseline probability from model bias
   #-- Uses 1 - sigmoid(logit) because negative SHAP = higher risk in this model's convention
@@ -44,7 +52,7 @@ mix_ml_shap_prob_bands <- function(shap_values,
   baseline_prob <- 1 - (1 / (1 + exp(-baseline_logit)))
 
   #-- Return probability contribution: change in P(bad) when each SHAP value is applied
-  if (output_type == "prob") {
+  if (output_type == 'prob') {
     return((1 - (1 / (1 + exp(-(baseline_logit + shap_values))))) - baseline_prob)
   }
 

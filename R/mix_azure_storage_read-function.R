@@ -20,17 +20,19 @@
 #' @importFrom jsonlite fromJSON
 #' @importFrom purrr list_rbind
 #' @export
-mix_azure_storage_read <- function(storage_account_name,
-                                   container_name,
-                                   prefix,
-                                   storage_key = NULL,
-                                   token = NULL,
-                                   storage_type = 'adls',
-                                   object_format = 'parquet',
-                                   regex_pattern = NULL,
-                                   single_file = F,
-                                   n_files = NULL,
-                                   return_list = F) {
+mix_azure_storage_read <- function(
+  storage_account_name,
+  container_name,
+  prefix,
+  storage_key = NULL,
+  token = NULL,
+  storage_type = 'adls',
+  object_format = 'parquet',
+  regex_pattern = NULL,
+  single_file = F,
+  n_files = NULL,
+  return_list = F
+) {
 
   #-- Validate inputs
   stopifnot(
@@ -75,7 +77,7 @@ mix_azure_storage_read <- function(storage_account_name,
     }
 
     if (length(v_object_names) == 0) {
-      stop("No ", object_format, " files found at: ", prefix)
+      stop('No ', object_format, ' files found at: ', prefix)
     }
 
     message('Files found: ', length(v_object_names))
@@ -88,7 +90,7 @@ mix_azure_storage_read <- function(storage_account_name,
   }
 
   #-- Read files into memory (no temp files)
-  ls_object <- vector("list", length(v_object_names))
+  ls_object <- vector('list', length(v_object_names))
 
   for (i in seq_along(v_object_names)) {
     message('Progress: ', i, '/', length(v_object_names))

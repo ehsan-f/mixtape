@@ -20,30 +20,33 @@
 #' @importFrom dplyr as_tibble mutate if_else filter
 #' @importFrom ggplot2 ggplot aes geom_bar geom_label scale_fill_manual labs xlab theme_minimal theme element_text element_blank
 #' @export
-bin <- function (x, y, data, type = "a", q = 0.2, cut = NULL, silent = F,
-                 custom_plot = T, custom_colour_scale_start = '#5720FF', custom_colour_scale_end = 'grey')
-{
+bin <- function(
+  x, y, data, type = 'a', q = 0.2, cut = NULL, silent = F,
+  custom_plot = T, custom_colour_scale_start = '#5720FF', custom_colour_scale_end = 'grey'
+) {
 
   #-- Dataframe
   data <- as.data.frame(data)
 
   #-- Binning
-  if (type == "a") {
+  if (type == 'a') {
     sbin <- smbinning(df = data, y = y, x = x, p = 0.05)
-  } else if (type == "f") {
+  } else if (type == 'f') {
     data[, x] <- as.factor(data[, x])
     sbin <- smbinning.factor(df = data, y = y, x = x, maxcat = 200)
-  } else if (type == "q") {
+  } else if (type == 'q') {
     cutoff <- quantile(data[, x], probs = seq(0, 1, q), na.rm = T)
     cutoff <- as.vector(cutoff)
     cutoff <- cutoff[2:(length(cutoff) - 1)]
     sbin <- smbinning.custom(df = data, y = y, x = x, cuts = cutoff)
-  } else if (type == "c") {
-    if (is.null(cut) == TRUE) {
+  } else if (type == 'c') {
+    if (is.null(cut) == T) {
       sbin <- smbinning(df = data, y = y, x = x, p = 0.05)
     } else {
-      sbin <- smbinning.custom(df = data, y = y, x = x,
-                               cuts = cut)
+      sbin <- smbinning.custom(
+        df = data, y = y, x = x,
+        cuts = cut
+      )
     }
   }
 
@@ -57,13 +60,9 @@ bin <- function (x, y, data, type = "a", q = 0.2, cut = NULL, silent = F,
       sbin_gg <- sbin$ivtable |>
         #-- Fix table
         as_tibble() |>
-        mutate(
-          exclude = if_else(Cutpoint == 'Total' | CntRec == 0, 1, 0)
-        ) |>
+        mutate(exclude = if_else(Cutpoint == 'Total' | CntRec == 0, 1, 0)) |>
         filter(exclude == 0) |>
-        mutate(
-          WoE = round(WoE, digits = 2)
-        ) |>
+        mutate(WoE = round(WoE, digits = 2)) |>
         #-- Plot
         ggplot(aes(x = Cutpoint, y = WoE, label = WoE, fill = Cutpoint)) +
 
@@ -91,7 +90,7 @@ bin <- function (x, y, data, type = "a", q = 0.2, cut = NULL, silent = F,
 
       print(sbin_gg)
     } else {
-      smbinning.plot(sbin, option = "WoE", sub = x)
+      smbinning.plot(sbin, option = 'WoE', sub = x)
     }
   }
 

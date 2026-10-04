@@ -16,15 +16,17 @@
 #' @importFrom bigrquery bq_project_query
 #' @importFrom dplyr if_else
 #' @export
-mix_bq_to_gcs <- function(project,
-                          dataset = NULL,
-                          table,
-                          external_table = F,
-                          external_server = NULL,
-                          bucket,
-                          folder = NULL,
-                          # destination_file_name,
-                          object_format = 'parquet') {
+mix_bq_to_gcs <- function(
+  project,
+  dataset = NULL,
+  table,
+  external_table = F,
+  external_server = NULL,
+  bucket,
+  folder = NULL,
+  # destination_file_name,
+  object_format = 'parquet'
+) {
 
   #-- Start Time
   v_start_time <- Sys.time()
@@ -84,8 +86,10 @@ mix_bq_to_gcs <- function(project,
     error = function(e) {
       message('An error was detected.')
 
-      if (!is.null(e) &
-          grepl(pattern = "no applicable method for 'as_bq_table' applied to an object of|must be a string, list, or", x = e)) {
+      if (
+        !is.null(e) &
+        grepl(pattern = "no applicable method for 'as_bq_table' applied to an object of|must be a string, list, or", x = e)
+      ) {
 
         message('Error not fatal, process can continue.')
 

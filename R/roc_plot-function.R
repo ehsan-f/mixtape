@@ -17,14 +17,16 @@
 #' @importFrom ggplot2 ggplot aes geom_abline geom_line ggtitle xlab ylab theme element_blank scale_color_manual
 #' @importFrom ROCR prediction performance
 #' @export
-roc_plot <- function (prob = 'p_',
-                      y,
-                      df_train,
-                      df_test,
-                      model = NULL,
-                      generate_output = T,
-                      train_colour = mix_palette$blue,
-                      test_colour = mix_palette$red)
+roc_plot <- function(
+  prob = 'p_',
+  y,
+  df_train,
+  df_test,
+  model = NULL,
+  generate_output = T,
+  train_colour = mix_palette$blue,
+  test_colour = mix_palette$red
+)
 {
 
   #-- Data
@@ -35,15 +37,15 @@ roc_plot <- function (prob = 'p_',
   }
 
   #-- Assign Predictions
-  if (class(model)[1] == "glm") {
-    df_train[,prob] <- predict(model, df_train, type = "response")
+  if (class(model)[1] == 'glm') {
+    df_train[,prob] <- predict(model, df_train, type = 'response')
 
     if (!is.null(df_test)) {
       df_test[,prob] <- predict(model, df_test, type = 'response')
     }
   }
 
-  if (class(model)[1] == "workflow") {
+  if (class(model)[1] == 'workflow') {
     df_train[,prob] <- predict(model, new_data = df_train, type = 'prob')$.pred_1
 
     if (!is.null(df_test)) {
@@ -54,8 +56,8 @@ roc_plot <- function (prob = 'p_',
   #----- Data
   #-- Train
   pred_train <- prediction(df_train[, prob], df_train[,y])
-  perf_train <- performance(pred_train, measure = "tpr", x.measure = "fpr")
-  auc_perf_train <- performance(pred_train, measure = "auc")
+  perf_train <- performance(pred_train, measure = 'tpr', x.measure = 'fpr')
+  auc_perf_train <- performance(pred_train, measure = 'auc')
 
   roc_train <- data.frame('x' = unlist(perf_train@x.values), 'y' = unlist(perf_train@y.values)) |>
     mutate(Data = 'Train')
@@ -63,8 +65,8 @@ roc_plot <- function (prob = 'p_',
   #-- Test
   if (!is.null(df_test)) {
     pred_test <- prediction(df_test[, prob], df_test[,y])
-    perf_test <- performance(pred_test, measure = "tpr", x.measure = "fpr")
-    auc_perf_test <- performance(pred_test, measure = "auc")
+    perf_test <- performance(pred_test, measure = 'tpr', x.measure = 'fpr')
+    auc_perf_test <- performance(pred_test, measure = 'auc')
 
     roc_test <- data.frame('x' = unlist(perf_test@x.values), 'y' = unlist(perf_test@y.values)) |>
       mutate(Data = 'Test')
@@ -86,19 +88,27 @@ roc_plot <- function (prob = 'p_',
     ggtitle('ROC Curves') + xlab('False Positive Rate') + ylab('True Positive Rate') +
 
     mix_theme() +
-    theme(legend.title = element_blank(),
-          legend.position = c(0, 1),
-          legend.justification = c("left", "top"))
+    theme(
+      legend.title = element_blank(),
+      legend.position = c(0, 1),
+      legend.justification = c('left', 'top')
+    )
 
   if (is.null(df_test)) {
     gg_roc <- gg_roc +
-      scale_color_manual(values = c(train_colour, test_colour),
-                         labels = c(sprintf("Train | AUC = %.4f | Gini = %.4f", auc_perf_train@y.values[[1]], auc_perf_train@y.values[[1]]*2 - 1)))
+      scale_color_manual(
+        values = c(train_colour, test_colour),
+        labels = c(sprintf('Train | AUC = %.4f | Gini = %.4f', auc_perf_train@y.values[[1]], auc_perf_train@y.values[[1]]*2 - 1))
+      )
   } else {
     gg_roc <- gg_roc +
-      scale_color_manual(values = c(train_colour, test_colour),
-                         labels = c(sprintf("Train | AUC = %.4f | Gini = %.4f", auc_perf_train@y.values[[1]], auc_perf_train@y.values[[1]]*2 - 1),
-                                    sprintf("Test  | AUC = %.4f | Gini = %.4f", auc_perf_test@y.values[[1]], auc_perf_test@y.values[[1]]*2 - 1)))
+      scale_color_manual(
+        values = c(train_colour, test_colour),
+        labels = c(
+          sprintf('Train | AUC = %.4f | Gini = %.4f', auc_perf_train@y.values[[1]], auc_perf_train@y.values[[1]]*2 - 1),
+          sprintf('Test  | AUC = %.4f | Gini = %.4f', auc_perf_test@y.values[[1]], auc_perf_test@y.values[[1]]*2 - 1)
+        )
+      )
   }
 
   if (generate_output == T) {

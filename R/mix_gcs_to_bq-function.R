@@ -21,17 +21,19 @@
 #' @importFrom purrr list_rbind
 #' @importFrom tibble tibble
 #' @export
-mix_gcs_to_bq <- function(project,
-                          bucket,
-                          folder = NULL,
-                          object_name,
-                          dataset,
-                          table,
-                          partition_index = NULL,
-                          cluster_index = NULL,
-                          use_staging = 0,
-                          staging_dataset,
-                          object_format = 'parquet') {
+mix_gcs_to_bq <- function(
+  project,
+  bucket,
+  folder = NULL,
+  object_name,
+  dataset,
+  table,
+  partition_index = NULL,
+  cluster_index = NULL,
+  use_staging = 0,
+  staging_dataset,
+  object_format = 'parquet'
+) {
 
   #-- Start Time
   v_start_time <- Sys.time()
@@ -53,9 +55,9 @@ mix_gcs_to_bq <- function(project,
   #-- Create query
   v_query_push_to_gcs <- paste0(
 
-    "LOAD DATA OVERWRITE ", if_else(v_staging == 1, v_staging_bq_table, v_bq_table),
-    "
-    ",
+    'LOAD DATA OVERWRITE ', if_else(v_staging == 1, v_staging_bq_table, v_bq_table),
+    '
+    ',
     "FROM FILES (
          format = '", object_format, "',
          uris = ['gs://", v_uri, "'])"
@@ -75,8 +77,10 @@ mix_gcs_to_bq <- function(project,
       message(e)
       message('An error was detected.')
 
-      if (!is.null(e) &
-          grepl(pattern = "no applicable method for 'as_bq_table' applied to an object of", x = e)) {
+      if (
+        !is.null(e) &
+        grepl(pattern = "no applicable method for 'as_bq_table' applied to an object of", x = e)
+      ) {
 
         message('Error not fatal, process can continue.')
 
@@ -95,42 +99,50 @@ mix_gcs_to_bq <- function(project,
     v_staging_bq_table_fields <- bq_table_fields(x = paste0(project, '.', v_staging_bq_table))
     ls_staging_bq_fields <- NULL
     for (i in 1:length(v_staging_bq_table_fields)) {
-      ls_staging_bq_fields[[i]] <- tibble(name = v_staging_bq_table_fields[[i]]$name,
-                                          type = v_staging_bq_table_fields[[i]]$type)
+      ls_staging_bq_fields[[i]] <- tibble(
+        name = v_staging_bq_table_fields[[i]]$name,
+        type = v_staging_bq_table_fields[[i]]$type
+      )
     }
     ds_staging_bq_fields <- ls_staging_bq_fields |> list_rbind()
 
     #- Partition / cluster query segments
-    v_partition <- if_else(is.null(partition_index),
-                           '',
-                           if_else(ds_staging_bq_fields$type[ds_staging_bq_fields$name == partition_index] == 'DATE',
-                                   paste0('PARTITION BY ', partition_index),
-                                   paste0('PARTITION BY DATE(', partition_index, ')')))
+    v_partition <- if_else(
+      is.null(partition_index),
+      '',
+      if_else(
+        ds_staging_bq_fields$type[ds_staging_bq_fields$name == partition_index] == 'DATE',
+        paste0('PARTITION BY ', partition_index),
+        paste0('PARTITION BY DATE(', partition_index, ')')
+      )
+    )
     v_cluster <- if_else(is.null(cluster_index), '', paste0('CLUSTER BY ', cluster_index))
 
     #-- Create query
     v_query_pt_cl <- paste0(
-      "CREATE OR REPLACE TABLE ", v_bq_table,
-      "
-    ",
+      'CREATE OR REPLACE TABLE ', v_bq_table,
+      '
+    ',
     v_partition,
-    "
-    ",
+    '
+    ',
     v_cluster,
-    "
-    ",
-    "AS (",
-    "
-    ",
-    "SELECT ",
-    if_else(!is.null(cluster_index),
-            paste0("CAST(", cluster_index, " AS INT64) AS ", cluster_index, ","),
-            ""),
-    paste0("* EXCEPT (", cluster_index,")"),
-    "
-    ",
-    "FROM ", v_staging_bq_table,
-    ")"
+    '
+    ',
+    'AS (',
+    '
+    ',
+    'SELECT ',
+    if_else(
+      !is.null(cluster_index),
+      paste0('CAST(', cluster_index, ' AS INT64) AS ', cluster_index, ','),
+      ''
+    ),
+    paste0('* EXCEPT (', cluster_index,')'),
+    '
+    ',
+    'FROM ', v_staging_bq_table,
+    ')'
     )
 
     #-- Run query
@@ -147,8 +159,10 @@ mix_gcs_to_bq <- function(project,
         message(e)
         message('An error was detected.')
 
-        if (!is.null(e) &
-            grepl(pattern = "no applicable method for 'as_bq_table' applied to an object of", x = e)) {
+        if (
+          !is.null(e) &
+          grepl(pattern = "no applicable method for 'as_bq_table' applied to an object of", x = e)
+        ) {
 
           message('Error not fatal, process can continue.')
 
@@ -157,7 +171,7 @@ mix_gcs_to_bq <- function(project,
           #-- Remove staging table
           bigrquery::bq_project_query(
             x = project,
-            query = paste0("DROP TABLE ", v_staging_bq_table)
+            query = paste0('DROP TABLE ', v_staging_bq_table)
           )
 
           stop(e)
@@ -169,7 +183,7 @@ mix_gcs_to_bq <- function(project,
     #-- Remove staging table
     bigrquery::bq_project_query(
       x = project,
-      query = paste0("DROP TABLE ", v_staging_bq_table)
+      query = paste0('DROP TABLE ', v_staging_bq_table)
     )
   }
 

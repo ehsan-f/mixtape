@@ -41,11 +41,17 @@ predicted probability. Designed for understanding negative feature impacts
 bands <- mix_ml_shap_prob_bands(shap_vals, model_bias = -2.5)
 
 # Custom thresholds (5 bands)
-bands <- mix_ml_shap_prob_bands(shap_vals, model_bias = -2.5,
-                                prob_thresholds = c(0.01, 0.03, 0.05, 0.10))
+bands <- mix_ml_shap_prob_bands(
+  shap_vals,
+  model_bias = -2.5,
+  prob_thresholds = c(0.01, 0.03, 0.05, 0.10)
+)
 
 # Custom labels
-bands <- mix_ml_shap_prob_bands(shap_vals, model_bias = -2.5,
-                                labels = c("High Risk", "Medium Risk", "Low Risk", "Neutral"))
+bands <- mix_ml_shap_prob_bands(
+  shap_vals,
+  model_bias = -2.5,
+  labels = c('High Risk', 'Medium Risk', 'Low Risk', 'Neutral')
+)
 }
 }

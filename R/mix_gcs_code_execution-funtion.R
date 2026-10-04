@@ -14,14 +14,16 @@
 #' @importFrom dplyr filter
 #' @importFrom googleCloudStorageR gcs_list_objects gcs_get_object
 #' @export
-mix_gcs_code_execution <- function(project,
-                                   bucket,
-                                   folder_regex = '',
-                                   object_regex,
+mix_gcs_code_execution <- function(
+  project,
+  bucket,
+  folder_regex = '',
+  object_regex,
 
-                                   #-- mix_code_execution args
-                                   google_sheet_id = NULL,
-                                   sheet_name = 'R_Code_Logs') {
+  #-- mix_code_execution args
+  google_sheet_id = NULL,
+  sheet_name = 'R_Code_Logs'
+) {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -46,21 +48,27 @@ mix_gcs_code_execution <- function(project,
 
         #-- Set file download name
         v_file_download_name <- v_object_names[i]
-        v_file_download_name <- substr(x = v_file_download_name,
-                                       start = (gregexpr(pattern = '/', text = v_file_download_name, ignore.case = T) |> unlist() |> max()) + 1,
-                                       stop = nchar(v_file_download_name))
+        v_file_download_name <- substr(
+          x = v_file_download_name,
+          start = (gregexpr(pattern = '/', text = v_file_download_name, ignore.case = T) |> unlist() |> max()) + 1,
+          stop = nchar(v_file_download_name)
+        )
         v_file_download_name <- paste0('gcs_', v_file_download_name)
 
         #-- Download
-        gcs_get_object(object_name = v_object_names[i],
-                       bucket = bucket,
-                       overwrite = T,
-                       saveToDisk = v_file_download_name)
+        gcs_get_object(
+          object_name = v_object_names[i],
+          bucket = bucket,
+          overwrite = T,
+          saveToDisk = v_file_download_name
+        )
 
         #-- Run script
-        mix_code_execution(script_path = v_file_download_name,
-                           google_sheet_id = google_sheet_id,
-                           sheet_name = sheet_name)
+        mix_code_execution(
+          script_path = v_file_download_name,
+          google_sheet_id = google_sheet_id,
+          sheet_name = sheet_name
+        )
 
         #-- Remove file
         file.remove(v_file_download_name)

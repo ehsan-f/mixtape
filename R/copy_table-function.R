@@ -11,12 +11,12 @@
 #' @param ... Additional arguments passed to write.table()
 #'
 #' @export
-copy_table <- function(x, sep = '\t', row.names = FALSE, col.names = TRUE, ...){
+copy_table <- function(x, sep = '\t', row.names = F, col.names = T, ...){
 
   if (.Platform$OS.type == 'unix') {
     write.table(
       x = x,
-      file = pipe("pbcopy"),
+      file = pipe('pbcopy'),
       sep = sep,
       row.names = row.names,
       col.names = col.names,

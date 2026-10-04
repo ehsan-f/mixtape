@@ -12,5 +12,5 @@
 #'
 #' @export
 mix_apply_tiles <- function(prob, tile_breaks) {
-  cut(prob, breaks = tile_breaks, labels = FALSE)
+  cut(prob, breaks = tile_breaks, labels = F)
 }

@@ -70,9 +70,13 @@
 #'
 #' @export
 `%limit%` <- function(x, range) {
-  ifelse(x <= range[1], range[1],
-         ifelse(x >= range[2], range[2],
-                x))
+  ifelse(
+    x <= range[1], range[1],
+    ifelse(
+      x >= range[2], range[2],
+      x
+    )
+  )
 }
 
 #' Find the next highest bracket value

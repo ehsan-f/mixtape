@@ -80,4 +80,4 @@ mix_palette_light$blue_grey <- '#B0BEC5' # Blue Grey
 #' @format A vector of 8 hex color codes
 #'
 #' @export
-mix_palette_cb_jp <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+mix_palette_cb_jp <- c('#000000', '#E69F00', '#56B4E9', '#009E73', '#F0E442', '#0072B2', '#D55E00', '#CC79A7')

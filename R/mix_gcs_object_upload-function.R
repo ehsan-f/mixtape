@@ -15,12 +15,14 @@
 #' @importFrom googleCloudStorageR gcs_upload
 #' @importFrom readr write_csv
 #' @export
-mix_gcs_object_upload <- function(project,
-                                  bucket,
-                                  prefix,
-                                  object,
-                                  object_name,
-                                  object_format = 'rds') {
+mix_gcs_object_upload <- function(
+  project,
+  bucket,
+  prefix,
+  object,
+  object_name,
+  object_format = 'rds'
+) {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -30,8 +32,8 @@ mix_gcs_object_upload <- function(project,
 
   #----- Data cleaning
   #-- Ensure trailing slash on prefix
-  if (!grepl("/$", prefix)) {
-    prefix <- paste0(prefix, "/")
+  if (!grepl('/$', prefix)) {
+    prefix <- paste0(prefix, '/')
   }
 
   #----- Single file upload
@@ -58,11 +60,13 @@ mix_gcs_object_upload <- function(project,
       #-- Upload to GCS
       message('Uploading to bucket: ', bucket, '/', prefix)
 
-      gcs_upload(file = v_file_name,
-                 bucket = bucket,
-                 type = object_format,
-                 name = paste0(prefix, v_file_name),
-                 predefinedAcl = "default")
+      gcs_upload(
+        file = v_file_name,
+        bucket = bucket,
+        type = object_format,
+        name = paste0(prefix, v_file_name),
+        predefinedAcl = 'default'
+      )
 
       #-- Remove file
       file.remove(v_file_name)

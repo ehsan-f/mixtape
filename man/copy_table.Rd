@@ -4,7 +4,7 @@
 \alias{copy_table}
 \title{Copy a data frame to the clipboard}
 \usage{
-copy_table(x, sep = "\\t", row.names = FALSE, col.names = TRUE, ...)
+copy_table(x, sep = "\\t", row.names = F, col.names = T, ...)
 }
 \arguments{
 \item{x}{Data frame to copy}

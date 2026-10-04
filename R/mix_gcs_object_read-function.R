@@ -14,11 +14,13 @@
 #' @importFrom googleCloudStorageR gcs_get_object
 #' @importFrom readr read_csv
 #' @export
-mix_gcs_object_read <- function(project,
-                                bucket,
-                                prefix,
-                                object_name,
-                                object_format = 'rds') {
+mix_gcs_object_read <- function(
+  project,
+  bucket,
+  prefix,
+  object_name,
+  object_format = 'rds'
+) {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -28,8 +30,8 @@ mix_gcs_object_read <- function(project,
 
   #----- Data cleaning
   #-- Ensure trailing slash on prefix
-  if (!grepl("/$", prefix)) {
-    prefix <- paste0(prefix, "/")
+  if (!grepl('/$', prefix)) {
+    prefix <- paste0(prefix, '/')
   }
 
   #----- Single file download and read
@@ -42,10 +44,12 @@ mix_gcs_object_read <- function(project,
       #-- Download from GCS
       message('Downloading from bucket: ', bucket, '/', prefix)
 
-      gcs_get_object(object_name = v_gcs_object_path,
-                     bucket = bucket,
-                     overwrite = TRUE,
-                     saveToDisk = v_file_name)
+      gcs_get_object(
+        object_name = v_gcs_object_path,
+        bucket = bucket,
+        overwrite = T,
+        saveToDisk = v_file_name
+      )
 
       #-- Read data
       message('Reading file: ', v_file_name)
@@ -57,7 +61,7 @@ mix_gcs_object_read <- function(project,
       } else if (tolower(object_format) == 'rds') {
         result <- readRDS(file = v_file_name)
       } else {
-        stop("Unsupported object_format: ", object_format)
+        stop('Unsupported object_format: ', object_format)
       }
 
       #-- Remove file
@@ -76,7 +80,7 @@ mix_gcs_object_read <- function(project,
     },
     error = function(e) {
       #-- Remove downloaded file in case of an error
-      if (exists("v_file_name") && file.exists(v_file_name)) {
+      if (exists('v_file_name') && file.exists(v_file_name)) {
         file.remove(v_file_name)
         message('Downloaded file deleted.')
       }

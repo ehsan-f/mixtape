@@ -58,7 +58,7 @@ mix_cluster_stop <- function() {
       message('Cluster uptime: ', round(as.numeric(v_time_taken), 3), ' mins')
     },
     error = function(e) {
-      message("No start time detected.")
+      message('No start time detected.')
     }
   )
 

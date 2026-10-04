@@ -17,13 +17,15 @@
 #' @importFrom janitor clean_names
 #' @export
 
-mix_gcs_read_arrow_dataset <- function(bucket,
-                                       prefix,
-                                       select = NULL,
-                                       select_regex = NULL,
-                                       object_format = 'parquet',
-                                       collect = T,
-                                       var_clean_names = F) {
+mix_gcs_read_arrow_dataset <- function(
+  bucket,
+  prefix,
+  select = NULL,
+  select_regex = NULL,
+  object_format = 'parquet',
+  collect = T,
+  var_clean_names = F
+) {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -31,7 +33,7 @@ mix_gcs_read_arrow_dataset <- function(bucket,
   #-- Construct GCS URI
   gcs_uri <- paste0('gs://', bucket, '/', prefix)
 
-  message("Opening dataset from: ", gcs_uri)
+  message('Opening dataset from: ', gcs_uri)
 
   #-- Open dataset
   if (object_format == 'csv') {
@@ -52,8 +54,10 @@ mix_gcs_read_arrow_dataset <- function(bucket,
       #-- Check for missing columns
       v_missing_vars <- setdiff(select, v_object_vars)
       if (length(v_missing_vars) > 0) {
-        message("Warning: The following variables are not available in the dataset: ",
-                paste(v_missing_vars, collapse = ", "))
+        message(
+          'Warning: The following variables are not available in the dataset: ',
+          paste(v_missing_vars, collapse = ', ')
+        )
       }
     }
 
@@ -62,8 +66,10 @@ mix_gcs_read_arrow_dataset <- function(bucket,
       v_selected_vars <- c(v_selected_vars, v_selected_vars_regex) |> unique()
     }
 
-    message("Selecting columns: ", paste(head(v_selected_vars, 20), collapse = ", "),
-            if(length(v_selected_vars) > 20) " ..." else "")
+    message(
+      'Selecting columns: ', paste(head(v_selected_vars, 20), collapse = ', '),
+      if(length(v_selected_vars) > 20) ' ...' else ''
+    )
 
     ds_object <- ds_object |>
       select(any_of(v_selected_vars))
@@ -71,7 +77,7 @@ mix_gcs_read_arrow_dataset <- function(bucket,
 
   #-- Collect if requested
   if (collect == T) {
-    message("Collecting dataset into memory...")
+    message('Collecting dataset into memory...')
     ds_object <- ds_object |>
       collect()
 

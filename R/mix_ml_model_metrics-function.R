@@ -28,18 +28,20 @@
 #' @importFrom xgboost xgb.importance
 #' @importFrom yardstick accuracy_vec precision_vec recall_vec
 #' @export
-mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
-                                 df_train,
-                                 df_test,
-                                 df_features = ds_features,
-                                 model_type = 'xgb',
-                                 n_tiles = 10,
-                                 tile_breaks = NULL,
-                                 n_percentiles = 100,
-                                 percentile_breaks = NULL,
-                                 model = NULL,
-                                 training_time = NULL,
-                                 prob_cutoff = NULL) {
+mix_ml_model_metrics <- function(
+  prob, y, y_pred = NULL,
+  df_train,
+  df_test,
+  df_features = ds_features,
+  model_type = 'xgb',
+  n_tiles = 10,
+  tile_breaks = NULL,
+  n_percentiles = 100,
+  percentile_breaks = NULL,
+  model = NULL,
+  training_time = NULL,
+  prob_cutoff = NULL
+) {
 
   #-- List object
   ls_model_metrics <- list()
@@ -64,9 +66,11 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
   }
 
   #----- ROC / AUC
-  ls_model_auc <- roc_plot(prob = 'p', y = 'y',
-                           df_train = df_train, df_test = df_test,
-                           generate_output = F)
+  ls_model_auc <- roc_plot(
+    prob = 'p', y = 'y',
+    df_train = df_train, df_test = df_test,
+    generate_output = F
+  )
 
   ls_model_metrics$roc_plot <- ls_model_auc$gg_roc
 
@@ -82,12 +86,14 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
   ls_model_metrics$tile_breaks <- ls_model_tile_lift$tile_breaks
 
   #----- Lift charts (percentiles) - same mechanics as tiles, just n_percentiles groups
-  ls_model_percentile_lift <- lift_chart(prob = 'p', y = 'y', measure = 'y',
-                                         df_train = df_train,
-                                         df_test = df_test,
-                                         n = n_percentiles,
-                                         tile_breaks = percentile_breaks,
-                                         generate_output = F)
+  ls_model_percentile_lift <- lift_chart(
+    prob = 'p', y = 'y', measure = 'y',
+    df_train = df_train,
+    df_test = df_test,
+    n = n_percentiles,
+    tile_breaks = percentile_breaks,
+    generate_output = F
+  )
 
   ls_model_metrics$percentile_lift <- ls_model_percentile_lift[setdiff(names(ls_model_percentile_lift), c('tiles_train', 'tiles_test', 'tile_breaks'))]
   ls_model_metrics$percentile_breaks <- ls_model_percentile_lift$tile_breaks
@@ -95,7 +101,7 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
   #----- Classification Metrics (AUC, Accuracy, Precision, Recall, Lift)
   #-- Probability cutoff
   roc_obj <- pROC::roc(df_train$y, df_train$p)
-  ls_model_metrics$p_optimum_cutoff <- pROC::coords(roc_obj, "best", best.method = "closest.topleft")
+  ls_model_metrics$p_optimum_cutoff <- pROC::coords(roc_obj, 'best', best.method = 'closest.topleft')
 
   #-- Cutoff
   v_cutoff <- if (!is.null(prob_cutoff)) prob_cutoff else ls_model_metrics$p_optimum_cutoff$threshold
@@ -113,8 +119,8 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
     train = tibble(
       auc = ls_model_auc$log_auc_train,
       accuracy = accuracy_vec(y_train_factor, pred_train),
-      precision = precision_vec(y_train_factor, pred_train, event_level = "second"),
-      recall = recall_vec(y_train_factor, pred_train, event_level = "second"),
+      precision = precision_vec(y_train_factor, pred_train, event_level = 'second'),
+      recall = recall_vec(y_train_factor, pred_train, event_level = 'second'),
       lift = ls_model_metrics$tile_lift$lift_factor_train
     ),
     test = if (!is.null(df_test)) {
@@ -123,8 +129,8 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
       tibble(
         auc = ls_model_auc$log_auc_test,
         accuracy = accuracy_vec(y_test_factor, pred_test),
-        precision = precision_vec(y_test_factor, pred_test, event_level = "second"),
-        recall = recall_vec(y_test_factor, pred_test, event_level = "second"),
+        precision = precision_vec(y_test_factor, pred_test, event_level = 'second'),
+        recall = recall_vec(y_test_factor, pred_test, event_level = 'second'),
         lift = ls_model_metrics$tile_lift$lift_factor_test
       )
     } else NULL
@@ -138,7 +144,10 @@ mix_ml_model_metrics <- function(prob, y, y_pred = NULL,
       left_join(
         (
           df_features |>
-            select(feature = variable, variable_group)
+            select(
+              feature = variable,
+              variable_group
+            )
         )
       )
   }

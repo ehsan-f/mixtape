@@ -10,7 +10,7 @@ pr_roc_plot(
   df_train,
   df_test = NULL,
   model = NULL,
-  generate_output = TRUE,
+  generate_output = T,
   train_colour = mix_palette$blue,
   test_colour = mix_palette$red
 )

@@ -23,7 +23,7 @@ pr_roc_plot <- function(prob = 'p_',
                     df_train,
                     df_test = NULL,
                     model = NULL,
-                    generate_output = TRUE,
+                    generate_output = T,
                     train_colour = mix_palette$blue,
                     test_colour = mix_palette$red) {
 
@@ -36,19 +36,19 @@ pr_roc_plot <- function(prob = 'p_',
 
   #-- Assign Predictions
   if (!is.null(model)) {
-    if (class(model)[1] == "glm") {
-      df_train[, prob] <- predict(model, df_train, type = "response")
+    if (class(model)[1] == 'glm') {
+      df_train[, prob] <- predict(model, df_train, type = 'response')
 
       if (!is.null(df_test)) {
-        df_test[, prob] <- predict(model, df_test, type = "response")
+        df_test[, prob] <- predict(model, df_test, type = 'response')
       }
     }
 
-    if (class(model)[1] == "workflow") {
-      df_train[, prob] <- predict(model, new_data = df_train, type = "prob")$.pred_1
+    if (class(model)[1] == 'workflow') {
+      df_train[, prob] <- predict(model, new_data = df_train, type = 'prob')$.pred_1
 
       if (!is.null(df_test)) {
-        df_test[, prob] <- predict(model, new_data = df_test, type = "prob")$.pred_1
+        df_test[, prob] <- predict(model, new_data = df_test, type = 'prob')$.pred_1
       }
     }
   }
@@ -69,7 +69,7 @@ pr_roc_plot <- function(prob = 'p_',
 
   #----- Train
   pred_train <- prediction(df_train[, prob], df_train[, y])
-  perf_train <- performance(pred_train, measure = "prec", x.measure = "rec")
+  perf_train <- performance(pred_train, measure = 'prec', x.measure = 'rec')
   prauc_train <- calc_prauc(perf_train)
 
   # Baseline: prevalence rate of the positive class
@@ -84,7 +84,7 @@ pr_roc_plot <- function(prob = 'p_',
   #----- Test
   if (!is.null(df_test)) {
     pred_test <- prediction(df_test[, prob], df_test[, y])
-    perf_test <- performance(pred_test, measure = "prec", x.measure = "rec")
+    perf_test <- performance(pred_test, measure = 'prec', x.measure = 'rec')
     prauc_test <- calc_prauc(perf_test)
 
     pr_test <- data.frame(
@@ -106,7 +106,7 @@ pr_roc_plot <- function(prob = 'p_',
     # Baseline: a random classifier scores ~= prevalence rate
     geom_hline(yintercept = baseline, colour = mix_palette$green, lty = 2) +
 
-    geom_line(lwd = 1, na.rm = TRUE) +
+    geom_line(lwd = 1, na.rm = T) +
 
     ggtitle('Precision-Recall Curves') +
     xlab('Recall') +
@@ -114,24 +114,24 @@ pr_roc_plot <- function(prob = 'p_',
 
     mix_theme() +
     theme(
-      legend.title    = element_blank(),
+      legend.title = element_blank(),
       legend.position = c(1, 1),
-      legend.justification = c("right", "top")
+      legend.justification = c('right', 'top')
     )
 
   if (is.null(df_test)) {
     gg_pr <- gg_pr +
       scale_color_manual(
         values = c(train_colour, test_colour),
-        labels = c(sprintf("Train | PR-AUC = %.4f | Baseline = %.4f", prauc_train, baseline))
+        labels = c(sprintf('Train | PR-AUC = %.4f | Baseline = %.4f', prauc_train, baseline))
       )
   } else {
     gg_pr <- gg_pr +
       scale_color_manual(
         values = c(train_colour, test_colour),
         labels = c(
-          sprintf("Train | PR-AUC = %.4f | Baseline = %.4f", prauc_train, baseline),
-          sprintf("Test  | PR-AUC = %.4f | Baseline = %.4f", prauc_test,  baseline)
+          sprintf('Train | PR-AUC = %.4f | Baseline = %.4f', prauc_train, baseline),
+          sprintf('Test  | PR-AUC = %.4f | Baseline = %.4f', prauc_test, baseline)
         )
       )
   }

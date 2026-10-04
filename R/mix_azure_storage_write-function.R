@@ -22,18 +22,20 @@
 #' @importFrom readr write_csv
 #' @importFrom jsonlite toJSON write_json
 #' @export
-mix_azure_storage_write <- function(df,
-                                    storage_account_name,
-                                    container_name,
-                                    prefix,
-                                    storage_key = NULL,
-                                    token = NULL,
-                                    storage_type = 'adls',
-                                    object_format = 'parquet',
-                                    object_name = 'part_',
-                                    single_file = F,
-                                    compress_json = T,
-                                    max_rows_per_file = 100000) {
+mix_azure_storage_write <- function(
+  df,
+  storage_account_name,
+  container_name,
+  prefix,
+  storage_key = NULL,
+  token = NULL,
+  storage_type = 'adls',
+  object_format = 'parquet',
+  object_name = 'part_',
+  single_file = F,
+  compress_json = T,
+  max_rows_per_file = 100000
+) {
 
   #-- Start time
   v_start_time <- Sys.time()
@@ -45,7 +47,7 @@ mix_azure_storage_write <- function(df,
     if (!object_format %in% c('json', 'rds')) stop("Non-data.frame input only supported with object_formats 'json' and 'rds'")
     single_file <- T
   } else {
-    if (nrow(df) == 0) stop("Cannot write empty data frame")
+    if (nrow(df) == 0) stop('Cannot write empty data frame')
   }
 
   #-- Storage endpoint
@@ -90,9 +92,11 @@ mix_azure_storage_write <- function(df,
       saveRDS(df, file = temp_file)
     }
 
-    storage_upload(v_target_container,
-                   src = temp_file,
-                   dest = paste0(prefix, v_file_name))
+    storage_upload(
+      v_target_container,
+      src = temp_file,
+      dest = paste0(prefix, v_file_name)
+    )
 
   } else {
     #-- Build row index splits
@@ -131,9 +135,11 @@ mix_azure_storage_write <- function(df,
         saveRDS(df_batch, file = temp_file)
       }
 
-      storage_upload(v_target_container,
-                     src = temp_file,
-                     dest = paste0(prefix, v_file_name))
+      storage_upload(
+        v_target_container,
+        src = temp_file,
+        dest = paste0(prefix, v_file_name)
+      )
     }
   }
 

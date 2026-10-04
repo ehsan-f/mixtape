@@ -14,6 +14,6 @@
 set_integer_to_numeric <- function(df) {
   #- Skip integer-backed Dates (e.g. seq() on Dates in R >= 4.5, data.table
   #  IDate) - as.numeric() would silently drop their class
-  df[] <- lapply(df, function(x) if (is.integer(x) && !inherits(x, c("Date", "IDate"))) as.numeric(x) else x)
+  df[] <- lapply(df, function(x) if (is.integer(x) && !inherits(x, c('Date', 'IDate'))) as.numeric(x) else x)
   df
 }

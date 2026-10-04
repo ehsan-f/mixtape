@@ -25,23 +25,25 @@
 #' @importFrom dplyr ntile group_by summarise left_join sym n
 #' @importFrom ggplot2 ggplot aes geom_line geom_point ggtitle ylab scale_colour_manual scale_x_continuous theme element_blank annotate expand_limits
 #' @export
-lift_chart <- function (prob = 'p_',
-                        y,
-                        measure = NULL,
-                        df_train,
-                        df_test,
-                        model = NULL,
-                        tile_breaks = NULL,
-                        n = 10,
-                        nudge_train = 1.5,
-                        nudge_test = 1.5,
-                        generate_output = T,
-                        actual_colour = mix_palette$blue,
-                        pred_colour = mix_palette$red,
-                        line_width = 1.1,
-                        point_size = 2.5,
-                        lift_bar_x = 10.5,
-                        lift_bar_colour = mix_palette$serene_purple)
+lift_chart <- function(
+  prob = 'p_',
+  y,
+  measure = NULL,
+  df_train,
+  df_test,
+  model = NULL,
+  tile_breaks = NULL,
+  n = 10,
+  nudge_train = 1.5,
+  nudge_test = 1.5,
+  generate_output = T,
+  actual_colour = mix_palette$blue,
+  pred_colour = mix_palette$red,
+  line_width = 1.1,
+  point_size = 2.5,
+  lift_bar_x = 10.5,
+  lift_bar_colour = mix_palette$serene_purple
+)
 {
   #-- Data
   df_train <- as.data.frame(df_train)
@@ -68,12 +70,10 @@ lift_chart <- function (prob = 'p_',
     }
   }
 
-  #================================================================================#
-
   #-- Assign tiles
   if (!is.null(tile_breaks)) {
     v_breaks <- tile_breaks
-    df_train$tile <- cut(df_train[, prob], breaks = v_breaks, labels = FALSE)
+    df_train$tile <- cut(df_train[, prob], breaks = v_breaks, labels = F)
   } else {
     df_train$tile <- ntile(df_train[,prob], n)
     v_breaks <- c(-Inf, sapply(1:(n-1), function(i) max(df_train[df_train$tile == i, prob])), Inf)
@@ -83,10 +83,8 @@ lift_chart <- function (prob = 'p_',
   v_n_tiles <- length(v_breaks) - 1
 
   if (!is.null(df_test)) {
-    df_test$tile <- cut(df_test[, prob], breaks = v_breaks, labels = FALSE)
+    df_test$tile <- cut(df_test[, prob], breaks = v_breaks, labels = F)
   }
-
-  #================================================================================#
 
   #----- Lift Tables
   #-- Train
@@ -98,7 +96,8 @@ lift_chart <- function (prob = 'p_',
     summarise(
       actual_train = mean(actual_train),
       pred_train = mean(pred_train),
-      records_vol = n()
+      records_vol = n(),
+      .groups = 'drop'
     )
 
   v_lift_factor_train <- lift_train$actual_train[nrow(lift_train)] / lift_train$actual_train[1]
@@ -108,7 +107,10 @@ lift_chart <- function (prob = 'p_',
       left_join(
         df_train |>
           group_by(tile) |>
-          summarise(measure_sum = sum(!!sym(measure))),
+          summarise(
+            measure_sum = sum(!!sym(measure)),
+            .groups = 'drop'
+          ),
         by = 'tile'
       )
 
@@ -134,7 +136,8 @@ lift_chart <- function (prob = 'p_',
       summarise(
         actual_test = mean(actual_test),
         pred_test = mean(pred_test),
-        records_vol = n()
+        records_vol = n(),
+        .groups = 'drop'
       )
 
     v_lift_factor_test <- lift_test$actual_test[nrow(lift_test)] / lift_test$actual_test[1]
@@ -144,7 +147,10 @@ lift_chart <- function (prob = 'p_',
         left_join(
           df_test |>
             group_by(tile) |>
-            summarise(measure_sum = sum(!!sym(measure))),
+            summarise(
+              measure_sum = sum(!!sym(measure)),
+              .groups = 'drop'
+            ),
           by = 'tile'
         )
 
@@ -162,7 +168,6 @@ lift_chart <- function (prob = 'p_',
 
   }
 
-  #================================================================================#
   #----- Lift Charts
   #-- Draws the lift bar: a vertical segment to the right of the last tile spanning the first
   #   tile's actual rate up to the last tile's actual rate - the lift, drawn to scale - capped
@@ -173,15 +178,23 @@ lift_chart <- function (prob = 'p_',
     v_cap <- 0.12
 
     gg +
-      annotate('segment', x = lift_bar_x, xend = lift_bar_x, y = v_low, yend = v_high,
-               colour = lift_bar_colour, linewidth = line_width) +
-      annotate('segment', x = lift_bar_x - v_cap, xend = lift_bar_x + v_cap, y = v_low, yend = v_low,
-               colour = lift_bar_colour, linewidth = line_width) +
-      annotate('segment', x = lift_bar_x - v_cap, xend = lift_bar_x + v_cap, y = v_high, yend = v_high,
-               colour = lift_bar_colour, linewidth = line_width) +
-      annotate('text', x = lift_bar_x + 0.3, y = mean(c(v_low, v_high)),
-               label = paste0(round(v_lift_factor, 1), 'x lift'),
-               angle = 90, colour = lift_bar_colour, fontface = 'bold') +
+      annotate(
+        'segment', x = lift_bar_x, xend = lift_bar_x, y = v_low, yend = v_high,
+        colour = lift_bar_colour, linewidth = line_width
+      ) +
+      annotate(
+        'segment', x = lift_bar_x - v_cap, xend = lift_bar_x + v_cap, y = v_low, yend = v_low,
+        colour = lift_bar_colour, linewidth = line_width
+      ) +
+      annotate(
+        'segment', x = lift_bar_x - v_cap, xend = lift_bar_x + v_cap, y = v_high, yend = v_high,
+        colour = lift_bar_colour, linewidth = line_width
+      ) +
+      annotate(
+        'text', x = lift_bar_x + 0.3, y = mean(c(v_low, v_high)),
+        label = paste0(round(v_lift_factor, 1), 'x lift'),
+        angle = 90, colour = lift_bar_colour, fontface = 'bold'
+      ) +
       expand_limits(x = lift_bar_x + 0.7)
   }
 
@@ -202,18 +215,24 @@ lift_chart <- function (prob = 'p_',
     scale_x_continuous(breaks = 1:v_n_tiles) +
 
     mix_theme() +
-    theme(legend.title = element_blank(),
-          legend.position = c(0, 1),
-          legend.justification = c("left", "top"))
+    theme(
+      legend.title = element_blank(),
+      legend.position = c(0, 1),
+      legend.justification = c('left', 'top')
+    )
 
   if (!is.null(measure)) {
     gg_train <- gg_train +
-      annotate('label', x = 2 + nudge_train + 0.3, y = lift_train$actual_train[2],
-               label = paste0('Bottom 3 = ', pretty_perc(bottom_3_train, 1)),
-               color = mix_palette$green) +
-      annotate('label', x = max(lift_train$tile) - 1 - nudge_train, y = lift_train$actual_train[nrow(lift_train) - 1],
-               label = paste0('Top 3 = ', pretty_perc(top_3_train, 1)),
-               color = mix_palette$green)
+      annotate(
+        'label', x = 2 + nudge_train + 0.3, y = lift_train$actual_train[2],
+        label = paste0('Bottom 3 = ', pretty_perc(bottom_3_train, 1)),
+        color = mix_palette$green
+      ) +
+      annotate(
+        'label', x = max(lift_train$tile) - 1 - nudge_train, y = lift_train$actual_train[nrow(lift_train) - 1],
+        label = paste0('Top 3 = ', pretty_perc(top_3_train, 1)),
+        color = mix_palette$green
+      )
   }
 
   gg_train <- add_lift_bar(gg_train, lift_train$actual_train, v_lift_factor_train)
@@ -241,18 +260,24 @@ lift_chart <- function (prob = 'p_',
       scale_x_continuous(breaks = 1:v_n_tiles) +
 
       mix_theme() +
-      theme(legend.title = element_blank(),
-            legend.position = c(0, 1),
-            legend.justification = c("left", "top"))
+      theme(
+        legend.title = element_blank(),
+        legend.position = c(0, 1),
+        legend.justification = c('left', 'top')
+      )
 
     if (!is.null(measure)) {
       gg_test <- gg_test +
-        annotate('label', x = 2 + nudge_test + 0.3, y = lift_test$actual_test[2],
-                 label = paste0('Bottom 3 = ', pretty_perc(bottom_3_test, 1)),
-                 color = mix_palette$green) +
-        annotate('label', x = max(lift_test$tile) - 1 - nudge_test, y = lift_test$actual_test[nrow(lift_test) - 1],
-                 label = paste0('Top 3 = ', pretty_perc(top_3_test, 1)),
-                 color = mix_palette$green)
+        annotate(
+          'label', x = 2 + nudge_test + 0.3, y = lift_test$actual_test[2],
+          label = paste0('Bottom 3 = ', pretty_perc(bottom_3_test, 1)),
+          color = mix_palette$green
+        ) +
+        annotate(
+          'label', x = max(lift_test$tile) - 1 - nudge_test, y = lift_test$actual_test[nrow(lift_test) - 1],
+          label = paste0('Top 3 = ', pretty_perc(top_3_test, 1)),
+          color = mix_palette$green
+        )
     }
 
     gg_test <- add_lift_bar(gg_test, lift_test$actual_test, v_lift_factor_test)
@@ -261,8 +286,6 @@ lift_chart <- function (prob = 'p_',
       print(gg_test)
     }
   }
-
-  #================================================================================#
 
   #----- Invisible Lists
   ls_output <- list(

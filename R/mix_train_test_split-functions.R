@@ -21,7 +21,7 @@ mix_train_index <- function(df, target = 't_', p = 0.7, group = NULL) {
   if (is.null(group)) {
 
     #-- Row-level split (original behavior)
-    train_ids <- createDataPartition(as.factor(df[[target]]), p = p, list = FALSE)
+    train_ids <- createDataPartition(as.factor(df[[target]]), p = p, list = F)
 
     df$train_index <- 0L
     df$train_index[train_ids] <- 1L
@@ -31,9 +31,12 @@ mix_train_index <- function(df, target = 't_', p = 0.7, group = NULL) {
     #-- Group-level split
     df_groups <- df |>
       dplyr::group_by(.data[[group]]) |>
-      dplyr::summarise(target_group = max(.data[[target]], na.rm = TRUE), .groups = 'drop')
+      dplyr::summarise(
+        target_group = max(.data[[target]], na.rm = T),
+        .groups = 'drop'
+      )
 
-    train_ids <- createDataPartition(as.factor(df_groups$target_group), p = p, list = FALSE)
+    train_ids <- createDataPartition(as.factor(df_groups$target_group), p = p, list = F)
 
     train_groups <- df_groups[[group]][train_ids]
 

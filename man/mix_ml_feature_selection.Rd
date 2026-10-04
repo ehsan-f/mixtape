@@ -68,11 +68,17 @@ model and selects features based on gain/frequency thresholds or grouped selecti
 results <- mix_ml_feature_selection(df_train, df_features)
 
 # Threshold-based selection
-results <- mix_ml_feature_selection(df_train, df_features,
-                                    grouped_selection = FALSE)
+results <- mix_ml_feature_selection(
+  df_train,
+  df_features,
+  grouped_selection = F
+)
 
 # Exclude specific features
-results <- mix_ml_feature_selection(df_train, df_features,
-                                    excl_features = c("feature1", "feature2"))
+results <- mix_ml_feature_selection(
+  df_train,
+  df_features,
+  excl_features = c('feature1', 'feature2')
+)
 }
 }

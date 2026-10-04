@@ -11,7 +11,7 @@
 #' @param env_var Environment to assign variables to (default: global environment)
 #'
 #' @export
-dts <- function (df, x = "train_index", df_train, df_test, env_var = NULL) {
+dts <- function(df, x = 'train_index', df_train, df_test, env_var = NULL) {
 
   #-- Environment Variables
   # Current Env = environment(fun = NULL)

@@ -8,7 +8,7 @@
 #'
 #' @export
 pretty_num <- function(x, p = 1) {
-  x <- ifelse(is.na(x), NA, prettyNum(round(x, p), big.mark = ","))
+  x <- ifelse(is.na(x), NA, prettyNum(round(x, p), big.mark = ','))
   x
 }
 
@@ -22,8 +22,8 @@ pretty_num <- function(x, p = 1) {
 #' @param curr Currency symbol (default: "")
 #'
 #' @export
-pretty_curr <- function(x, p = 0, curr = "") {
-  x <- ifelse(is.na(x), NA, paste(curr, prettyNum(round(x, p), big.mark = ","), sep = " ")) |>
+pretty_curr <- function(x, p = 0, curr = '') {
+  x <- ifelse(is.na(x), NA, paste(curr, prettyNum(round(x, p), big.mark = ','), sep = ' ')) |>
     trimws(which = 'both')
   x
 }
@@ -38,6 +38,6 @@ pretty_curr <- function(x, p = 0, curr = "") {
 #'
 #' @export
 pretty_perc <- function(x, p = 2) {
-  x <- ifelse(is.na(x), NA, paste(round(x*100, p), '%', sep = " "))
+  x <- ifelse(is.na(x), NA, paste(round(x*100, p), '%', sep = ' '))
   x
 }

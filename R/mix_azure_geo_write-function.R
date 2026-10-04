@@ -13,15 +13,17 @@
 #' @importFrom AzureStor list_storage_containers storage_upload
 #' @importFrom sf st_write
 #' @export
-mix_azure_geo_write <- function(df,
-                                storage_account_name,
-                                container_name,
-                                prefix,
-                                storage_key = NULL,
-                                token = NULL,
-                                object_name,
-                                storage_type = 'adls',
-                                driver = 'GeoJSON') {
+mix_azure_geo_write <- function(
+  df,
+  storage_account_name,
+  container_name,
+  prefix,
+  storage_key = NULL,
+  token = NULL,
+  object_name,
+  storage_type = 'adls',
+  driver = 'GeoJSON'
+) {
 
   v_start_time <- Sys.time()
   message('Prefix: ', prefix)
@@ -34,17 +36,17 @@ mix_azure_geo_write <- function(df,
     v_endpoint <- sprintf('https://%s.blob.core.windows.net', storage_account_name)
   }
 
-  v_storage_account     <- mix_azure_resolve_endpoint(v_endpoint, storage_key, token)
+  v_storage_account <- mix_azure_resolve_endpoint(v_endpoint, storage_key, token)
   ls_storage_containers <- list_storage_containers(v_storage_account)
-  v_target_container    <- ls_storage_containers[[container_name]]
+  v_target_container <- ls_storage_containers[[container_name]]
 
-  prefix      <- paste0(gsub('/$', '', prefix), '/')
+  prefix <- paste0(gsub('/$', '', prefix), '/')
   v_file_name <- paste0(object_name, '.', v_file_ext)
-  temp_file   <- tempfile(fileext = paste0('.', v_file_ext))
-  on.exit(if (file.exists(temp_file)) file.remove(temp_file), add = TRUE)
+  temp_file <- tempfile(fileext = paste0('.', v_file_ext))
+  on.exit(if (file.exists(temp_file)) file.remove(temp_file), add = T)
 
   message('Writing: ', v_file_name)
-  sf::st_write(df, temp_file, driver = driver, quiet = TRUE)
+  sf::st_write(df, temp_file, driver = driver, quiet = T)
 
   storage_upload(v_target_container, src = temp_file, dest = paste0(prefix, v_file_name))
 

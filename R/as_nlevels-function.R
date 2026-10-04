@@ -6,6 +6,6 @@
 #' @param x Factor to convert
 #'
 #' @export
-as_nlevels = function(x) {
+as_nlevels <- function(x) {
   as.numeric(levels(x))[x]
 }

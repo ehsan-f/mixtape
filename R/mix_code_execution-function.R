@@ -17,17 +17,21 @@
 #' @importFrom googlesheets4 sheet_append as_sheets_id
 #' @importFrom tibble tibble
 #' @export
-mix_code_execution <-  function(script_path = NULL,
-                                script_url = NULL,
-                                google_sheet_id = NULL,
-                                sheet_name = 'R_Code_Logs',
-                                script_prefix = NULL,
-                                gcp_auth_var = NULL,
-                                ...) {
+mix_code_execution <- function(
+  script_path = NULL,
+  script_url = NULL,
+  google_sheet_id = NULL,
+  sheet_name = 'R_Code_Logs',
+  script_prefix = NULL,
+  gcp_auth_var = NULL,
+  ...
+) {
 
   ##### Variables #####
-  script_path <- paste0(script_path,
-                        if_else(!grepl('\\.R$', x = script_path), '.R', ''))
+  script_path <- paste0(
+    script_path,
+    if_else(!grepl('\\.R$', x = script_path), '.R', '')
+  )
 
   #-- Script name (output)
   script_name <- gsub(pattern = '.*/', replacement = '', x = script_path)

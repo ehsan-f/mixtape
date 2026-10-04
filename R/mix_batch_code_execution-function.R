@@ -22,14 +22,18 @@ mix_batch_code_execution <- function(directory, run_manual_scripts = NA) {
       run_manual_scripts <- run_manual_scripts |> if_null()
       if (!is.na(run_manual_scripts)) {
         run_manual_scripts <- fromJSON(run_manual_scripts)
-        run_manual_scripts <- paste0(run_manual_scripts,
-                                     if_else(!grepl('\\.R$', x = run_manual_scripts), '.R', ''))
+        run_manual_scripts <- paste0(
+          run_manual_scripts,
+          if_else(!grepl('\\.R$', x = run_manual_scripts), '.R', '')
+        )
 
         #- If any manual script does not exist
         if (any(!run_manual_scripts %in% v_r_scripts)) {
 
-          stop(paste0(run_manual_scripts[run_manual_scripts %in% v_r_scripts], ' does not exist', collapse = ' | '),
-               call. = F)
+          stop(
+            paste0(run_manual_scripts[run_manual_scripts %in% v_r_scripts], ' does not exist', collapse = ' | '),
+            call. = F
+          )
 
         }
 
